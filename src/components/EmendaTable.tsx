@@ -58,7 +58,7 @@ export default function EmendaTable({
             type="text"
             value={busca}
             onChange={(e) => setBusca(e.target.value)}
-            placeholder="Busque por n\u00famero, parlamentar, munic\u00edpio, objeto ou \u00e1rea tem\u00e1tica..."
+            placeholder="Busque por número, parlamentar, município, objeto ou área temática..."
             className="w-full pl-9 pr-3 py-[9px] border border-n-3 rounded text-[13px] font-sans text-n-5 placeholder:text-n-4 focus:outline-none focus:border-gov-blue focus:ring-2 focus:ring-gov-blue/15"
             autoComplete="off"
           />

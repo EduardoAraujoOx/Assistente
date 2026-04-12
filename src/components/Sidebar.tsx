@@ -66,7 +66,7 @@ export default function Sidebar({
 
       <div className="px-4 mt-6 border-t border-n-2 pt-4">
         <div className="text-[10px] text-n-4">
-          Transfer\u00eancias Especiais
+          Transferências Especiais
         </div>
         <div className="text-[10px] text-n-4">
           LC 210/2024
