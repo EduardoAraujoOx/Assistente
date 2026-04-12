@@ -118,7 +118,7 @@ export default function PlanoForm({ state, onChange, onMetaChange, onExport, onB
                 ))}
               </select>
               <div className="text-[11px] text-amber-700 mt-1 flex items-center gap-1">
-                <i className="fas fa-exclamation-triangle text-[11px]" /> Confirme no dropdown do Transferegov.
+                <i className="fas fa-exclamation-triangle text-[11px]" /> Confirme no menu suspenso do Transferegov.
               </div>
               <button
                 onClick={() => regenerar("finalidade")}
@@ -462,7 +462,7 @@ export default function PlanoForm({ state, onChange, onMetaChange, onExport, onB
       <div className="bg-white border border-n-2 rounded-lg mb-4 shadow-sm overflow-hidden">
         <div className="bg-n-1 border-b border-n-2 px-[18px] py-[11px]">
           <div className="text-xs font-bold text-gov-blue-dark1 flex items-center gap-[7px] uppercase tracking-wider">
-            <i className="fas fa-paperclip text-gov-blue" /> Documentos a Anexar
+            <i className="fas fa-paperclip text-gov-blue" /> Documentos a anexar
           </div>
         </div>
         <div className="p-[18px]">

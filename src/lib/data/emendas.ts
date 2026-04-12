@@ -9,7 +9,7 @@ export const EMENDAS: Emenda[] = [
     valor: 1500000,
     area: "Sa\u00fade",
     objeto:
-      "Aquisi\u00e7\u00e3o de equipamentos m\u00e9dico-hospitalares para Unidades B\u00e1sicas de Sa\u00fade e Pronto-Atendimentos municipais.",
+      "Aquisi\u00e7\u00e3o de equipamentos m\u00e9dico-hospitalares para Unidades B\u00e1sicas de Sa\u00fade e pronto-atendimentos municipais.",
     municipio: "Vit\u00f3ria",
     prazo: 24,
     nat: "44905200",

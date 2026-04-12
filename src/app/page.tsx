@@ -176,7 +176,7 @@ export default function Home() {
 
       {/* Footer */}
       <footer className="bg-gov-blue-dark2 text-white/40 px-3 md:px-6 py-3.5 text-[11px] flex items-center justify-between flex-wrap gap-2 no-print">
-        <div>TransfereGov Assistente &middot; SEFAZ-ES | Tesouro Estadual &middot; Esp&iacute;rito Santo &middot; 2026</div>
+        <div>Transferegov Assistente &middot; SEFAZ-ES | Tesouro Estadual &middot; Esp&iacute;rito Santo &middot; 2026</div>
         <div>Plano de Trabalho Pr&eacute;-preenchido &mdash; Transfer&ecirc;ncias Especiais</div>
       </footer>
 

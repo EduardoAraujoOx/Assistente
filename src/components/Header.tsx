@@ -23,7 +23,7 @@ export default function Header({ onNovoPlano }: HeaderProps) {
 
         <div className="min-w-0 flex-1 md:flex-initial">
           <div className="text-white text-[13px] md:text-sm font-medium truncate">
-            TransfereGov Assistente
+            Transferegov Assistente
           </div>
           <div className="text-white/45 text-[11px] mt-px hidden md:block">
             Plano de Trabalho Pr\u00e9-preenchido &mdash; Transfer\u00eancias Especiais
