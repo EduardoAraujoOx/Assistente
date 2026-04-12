@@ -1,0 +1,1308 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TransfereGov Assistente — SEFAZ-ES</title>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+<style>
+/* ── PALETA TRANSFEREGOV ESPECIAIS ── */
+:root {
+  --blue:       #1351B4;
+  --blue-dark:  #0C326F;
+  --blue-xdark: #071D41;
+  --blue-light: #2670E8;
+  --blue-pale:  #EBF1FB;
+  --blue-bg:    #F3F7FD;
+  --teal:       #1B7A4E;
+  --teal-pale:  #EBF5F0;
+  --amber:      #856404;
+  --amber-pale: #FFF9E0;
+  --red:        #C0392B;
+  --red-pale:   #FDECEA;
+  --ink:        #1C1C1E;
+  --ink-60:     #49505A;
+  --ink-40:     #737B87;
+  --ink-20:     #B0B8C4;
+  --bg:         #F5F6FA;
+  --surface:    #FFFFFF;
+  --border:     #DDE3EE;
+  --border-strong: #B8C2D4;
+  --header-h:   56px;
+  --r: 4px;
+  --shadow: 0 1px 3px rgba(0,0,0,.10), 0 1px 2px rgba(0,0,0,.07);
+  --shadow-md: 0 4px 12px rgba(0,0,0,.10), 0 2px 4px rgba(0,0,0,.06);
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Roboto', sans-serif;
+  font-size: 14px;
+  color: var(--ink);
+  background: var(--bg);
+  line-height: 1.55;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── HEADER ── */
+.tg-header {
+  background: var(--blue-xdark);
+  height: var(--header-h);
+  display: flex;
+  align-items: center;
+  padding: 0 24px;
+  gap: 16px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 2px 8px rgba(0,0,0,.2);
+}
+.tg-logo-mark {
+  background: var(--surface);
+  border-radius: 3px;
+  padding: 4px 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+.tg-logo-sefaz {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--blue-xdark);
+  letter-spacing: .02em;
+}
+.tg-logo-div {
+  width: 1px;
+  height: 14px;
+  background: var(--border-strong);
+}
+.tg-logo-sub {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--ink-60);
+}
+.tg-header-sep {
+  width: 1px;
+  height: 28px;
+  background: rgba(255,255,255,.15);
+}
+.tg-system-name {
+  color: #fff;
+  font-size: 14px;
+  font-weight: 500;
+}
+.tg-system-sub {
+  color: rgba(255,255,255,.45);
+  font-size: 11px;
+  margin-top: 1px;
+}
+.tg-spacer { flex: 1; }
+.tg-badge {
+  background: rgba(255,255,255,.12);
+  color: rgba(255,255,255,.7);
+  font-size: 11px;
+  font-weight: 500;
+  padding: 3px 10px;
+  border-radius: 2px;
+  border: 1px solid rgba(255,255,255,.15);
+}
+.tg-btn-new {
+  background: transparent;
+  border: 1px solid rgba(255,255,255,.3);
+  color: rgba(255,255,255,.7);
+  padding: 6px 12px;
+  border-radius: var(--r);
+  font-size: 12px;
+  font-family: 'Roboto', sans-serif;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  transition: all .15s;
+}
+.tg-btn-new:hover { background: rgba(255,255,255,.08); color: #fff; }
+
+/* ── PROGRESS STEPS (substituiu sidebar) ── */
+.tg-wizard {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 0 24px;
+  display: flex;
+  align-items: center;
+  gap: 0;
+}
+.wz-step {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 20px 14px 0;
+  font-size: 13px;
+  color: var(--ink-40);
+  cursor: default;
+  border-bottom: 3px solid transparent;
+  transition: all .2s;
+}
+.wz-step:first-child { padding-left: 0; }
+.wz-step.active { color: var(--blue); border-bottom-color: var(--blue); font-weight: 500; cursor: default; }
+.wz-step.done { color: var(--teal); cursor: pointer; }
+.wz-step.done:hover { color: var(--blue); }
+.wz-num {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+  background: var(--bg);
+  color: var(--ink-40);
+  border: 1.5px solid var(--border-strong);
+  flex-shrink: 0;
+  transition: all .2s;
+}
+.wz-step.active .wz-num { background: var(--blue); color: #fff; border-color: var(--blue); }
+.wz-step.done .wz-num { background: var(--teal); color: #fff; border-color: var(--teal); font-size: 10px; }
+.wz-arrow { color: var(--ink-20); font-size: 12px; margin: 0 4px; }
+
+/* ── MAIN ── */
+.tg-main {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 28px 24px 60px;
+}
+
+/* ── RESTORE ── */
+.tg-restore {
+  background: var(--blue-pale);
+  border: 1px solid #C5D4EB;
+  border-radius: var(--r);
+  padding: 10px 16px;
+  margin-bottom: 20px;
+  font-size: 13px;
+  color: var(--blue-dark);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  font-weight: 500;
+}
+
+/* ── PAGE HEADER ── */
+.pg-hdr { margin-bottom: 22px; }
+.pg-hdr h2 {
+  font-size: 20px;
+  font-weight: 500;
+  color: var(--blue-xdark);
+  letter-spacing: -.01em;
+  margin-bottom: 5px;
+}
+.pg-hdr p { font-size: 13px; color: var(--ink-60); }
+.pg-hdr-line {
+  height: 2px;
+  background: var(--blue);
+  width: 36px;
+  border-radius: 2px;
+  margin: 8px 0 12px;
+}
+
+/* ── CALL TO ACTION INICIAL ── */
+.cta-instrucoes {
+  background: var(--blue-pale);
+  border-left: 3px solid var(--blue);
+  border-radius: var(--r);
+  padding: 14px 16px;
+  margin-bottom: 20px;
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+}
+.cta-instrucoes i { color: var(--blue); font-size: 20px; margin-top: 1px; flex-shrink: 0; }
+.cta-instrucoes-body h4 { font-size: 13px; font-weight: 700; color: var(--blue-dark); margin-bottom: 4px; }
+.cta-instrucoes-body p { font-size: 12px; color: var(--ink-60); line-height: 1.5; }
+.cta-passos { display: flex; gap: 0; margin-bottom: 24px; border: 1px solid var(--border); border-radius: var(--r); overflow: hidden; }
+.cta-passo {
+  flex: 1;
+  padding: 12px 16px;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+.cta-passo:last-child { border-right: none; }
+.cta-passo-num {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--blue);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.cta-passo-txt { font-size: 12px; color: var(--ink-60); line-height: 1.4; }
+.cta-passo-txt strong { color: var(--ink); font-weight: 500; display: block; margin-bottom: 2px; }
+
+/* ── CARD ── */
+.tg-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  margin-bottom: 16px;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+.tg-card-hdr {
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+  padding: 11px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.tg-card-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--blue-dark);
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+}
+.tg-card-title i { color: var(--blue); }
+.tg-card-body { padding: 18px; }
+.tg-card-tag {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 7px;
+  border-radius: 2px;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  white-space: nowrap;
+}
+.tag-system { background: var(--bg); color: var(--ink-40); border: 1px solid var(--border); }
+.tag-auto { background: var(--blue-pale); color: var(--blue); border: 1px solid #C5D4EB; }
+.tag-fixed { background: #FFF9E0; color: var(--amber); border: 1px solid #E8D47A; }
+.tag-hist { background: var(--teal-pale); color: var(--teal); border: 1px solid #9DD0B4; }
+
+/* ── EMENDA SELECIONADA ── */
+.emenda-hdr {
+  background: linear-gradient(135deg, var(--blue-xdark) 0%, var(--blue-dark) 100%);
+  border-radius: var(--r);
+  padding: 18px 22px;
+  margin-bottom: 18px;
+  box-shadow: var(--shadow-md);
+  border-left: 4px solid #FFCD07;
+}
+.emenda-hdr-obj { font-size: 14px; font-weight: 500; color: #fff; line-height: 1.45; margin-bottom: 8px; }
+.emenda-hdr-meta { font-size: 12px; color: rgba(255,255,255,.5); display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 8px; }
+.emenda-hdr-meta span { display: flex; align-items: center; gap: 4px; }
+.emenda-hdr-valor { font-size: 22px; font-weight: 700; color: #FFCD07; font-family: 'Roboto Mono', monospace; letter-spacing: -.01em; }
+.emenda-hdr-plano { float: right; font-size: 11px; background: rgba(255,255,255,.1); color: rgba(255,255,255,.65); border-radius: 2px; padding: 2px 8px; }
+
+/* ── SEARCH ── */
+.tg-search-wrap { position: relative; margin-bottom: 10px; }
+.tg-search-wrap input {
+  width: 100%;
+  padding: 9px 12px 9px 36px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--r);
+  font-size: 13px;
+  font-family: 'Roboto', sans-serif;
+  color: var(--ink);
+  transition: border-color .15s, box-shadow .15s;
+}
+.tg-search-wrap input:focus { outline: none; border-color: var(--blue); box-shadow: 0 0 0 2px rgba(19,81,180,.15); }
+.tg-search-wrap input::placeholder { color: var(--ink-40); }
+.tg-search-wrap i { position: absolute; left: 11px; top: 50%; transform: translateY(-50%); color: var(--ink-40); font-size: 14px; pointer-events: none; }
+.tg-count { font-size: 12px; color: var(--ink-40); margin-bottom: 10px; }
+
+/* ── ENTE SELECTOR ── */
+.ente-selector {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: 14px 18px;
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  box-shadow: var(--shadow);
+}
+.ente-selector label { font-size: 13px; font-weight: 500; color: var(--ink); white-space: nowrap; }
+.ente-selector select {
+  flex: 1;
+  padding: 8px 10px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--r);
+  font-size: 13px;
+  font-family: 'Roboto', sans-serif;
+  background: #fff;
+  color: var(--ink);
+}
+.ente-selector select:focus { outline: none; border-color: var(--blue); box-shadow: 0 0 0 2px rgba(19,81,180,.15); }
+
+/* ── TABLE ── */
+.tg-table { border: 1px solid var(--border); border-radius: var(--r); overflow: hidden; }
+.tg-thead {
+  display: grid;
+  grid-template-columns: 1fr 130px 90px;
+  background: var(--blue-xdark);
+  padding: 8px 14px;
+  gap: 8px;
+}
+.tg-thead span { font-size: 11px; font-weight: 500; color: rgba(255,255,255,.65); text-transform: uppercase; letter-spacing: .05em; }
+.tg-tbody { max-height: 300px; overflow-y: auto; scrollbar-width: thin; }
+.tg-row {
+  display: grid;
+  grid-template-columns: 1fr 130px 90px;
+  padding: 10px 14px;
+  gap: 8px;
+  border-top: 1px solid var(--border);
+  cursor: pointer;
+  transition: background .1s;
+  align-items: start;
+}
+.tg-row:first-child { border-top: none; }
+.tg-row:hover { background: var(--blue-bg); }
+.tg-row.sel { background: var(--blue-pale); border-left: 3px solid var(--blue); }
+.tr-obj { font-size: 12.5px; font-weight: 500; color: var(--ink); line-height: 1.35; margin-bottom: 4px; }
+.tr-sub { font-size: 11px; color: var(--ink-60); display: flex; gap: 5px; flex-wrap: wrap; align-items: center; }
+.tr-pill { font-size: 10px; padding: 1px 5px; border-radius: 2px; font-weight: 500; }
+.pill-id { background: var(--blue-pale); color: var(--blue); font-family: 'Roboto Mono', monospace; }
+.pill-area { background: var(--bg); color: var(--ink-60); }
+.tr-parl { font-size: 12px; color: var(--ink); }
+.tr-partido { font-size: 10.5px; color: var(--ink-40); margin-top: 2px; }
+.tr-valor { font-size: 13px; font-weight: 700; color: var(--blue); text-align: right; font-family: 'Roboto Mono', monospace; }
+.tr-prazo { font-size: 10.5px; color: var(--ink-40); text-align: right; margin-top: 2px; }
+.tg-empty { padding: 2rem; text-align: center; color: var(--ink-40); font-size: 13px; }
+
+/* ── FORM ── */
+.fg { margin-bottom: 14px; }
+.fg:last-child { margin-bottom: 0; }
+.fg > label, .fg > .lbl {
+  display: block;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--ink-60);
+  margin-bottom: 5px;
+}
+.fg > label .req { color: var(--red); margin-left: 2px; }
+.fg > label .sub { font-size: 10.5px; font-weight: 400; color: var(--ink-40); }
+.hint { font-size: 11px; color: var(--ink-40); margin-top: 4px; }
+.fwarn { font-size: 11px; color: var(--amber); margin-top: 4px; display: flex; align-items: center; gap: 4px; }
+.fwarn i { font-size: 11px; }
+input[type=text], input[type=number], input[type=email], textarea, select {
+  width: 100%;
+  padding: 8px 11px;
+  font-size: 13px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--r);
+  background: #fff;
+  color: var(--ink);
+  font-family: 'Roboto', sans-serif;
+  line-height: 1.5;
+  transition: border-color .15s, box-shadow .15s;
+}
+input:focus, textarea:focus, select:focus {
+  outline: none;
+  border-color: var(--blue);
+  box-shadow: 0 0 0 2px rgba(19,81,180,.15);
+}
+textarea { resize: vertical; }
+.field-locked {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: 8px 11px;
+  font-size: 13px;
+  color: var(--ink-60);
+  line-height: 1.6;
+}
+.field-locked.fixed { color: var(--ink); font-weight: 400; }
+.g2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.g3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+.field-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 6px;
+  border-radius: 2px;
+  margin-bottom: 5px;
+  text-transform: uppercase;
+  letter-spacing: .03em;
+}
+.ft-lock { background: #FFF9E0; color: var(--amber); border: 1px solid #E8D47A; }
+.ft-auto { background: var(--blue-pale); color: var(--blue); border: 1px solid #C5D4EB; }
+.ft-hist { background: var(--teal-pale); color: var(--teal); border: 1px solid #9DD0B4; }
+
+/* ── BARRA FIN ── */
+.fin-labels { display: flex; justify-content: space-between; font-size: 12px; font-weight: 500; color: var(--ink-60); margin-bottom: 5px; }
+.fin-track { height: 6px; background: var(--bg); border-radius: 3px; overflow: hidden; border: 1px solid var(--border); }
+.fin-fill { height: 100%; border-radius: 3px; transition: width .4s, background .3s; }
+.fin-msg { font-size: 12px; padding: 7px 11px; border-radius: var(--r); margin-top: 6px; display: flex; align-items: center; gap: 6px; font-weight: 500; }
+.fin-ok { background: var(--teal-pale); color: var(--teal); }
+.fin-warn { background: var(--amber-pale); color: var(--amber); }
+.fin-err { background: var(--red-pale); color: var(--red); }
+
+/* ── META BOX ── */
+.meta-box { background: var(--bg); border: 1px solid var(--border); border-radius: var(--r); padding: 16px; }
+.meta-box-hdr { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+.meta-box-title { font-size: 13px; font-weight: 500; color: var(--blue-dark); display: flex; align-items: center; gap: 6px; }
+.meta-box-title i { color: var(--blue); }
+
+/* ── INSTÂNCIAS FIXAS ── */
+.fixed-field { display: flex; align-items: flex-start; gap: 10px; padding: 10px 12px; background: #FDFDF5; border: 1px solid #E8E0AC; border-radius: var(--r); margin-bottom: 8px; }
+.fixed-field i { color: var(--amber); font-size: 14px; margin-top: 1px; flex-shrink: 0; }
+.fixed-field-body { font-size: 12.5px; color: var(--ink); }
+.fixed-field-body .ff-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: var(--amber); margin-bottom: 2px; }
+
+/* ── BOTÕES ── */
+button { font-family: 'Roboto', sans-serif; cursor: pointer; transition: all .15s; border-radius: var(--r); }
+.btn-primary { background: var(--blue); color: #fff; border: none; padding: 9px 20px; font-size: 13px; font-weight: 500; display: inline-flex; align-items: center; gap: 7px; }
+.btn-primary:hover { background: var(--blue-dark); }
+.btn-primary:disabled { background: var(--border-strong); color: var(--ink-40); cursor: not-allowed; }
+.btn-secondary { background: transparent; color: var(--blue); border: 1px solid var(--blue); padding: 8px 16px; font-size: 13px; font-weight: 500; display: inline-flex; align-items: center; gap: 7px; }
+.btn-secondary:hover { background: var(--blue-pale); }
+.btn-sm { padding: 5px 11px; font-size: 12px; }
+.btn-regen { background: var(--blue-pale); color: var(--blue); border: 1px solid #C5D4EB; padding: 4px 9px; font-size: 11px; font-weight: 500; display: inline-flex; align-items: center; gap: 4px; }
+.btn-regen:hover { background: #D4E4F7; }
+.btn-regen:disabled { opacity: .5; cursor: wait; }
+.row-actions { display: flex; justify-content: space-between; align-items: center; margin-top: 22px; flex-wrap: wrap; gap: 10px; }
+.dl-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px; }
+
+/* ── STATUS ── */
+.tg-status { padding: 11px 15px; border-radius: var(--r); font-size: 13px; margin-bottom: 18px; display: flex; align-items: center; gap: 9px; font-weight: 500; border-left: 3px solid; }
+.ts-ok { background: var(--teal-pale); color: var(--teal); border-left-color: var(--teal); }
+.ts-warn { background: var(--amber-pale); color: var(--amber); border-left-color: var(--amber); }
+.ts-info { background: var(--blue-pale); color: var(--blue); border-left-color: var(--blue); }
+
+/* ── GENERATING ── */
+.gen-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r); padding: 56px; text-align: center; box-shadow: var(--shadow); }
+.gen-ring { width: 44px; height: 44px; border: 3px solid var(--border); border-top-color: var(--blue); border-radius: 50%; animation: spin .8s linear infinite; margin: 0 auto 18px; }
+.gen-title { font-size: 15px; font-weight: 500; color: var(--blue-xdark); margin-bottom: 6px; }
+.gen-sub { font-size: 13px; color: var(--ink-60); }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── MAPA ── */
+.mapa { border: 1px solid var(--border); border-radius: var(--r); overflow: hidden; }
+.mapa-hdr { background: var(--blue-xdark); color: rgba(255,255,255,.6); padding: 8px 14px; font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; display: flex; align-items: center; gap: 6px; }
+.mapa-row { display: flex; gap: 12px; padding: 8px 14px; border-bottom: 1px solid var(--bg); align-items: flex-start; }
+.mapa-row:last-child { border-bottom: none; }
+.mc { color: var(--ink-60); width: 185px; flex-shrink: 0; font-size: 12px; font-weight: 500; padding-top: 1px; }
+.mv { color: var(--ink); flex: 1; font-size: 12px; line-height: 1.5; }
+
+/* ── PREVIEW ── */
+.prev-blk { background: var(--bg); border-radius: var(--r); padding: 12px 14px; margin-bottom: 8px; border: 1px solid var(--border); }
+.prev-lbl { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--ink-40); margin-bottom: 3px; }
+.prev-val { font-size: 13px; line-height: 1.7; white-space: pre-wrap; color: var(--ink); }
+
+/* ── TAGS INLINE ── */
+.tag-row { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
+.itag { display: inline-flex; align-items: center; gap: 5px; background: var(--bg); border: 1px solid var(--border-strong); border-radius: 2px; padding: 3px 8px; font-size: 12px; }
+.itag button { background: none; border: none; color: var(--ink-40); font-size: 13px; padding: 0; cursor: pointer; line-height: 1; }
+.itag button:hover { color: var(--red); }
+.add-row { display: flex; gap: 8px; }
+.add-row input { flex: 1; }
+
+/* ── FOOTER ── */
+.tg-footer {
+  background: var(--blue-xdark);
+  color: rgba(255,255,255,.4);
+  padding: 14px 24px;
+  font-size: 11px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.tg-footer a { color: rgba(255,255,255,.4); text-decoration: none; }
+
+/* ── MODAL ── */
+.modal-bg { position: fixed; inset: 0; background: rgba(7,29,65,.5); display: flex; align-items: center; justify-content: center; z-index: 200; backdrop-filter: blur(2px); }
+.modal { background: #fff; border-radius: var(--r); padding: 26px; width: 400px; box-shadow: var(--shadow-md); }
+.modal h3 { font-size: 16px; font-weight: 500; color: var(--blue-xdark); margin-bottom: 6px; }
+.modal p { font-size: 13px; color: var(--ink-60); margin-bottom: 16px; line-height: 1.5; }
+.stars { display: flex; gap: 5px; margin-bottom: 7px; }
+.star { font-size: 28px; cursor: pointer; color: var(--border-strong); background: none; border: none; line-height: 1; transition: color .1s; }
+.star:hover, .star.on { color: #FFCD07; }
+.star-lbl { font-size: 12px; color: var(--ink-40); margin-bottom: 12px; min-height: 18px; font-weight: 500; }
+.modal-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 12px; }
+
+@media (max-width: 680px) {
+  .tg-main { padding: 20px 16px 60px; }
+  .g2, .g3 { grid-template-columns: 1fr; }
+  .tg-thead, .tg-row { grid-template-columns: 1fr 80px; }
+  .tg-thead span:nth-child(2), .tg-row > div:nth-child(2) { display: none; }
+  .cta-passos { flex-direction: column; }
+  .cta-passo { border-right: none; border-bottom: 1px solid var(--border); }
+  .cta-passo:last-child { border-bottom: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="tg-header">
+  <div class="tg-logo-mark">
+    <span class="tg-logo-sefaz">SEFAZ-ES</span>
+    <div class="tg-logo-div"></div>
+    <span class="tg-logo-sub">Tesouro Estadual</span>
+  </div>
+  <div class="tg-header-sep"></div>
+  <div>
+    <div class="tg-system-name">TransfereGov Assistente</div>
+    <div class="tg-system-sub">Plano de Trabalho Pré-preenchido — Transferências Especiais</div>
+  </div>
+  <div class="tg-spacer"></div>
+  <span class="tg-badge">ES · 2026</span>
+  <button class="tg-btn-new" onclick="novoPlano()"><i class="fas fa-plus"></i> Novo plano</button>
+</header>
+
+<!-- WIZARD STEPS -->
+<div class="tg-wizard">
+  <div class="wz-step active" id="ws1"><div class="wz-num">1</div> Selecionar emenda</div>
+  <i class="fas fa-chevron-right wz-arrow"></i>
+  <div class="wz-step" id="ws2"><div class="wz-num">2</div> Revisar plano</div>
+  <i class="fas fa-chevron-right wz-arrow"></i>
+  <div class="wz-step" id="ws3"><div class="wz-num">3</div> Exportar</div>
+</div>
+
+<!-- MAIN -->
+<div class="tg-main">
+
+  <div id="restore-bar" style="display:none" class="tg-restore">
+    <span><i class="fas fa-save" style="margin-right:6px"></i>Rascunho salvo encontrado.</span>
+    <button class="btn-primary btn-sm" onclick="restaurar()">Restaurar</button>
+  </div>
+
+  <!-- VIEW 1: SELEÇÃO -->
+  <div id="v-sel">
+    <div class="pg-hdr">
+      <h2>Selecione sua emenda parlamentar</h2>
+      <div class="pg-hdr-line"></div>
+      <p>Escolha o ente público e a emenda. O plano de trabalho será gerado automaticamente.</p>
+    </div>
+
+    <div class="cta-instrucoes">
+      <i class="fas fa-info-circle"></i>
+      <div class="cta-instrucoes-body">
+        <h4>Como funciona</h4>
+        <p>Selecione o ente público, encontre sua emenda na lista e clique em <strong>"Gerar Plano Pré-preenchido"</strong>. O sistema preencherá automaticamente os campos do Plano de Trabalho com base no objeto definido pelo parlamentar e em referências aprovadas. Você revisa, ajusta o necessário e exporta para inserir no Transferegov.</p>
+      </div>
+    </div>
+
+    <div class="ente-selector">
+      <i class="fas fa-building" style="color:var(--blue);font-size:16px;flex-shrink:0"></i>
+      <label for="sel-ente">Ente público:</label>
+      <select id="sel-ente" onchange="onEnteChange()">
+        <option value="">— Selecione o município ou estado —</option>
+        <optgroup label="Estado">
+          <option value="ES|Governo do Estado do Espírito Santo|27.080.518/0001-06|ES">Governo do Estado do ES</option>
+        </optgroup>
+        <optgroup label="Grande Vitória">
+          <option value="VIT|Vitória|27.142.357/0001-23|3205309">Vitória</option>
+          <option value="VIL|Vila Velha|27.165.695/0001-18|3205200">Vila Velha</option>
+          <option value="CAR|Cariacica|27.165.840/0001-90|3201308">Cariacica</option>
+          <option value="SER|Serra|27.174.093/0001-15|3205010">Serra</option>
+          <option value="GUA|Guarapari|27.165.585/0001-50|3202405">Guarapari</option>
+          <option value="VEN|Viana|27.165.946/0001-80|3205101">Viana</option>
+        </optgroup>
+        <optgroup label="Norte">
+          <option value="SAO|São Mateus|27.165.776/0001-07|3204906">São Mateus</option>
+          <option value="LIN|Linhares|27.165.675/0001-11|3203304">Linhares</option>
+          <option value="ARA|Aracruz|27.165.279/0001-08|3200607">Aracruz</option>
+        </optgroup>
+        <optgroup label="Sul">
+          <option value="CAC|Cachoeiro de Itapemirim|27.165.378/0001-39|3201209">Cachoeiro de Itapemirim</option>
+          <option value="ALE|Alegre|27.165.229/0001-82|3200201">Alegre</option>
+        </optgroup>
+        <optgroup label="Serrana">
+          <option value="DOM|Domingos Martins|27.165.524/0001-27|3201803">Domingos Martins</option>
+          <option value="VNI|Venda Nova do Imigrante|27.165.916/0001-48|3205051">Venda Nova do Imigrante</option>
+        </optgroup>
+      </select>
+    </div>
+
+    <div class="tg-card">
+      <div class="tg-card-hdr">
+        <div class="tg-card-title"><i class="fas fa-list-alt"></i> Emendas 2026</div>
+        <span class="tg-card-tag tag-system" id="ente-badge">Nenhum ente selecionado</span>
+      </div>
+      <div class="tg-card-body">
+        <div class="tg-search-wrap">
+          <i class="fas fa-search"></i>
+          <input type="text" id="busca" placeholder="Busque por número, parlamentar, município, objeto ou área temática..." oninput="filtrar()" autocomplete="off">
+        </div>
+        <div class="tg-count" id="tbl-count"></div>
+        <div class="tg-table">
+          <div class="tg-thead">
+            <span>Objeto da emenda</span>
+            <span>Parlamentar</span>
+            <span style="text-align:right">Valor</span>
+          </div>
+          <div class="tg-tbody" id="lista"></div>
+        </div>
+      </div>
+    </div>
+
+    <div style="text-align:right">
+      <button class="btn-primary" id="btn-gerar" onclick="gerarPlano()" disabled>
+        <i class="fas fa-magic"></i> Gerar Plano Pré-preenchido
+      </button>
+    </div>
+  </div>
+
+  <!-- VIEW 2: GERANDO -->
+  <div id="v-gen" style="display:none">
+    <div class="pg-hdr"><h2>Gerando plano...</h2><div class="pg-hdr-line"></div></div>
+    <div class="gen-card">
+      <div class="gen-ring"></div>
+      <div class="gen-title" id="gen-msg">Analisando objeto da emenda...</div>
+      <div class="gen-sub" id="gen-sub">Consultando referências aprovadas pelo órgão setorial</div>
+    </div>
+  </div>
+
+  <!-- VIEW 3: PLANO -->
+  <div id="v-plano" style="display:none">
+    <div class="pg-hdr">
+      <h2>Plano de Trabalho Pré-preenchido</h2>
+      <div class="pg-hdr-line"></div>
+      <p>Revise os campos e ajuste o necessário. Campos marcados com <strong>✦</strong> foram gerados automaticamente — confirme antes de inserir no Transferegov.</p>
+    </div>
+
+    <div id="emenda-hdr-plano"></div>
+    <div id="status-plano" class="tg-status ts-info"><i class="fas fa-info-circle"></i> Campos ✦ foram gerados com base no objeto do parlamentar e em planos aprovados. Confirme antes de salvar no Transferegov.</div>
+
+    <!-- DADOS BÁSICOS -->
+    <div class="tg-card">
+      <div class="tg-card-hdr">
+        <div class="tg-card-title"><i class="fas fa-info-circle"></i> Dados Básicos</div>
+        <span class="tg-card-tag tag-system">aba "Dados Básicos"</span>
+      </div>
+      <div class="tg-card-body">
+        <div class="fg">
+          <div class="lbl">Objeto de execução <span style="font-size:10.5px;font-weight:400;color:var(--ink-40)">(definido pelo parlamentar via SIOP — somente leitura)</span></div>
+          <div class="field-tag ft-lock"><i class="fas fa-lock"></i> SIOP — somente leitura</div>
+          <div class="field-locked" id="campo-objeto"></div>
+        </div>
+        <div class="g2" style="margin-top:14px">
+          <div class="fg">
+            <label>Finalidade <span class="req">*</span></label>
+            <div class="field-tag ft-auto"><i class="fas fa-robot"></i> ✦ automático</div>
+            <select id="f-finalidade" onchange="salvar()"></select>
+            <div class="fwarn"><i class="fas fa-exclamation-triangle"></i> Confirme no dropdown do Transferegov.</div>
+            <button class="btn-regen" style="margin-top:5px" id="btn-rf" onclick="regerarFinalidade()"><i class="fas fa-redo"></i> Regenerar</button>
+          </div>
+          <div class="fg">
+            <label>Área temática <span class="req">*</span></label>
+            <div class="field-tag ft-auto"><i class="fas fa-robot"></i> ✦ automático</div>
+            <select id="f-area" onchange="salvar()">
+              <option>Saúde</option><option>Educação</option><option>Infraestrutura urbana</option>
+              <option>Saneamento básico</option><option>Cultura e Esporte</option>
+              <option>Assistência Social</option><option>Segurança Pública</option>
+              <option>Meio Ambiente</option><option>Agricultura e Pesca</option><option>Turismo</option>
+            </select>
+          </div>
+        </div>
+        <div class="fg" style="margin-top:4px">
+          <label>Ação orçamentária</label>
+          <input type="text" id="f-acao" placeholder="Ex: 20B0" oninput="salvar()">
+          <div class="hint">Confirme o código com a setorial orçamentária do ente.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PLANO DE TRABALHO -->
+    <div class="tg-card">
+      <div class="tg-card-hdr">
+        <div class="tg-card-title"><i class="fas fa-tasks"></i> Plano de Trabalho</div>
+        <span class="tg-card-tag tag-system">aba "Plano de Trabalho"</span>
+      </div>
+      <div class="tg-card-body">
+        <div class="fg">
+          <label>Detalhamento do objeto de execução <span class="req">*</span></label>
+          <div class="field-tag ft-auto"><i class="fas fa-robot"></i> ✦ gerado com base no objeto do parlamentar</div>
+          <textarea id="f-det" rows="4" oninput="salvar()"></textarea>
+          <div class="fwarn"><i class="fas fa-exclamation-triangle"></i> Verifique aderência ao objeto antes de inserir no sistema.</div>
+          <button class="btn-regen" style="margin-top:5px" id="btn-rd" onclick="regerarDet()"><i class="fas fa-redo"></i> Regenerar</button>
+        </div>
+
+        <div style="height:1px;background:var(--border);margin:16px 0"></div>
+
+        <!-- BARRA -->
+        <div style="margin-bottom:14px">
+          <div class="fin-labels"><span id="fin-aloc">R$ 0,00 alocados</span><span id="fin-tot">de R$ 0,00</span></div>
+          <div class="fin-track"><div class="fin-fill" id="fin-fill" style="width:0%;background:var(--border-strong)"></div></div>
+          <div id="fin-msg" class="fin-msg fin-warn" style="display:none"></div>
+        </div>
+
+        <!-- META -->
+        <div class="meta-box">
+          <div class="meta-box-hdr">
+            <div class="meta-box-title"><i class="fas fa-bullseye"></i> Meta 1</div>
+            <span class="field-tag ft-auto" style="margin:0"><i class="fas fa-robot"></i> ✦ automático</span>
+          </div>
+          <div class="fg">
+            <label style="font-size:12px">Descrição da meta <span class="req">*</span></label>
+            <textarea id="m-desc" rows="2" style="font-size:13px" oninput="atualizarBarra()"></textarea>
+            <div class="fwarn"><i class="fas fa-exclamation-triangle"></i> Verifique mensurabilidade e compatibilidade com o objeto.</div>
+          </div>
+          <div class="g3">
+            <div class="fg" style="margin:0"><label style="font-size:11.5px">Unidade</label>
+              <select id="m-unid" style="font-size:13px" onchange="atualizarBarra()">
+                <option>Unidade</option><option>Metro</option><option>Metro quadrado</option>
+                <option>Metro linear</option><option>Serviço</option><option>Kit</option><option>Conjunto</option>
+              </select>
+            </div>
+            <div class="fg" style="margin:0"><label style="font-size:11.5px">Quantidade</label>
+              <input id="m-qtd" type="number" style="font-size:13px" oninput="atualizarBarra()">
+            </div>
+            <div class="fg" style="margin:0"><label style="font-size:11.5px">Valor (R$)</label>
+              <input id="m-val" type="number" style="font-size:13px" oninput="atualizarBarra()">
+            </div>
+          </div>
+          <div class="g2" style="margin-top:10px">
+            <div class="fg" style="margin:0"><label style="font-size:11.5px">Natureza de despesa</label>
+              <select id="m-nat" style="font-size:13px" onchange="salvar()">
+                <option value="44905200">449052 — Equip. e material permanente</option>
+                <option value="44905100">449051 — Obras e instalações</option>
+                <option value="33903000">339030 — Material de consumo</option>
+                <option value="33904000">339040 — Serviços de terceiros — PJ</option>
+              </select>
+            </div>
+            <div class="fg" style="margin:0"><label style="font-size:11.5px">Prazo de execução (meses)</label>
+              <input id="m-prazo" type="number" style="font-size:13px" oninput="salvar()">
+              <div class="hint">Não exceder o prazo total da emenda.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- EXECUÇÃO -->
+    <div class="tg-card">
+      <div class="tg-card-hdr">
+        <div class="tg-card-title"><i class="fas fa-university"></i> Execução dos Recursos</div>
+        <span class="tg-card-tag tag-system">Execução</span>
+      </div>
+      <div class="tg-card-body">
+        <div class="fg"><label>Beneficiário <span class="req">*</span></label><input type="text" id="f-beneficiario" oninput="salvar()"></div>
+        <div class="g2">
+          <div class="fg">
+            <label>CNPJ do beneficiário <span class="req">*</span></label>
+            <input type="text" id="f-cnpj" oninput="fmtCnpj(this);salvar()">
+            <div class="field-tag ft-hist" id="ht-cnpj" style="display:none;margin-top:4px"><i class="fas fa-check-circle"></i> Histórico — confirme</div>
+          </div>
+          <div class="fg"><label>Responsável <span class="req">*</span></label><input type="text" id="f-responsavel" oninput="salvar()"></div>
+        </div>
+        <div class="fg">
+          <label>Executor <span style="font-size:10.5px;font-weight:400;color:var(--ink-40)">(se diferente do beneficiário)</span></label>
+          <input type="text" id="f-executor" oninput="salvar()">
+          <div class="field-tag ft-hist" id="ht-exec" style="display:none;margin-top:4px"><i class="fas fa-check-circle"></i> Histórico — confirme</div>
+        </div>
+        <div class="g2">
+          <div class="fg">
+            <label>Banco <span class="req">*</span></label>
+            <select id="f-banco" onchange="atualizarAgencia()">
+              <option value="">Selecione...</option>
+              <option value="CEF">Caixa Econômica Federal</option>
+              <option value="BB">Banco do Brasil</option>
+            </select>
+            <div class="field-tag ft-hist" id="ht-banco" style="display:none;margin-top:4px"><i class="fas fa-check-circle"></i> Histórico — confirme</div>
+          </div>
+          <div class="fg">
+            <label>Agência <span class="req">*</span></label>
+            <select id="f-agencia" onchange="salvar()"><option value="">Selecione o banco primeiro</option></select>
+          </div>
+        </div>
+        <div class="fg">
+          <label>Conta exclusiva para esta emenda</label>
+          <select id="f-conta-exist" onchange="salvar()">
+            <option value="nao">Não — abrir conta exclusiva para esta emenda</option>
+            <option value="sim">Sim — utilizar conta já existente do beneficiário</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- CONTROLE SOCIAL -->
+    <div class="tg-card">
+      <div class="tg-card-hdr">
+        <div class="tg-card-title"><i class="fas fa-users"></i> Controle Social e Notificações</div>
+      </div>
+      <div class="tg-card-body">
+        <p style="font-size:12px;color:var(--ink-60);margin-bottom:12px">O Transferegov notificará automaticamente os e-mails abaixo ao enviar o plano de trabalho.</p>
+
+        <div class="fixed-field">
+          <i class="fas fa-lock"></i>
+          <div class="fixed-field-body">
+            <div class="ff-label">Assembleia Legislativa do ES — fixo</div>
+            presidencia@ales.es.gov.br
+          </div>
+        </div>
+
+        <div class="fixed-field">
+          <i class="fas fa-lock"></i>
+          <div class="fixed-field-body">
+            <div class="ff-label">Tribunal de Contas do ES — fixo</div>
+            protocolo@tce.es.gov.br
+          </div>
+        </div>
+
+        <div class="fixed-field">
+          <i class="fas fa-lock"></i>
+          <div class="fixed-field-body">
+            <div class="ff-label">Transparência Capixaba — fixo</div>
+            transparencia@sefaz.es.gov.br
+          </div>
+        </div>
+
+        <div class="fg" style="margin-top:12px">
+          <label>Conselho setorial da área finalística <span style="font-size:10.5px;font-weight:400;color:var(--ink-40)">(opcional — adicione se houver)</span></label>
+          <div class="field-tag ft-hist" id="ht-conselho" style="display:none;margin-bottom:5px"><i class="fas fa-check-circle"></i> Histórico — confirme</div>
+          <div class="add-row">
+            <input type="email" id="f-conselho" placeholder="Ex: cmas@municipio.es.gov.br">
+            <button class="btn-secondary btn-sm" onclick="addConselho()"><i class="fas fa-plus"></i> Adicionar</button>
+          </div>
+          <div class="tag-row" id="tags-conselho"></div>
+          <div class="hint">Conselho setorial da área (saúde, educação, assistência social, etc.)</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DOCUMENTOS -->
+    <div class="tg-card">
+      <div class="tg-card-hdr"><div class="tg-card-title"><i class="fas fa-paperclip"></i> Documentos a Anexar</div></div>
+      <div class="tg-card-body">
+        <div class="add-row">
+          <input type="text" id="f-doc" placeholder="Ex: Projeto executivo, ART, orçamento, laudos técnicos...">
+          <button class="btn-secondary btn-sm" onclick="addDoc()"><i class="fas fa-plus"></i> Adicionar</button>
+        </div>
+        <div class="tag-row" id="tags-doc"></div>
+      </div>
+    </div>
+
+    <div class="row-actions">
+      <button class="btn-secondary" onclick="voltarSel()"><i class="fas fa-arrow-left"></i> Trocar emenda</button>
+      <button class="btn-primary" onclick="irExportar()">Exportar plano <i class="fas fa-arrow-right"></i></button>
+    </div>
+  </div>
+
+  <!-- VIEW 4: EXPORTAR -->
+  <div id="v-exp" style="display:none">
+    <div class="pg-hdr">
+      <h2>Exportar Plano de Trabalho</h2>
+      <div class="pg-hdr-line"></div>
+      <p>Use o guia abaixo com o Transferegov aberto ao lado. Baixe o Word ou copie o texto para inserir no sistema.</p>
+    </div>
+
+    <div id="emenda-hdr-exp"></div>
+    <div id="status-exp" class="tg-status ts-warn"><i class="fas fa-exclamation-triangle"></i> Verificando completude...</div>
+
+    <div class="tg-card">
+      <div class="tg-card-hdr"><div class="tg-card-title"><i class="fas fa-map"></i> Guia de preenchimento campo a campo</div></div>
+      <div style="padding:0"><div id="mapa-campos"></div></div>
+    </div>
+
+    <div class="tg-card">
+      <div class="tg-card-hdr"><div class="tg-card-title"><i class="fas fa-eye"></i> Pré-visualização completa</div></div>
+      <div class="tg-card-body">
+        <div id="preview-full"></div>
+        <div class="dl-row">
+          <button class="btn-primary" onclick="exportarDoc()"><i class="fas fa-file-word"></i> Baixar Word (.doc)</button>
+          <button class="btn-secondary" onclick="copiar()"><i class="fas fa-copy"></i> Copiar texto</button>
+          <button class="btn-secondary" onclick="salvar();alert('Rascunho salvo.')"><i class="fas fa-save"></i> Salvar rascunho</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="row-actions">
+      <button class="btn-secondary" onclick="irPlano()"><i class="fas fa-arrow-left"></i> Voltar e editar</button>
+      <button class="btn-secondary btn-sm" onclick="abrirFeedback()"><i class="fas fa-star"></i> Avaliar ferramenta</button>
+    </div>
+  </div>
+
+</div><!-- /tg-main -->
+
+<footer class="tg-footer">
+  <div>TransfereGov Assistente · SEFAZ-ES | Tesouro Estadual · Espírito Santo · 2026</div>
+  <div>Plano de Trabalho Pré-preenchido — Transferências Especiais</div>
+</footer>
+
+<!-- MODAL FEEDBACK -->
+<div id="modal-fb" class="modal-bg" style="display:none" onclick="if(event.target===this)fecharFeedback()">
+  <div class="modal">
+    <h3>Avalie o TransfereGov Assistente</h3>
+    <p>Sua avaliação ajuda a melhorar a ferramenta para todos os gestores do ES.</p>
+    <div class="stars" id="stars"><button class="star" onclick="setStar(1)">★</button><button class="star" onclick="setStar(2)">★</button><button class="star" onclick="setStar(3)">★</button><button class="star" onclick="setStar(4)">★</button><button class="star" onclick="setStar(5)">★</button></div>
+    <div class="star-lbl" id="star-lbl">Clique para avaliar</div>
+    <textarea id="fb-txt" placeholder="O que funcionou bem? O que poderia melhorar?" rows="3"></textarea>
+    <div class="modal-actions">
+      <button class="btn-secondary btn-sm" onclick="fecharFeedback()">Cancelar</button>
+      <button class="btn-primary btn-sm" onclick="enviarFeedback()"><i class="fas fa-paper-plane"></i> Enviar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const EMENDAS=[
+  {id:'90065',plano:'TE26-ES-001',parlamentar:'Dep. Norma Ayub',partido:'União Brasil',valor:1500000,area:'Saúde',objeto:'Aquisição de equipamentos médico-hospitalares para Unidades Básicas de Saúde e Pronto-Atendimentos municipais.',municipio:'Vitória',prazo:24,nat:'44905200',orgao:'Ministério da Saúde',fin:'Atenção Básica'},
+  {id:'90121',plano:'TE26-ES-002',parlamentar:'Dep. Gilson Daniel',partido:'Podemos',valor:800000,area:'Educação',objeto:'Reforma, ampliação e adequação de unidades escolares da rede pública municipal de educação básica.',municipio:'Vila Velha',prazo:18,nat:'44905100',orgao:'FNDE',fin:'Educação Básica'},
+  {id:'90233',plano:'TE26-ES-003',parlamentar:'Sen. Marcos Do Val',partido:'Podemos',valor:2000000,area:'Infraestrutura urbana',objeto:'Execução de obras de pavimentação asfáltica, drenagem pluvial e sinalização viária em vias urbanas municipais.',municipio:'Serra',prazo:24,nat:'44905100',orgao:'Ministério das Cidades',fin:'Infraestrutura Urbana'},
+  {id:'90287',plano:'TE26-ES-004',parlamentar:'Dep. Soraya Manato',partido:'PL',valor:600000,area:'Saneamento básico',objeto:'Implantação e ampliação de redes coletoras de esgoto sanitário e ligações domiciliares em áreas urbanas.',municipio:'Cachoeiro de Itapemirim',prazo:12,nat:'44905100',orgao:'Fundação Nacional de Saúde',fin:'Esgotamento Sanitário'},
+  {id:'90312',plano:'TE26-ES-005',parlamentar:'Dep. Calmon',partido:'PSD',valor:400000,area:'Cultura e Esporte',objeto:'Construção de quadra esportiva poliesportiva coberta com equipamentos de lazer em espaço público municipal.',municipio:'Linhares',prazo:12,nat:'44905100',orgao:'Ministério do Esporte',fin:'Infraestrutura Esportiva'},
+  {id:'90388',plano:'TE26-ES-006',parlamentar:'Dep. Norma Ayub',partido:'União Brasil',valor:1200000,area:'Saúde',objeto:'Aquisição de equipamentos e mobiliário hospitalar para aparelhamento de Unidades Básicas de Saúde.',municipio:'Aracruz',prazo:18,nat:'44905200',orgao:'Ministério da Saúde',fin:'Atenção Básica'},
+  {id:'90401',plano:'TE26-ES-007',parlamentar:'Sen. Marcos Do Val',partido:'Podemos',valor:900000,area:'Infraestrutura urbana',objeto:'Obras de macrodrenagem, canalização de córregos e bacias de amortecimento para controle de inundações urbanas.',municipio:'Cariacica',prazo:24,nat:'44905100',orgao:'Fundação Nacional de Saúde',fin:'Drenagem Urbana'},
+  {id:'90445',plano:'TE26-ES-008',parlamentar:'Dep. Gilson Daniel',partido:'Podemos',valor:700000,area:'Educação',objeto:'Aquisição de mobiliário escolar, equipamentos de informática e material didático para escolas da rede pública municipal.',municipio:'Guarapari',prazo:12,nat:'44905200',orgao:'FNDE',fin:'Educação Básica'},
+  {id:'90512',plano:'TE26-ES-009',parlamentar:'Dep. Flávia Morais',partido:'PDT',valor:550000,area:'Assistência Social',objeto:'Aquisição de equipamentos, mobiliário e veículos para CRAS e CREAS municipais.',municipio:'São Mateus',prazo:12,nat:'44905200',orgao:'MDS',fin:'Proteção Social Básica'},
+  {id:'90567',plano:'TE26-ES-010',parlamentar:'Dep. Evair de Melo',partido:'PP',valor:1800000,area:'Infraestrutura urbana',objeto:'Recapeamento asfáltico, sinalização horizontal e vertical e recuperação de calçadas em vias municipais.',municipio:'Vitória',prazo:24,nat:'44905100',orgao:'Ministério das Cidades',fin:'Infraestrutura Urbana'},
+];
+
+const FINS={
+  'Saúde':['Atenção Básica','Assistência Hospitalar e Ambulatorial','Vigilância Epidemiológica','Vigilância Sanitária'],
+  'Educação':['Educação Básica','Ensino Fundamental — Educação Regular','Ensino Fundamental — EJA','Ensino Médio — Educação Regular','Educação Infantil Creche','Educação Infantil Pré-Escola'],
+  'Infraestrutura urbana':['Infraestrutura Urbana','Transportes Coletivos Urbanos','Habitação Urbana'],
+  'Saneamento básico':['Saneamento Básico Urbano','Esgotamento Sanitário','Drenagem Urbana','Abastecimento de Água','Resíduos Sólidos'],
+  'Cultura e Esporte':['Infraestrutura Esportiva','Desporto Comunitário','Difusão Cultural'],
+  'Assistência Social':['Proteção Social Básica','Proteção Social Especial','Assistência à Criança e ao Adolescente'],
+  'Segurança Pública':['Policiamento','Defesa Civil'],
+  'Meio Ambiente':['Preservação e Conservação Ambiental','Resíduos Sólidos'],
+  'Agricultura e Pesca':['Extensão Rural','Promoção da Produção Vegetal'],
+  'Turismo':['Turismo','Promoção Turística'],
+};
+
+const AGENCIAS={
+  CEF:[{val:'CEF-3055',lbl:'Ag. 3055-0 — Vitória (Setor Público ES)'}],
+  BB:[{val:'BB-3801',lbl:'Ag. 3801-7 — Vitória (Governo Estadual ES)'}],
+};
+
+const HIST_MOCK={
+  '3205309':[{cnpjBeneficiario:'27.142.357/0001-23',nomeExecutor:'Secretaria Municipal de Saúde de Vitória',banco:'CEF',agencia:'CEF-3055',emailConselho:'cms@vitoria.es.gov.br'}],
+  '3205200':[{cnpjBeneficiario:'27.165.695/0001-18',nomeExecutor:'Secretaria Municipal de Educação de Vila Velha',banco:'BB',agencia:'BB-3801',emailConselho:'cme@vilavelha.es.gov.br'}],
+  '3201308':[{cnpjBeneficiario:'27.165.840/0001-90',nomeExecutor:'Secretaria Municipal de Infraestrutura de Cariacica',banco:'CEF',agencia:'CEF-3055',emailConselho:'cmpu@cariacica.es.gov.br'}],
+  '3205010':[{cnpjBeneficiario:'27.174.093/0001-15',nomeExecutor:'Secretaria Municipal de Obras de Serra',banco:'CEF',agencia:'CEF-3055',emailConselho:'cidades@serra.es.gov.br'}],
+  '3204906':[{cnpjBeneficiario:'27.165.776/0001-07',nomeExecutor:'Secretaria Municipal de Assistência Social de São Mateus',banco:'BB',agencia:'BB-3801',emailConselho:'cmas@saomateus.es.gov.br'}],
+};
+
+const fmt=v=>new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(v);
+function fmtCnpj(el){let v=el.value.replace(/\D/g,'').slice(0,14);if(v.length>12)v=v.replace(/^(\d{2})(\d{3})(\d{3})(\d{4})(\d{2}).*/,'$1.$2.$3/$4-$5');else if(v.length>8)v=v.replace(/^(\d{2})(\d{3})(\d{3})(\d{1,4}).*/,'$1.$2.$3/$4');else if(v.length>5)v=v.replace(/^(\d{2})(\d{3})(\d{1,3}).*/,'$1.$2.$3');else if(v.length>2)v=v.replace(/^(\d{2})(\d{1,3}).*/,'$1.$2');el.value=v;}
+
+let S={view:'sel',ente:null,emenda:null,_hist:null,finalidade:'',area:'',acao:'',det:'',meta:{desc:'',unidade:'Unidade',quantidade:'',valor:'',natureza:'44905200',prazo:''},beneficiario:'',cnpj:'',responsavel:'',executor:'',banco:'',agencia:'',contaExist:'nao',conselhos:[],docs:[]};
+let emSel=null;
+
+function salvar(){coletar();try{localStorage.setItem('tga_v7',JSON.stringify(S));}catch(e){}}
+function restaurar(){
+  try{const d=JSON.parse(localStorage.getItem('tga_v7'));if(!d||!d.emenda)return;S=d;emSel=S.emenda;
+    document.getElementById('restore-bar').style.display='none';
+    if(S.ente){document.getElementById('sel-ente').value=`${S.ente.cod}|${S.ente.nome}|${S.ente.cnpj}|${S.ente.ibge}`;document.getElementById('ente-badge').textContent=S.ente.nome;_extrairHist(S.ente.ibge);}
+    if(S.view==='plano'||S.view==='exportar')mostrarPlano();else renderLista(EMENDAS);
+  }catch(e){}
+}
+function novoPlano(){if(!confirm('Iniciar novo plano? O rascunho será descartado.'))return;try{localStorage.removeItem('tga_v7');}catch(e){}location.reload();}
+
+window.addEventListener('load',()=>{
+  try{const d=localStorage.getItem('tga_v7');if(d){const p=JSON.parse(d);if(p&&p.emenda)document.getElementById('restore-bar').style.display='flex';}}catch(e){}
+  renderLista(EMENDAS);
+});
+
+function onEnteChange(){
+  const val=document.getElementById('sel-ente').value;if(!val)return;
+  const[cod,nome,cnpj,ibge]=val.split('|');
+  S.ente={cod,nome,cnpj,ibge};
+  document.getElementById('ente-badge').textContent=nome;
+  _extrairHist(ibge);
+  filtrar();
+}
+
+function _extrairHist(ibge){
+  const h=HIST_MOCK[ibge];if(h&&h.length)S._hist=h[0];
+  else S._hist={cnpj:S.ente?.cnpj||'',executor:'',banco:'',agencia:'',conselho:''};
+}
+
+function _aplicarHist(){
+  const h=S._hist;if(!h)return;
+  const setIfEmpty=(id,val,tagId)=>{const el=document.getElementById(id);if(el&&!el.value&&val){el.value=val;if(tagId){const t=document.getElementById(tagId);if(t)t.style.display='inline-flex';}}};
+  setIfEmpty('f-beneficiario',S.ente?.nome);
+  setIfEmpty('f-cnpj',h.cnpj||S.ente?.cnpj,'ht-cnpj');
+  setIfEmpty('f-executor',h.executor,'ht-exec');
+  if(h.banco&&!document.getElementById('f-banco').value){
+    document.getElementById('f-banco').value=h.banco;atualizarAgencia(h.agencia);
+    const t=document.getElementById('ht-banco');if(t)t.style.display='inline-flex';
+  }
+  if(h.conselho&&!S.conselhos.length){
+    S.conselhos.push(h.conselho);renderConselhos();
+    const t=document.getElementById('ht-conselho');if(t)t.style.display='inline-flex';
+  }
+}
+
+function filtrar(){
+  const q=document.getElementById('busca').value.toLowerCase().trim();
+  const ente=S.ente;
+  let lista=EMENDAS;
+  if(ente&&ente.nome&&!ente.nome.includes('Estado')){
+    const mun=ente.nome.toLowerCase();
+    lista=lista.filter(e=>e.municipio.toLowerCase()===mun||e.municipio.toLowerCase().startsWith(mun.split(' ')[0].toLowerCase()));
+  }
+  if(q)lista=lista.filter(e=>[e.id,e.plano,e.parlamentar,e.municipio,e.area,e.objeto,e.partido].some(f=>f.toLowerCase().includes(q)));
+  document.getElementById('tbl-count').textContent=`${lista.length} emenda${lista.length!==1?'s':''} encontrada${lista.length!==1?'s':''}${ente?.nome?' — '+ente.nome:''}`;
+  renderLista(lista);
+}
+
+function renderLista(lista){
+  const el=document.getElementById('lista');
+  el.innerHTML=!lista.length?`<div class="tg-empty">${S.ente?'Nenhuma emenda encontrada para este ente.':'Selecione o ente no campo acima para filtrar as emendas.'}</div>`:
+    lista.map(e=>`<div class="tg-row${emSel&&emSel.id===e.id?' sel':''}" onclick="selEmenda('${e.id}')">
+      <div><div class="tr-obj">${e.objeto}</div><div class="tr-sub"><span class="tr-pill pill-id">${e.plano}</span><span class="tr-pill pill-area">${e.area}</span><span>${e.municipio}/ES</span></div></div>
+      <div><div class="tr-parl">${e.parlamentar}</div><div class="tr-partido">${e.partido}</div></div>
+      <div><div class="tr-valor">${fmt(e.valor)}</div><div class="tr-prazo">${e.prazo}m</div></div>
+    </div>`).join('');
+}
+function selEmenda(id){emSel=EMENDAS.find(e=>e.id===id);filtrar();document.getElementById('btn-gerar').disabled=false;}
+
+async function gerarPlano(){
+  if(!emSel)return;S.emenda=emSel;mostrarView('gen');
+  const e=emSel;
+  const msgs=[['Analisando objeto da emenda...','Consultando referências aprovadas pelo órgão setorial'],['Identificando finalidade e área temática...','Cruzando com lista oficial de finalidades 2026'],['Gerando detalhamento e meta...','Calibrando com padrões aprovados pelo TCU']];
+  let mi=0;const iv=setInterval(()=>{if(mi<msgs.length){document.getElementById('gen-msg').textContent=msgs[mi][0];document.getElementById('gen-sub').textContent=msgs[mi][1];mi++;}},1800);
+
+  const exemplosMesmoOrgao=EMENDAS.filter(x=>x.orgao===e.orgao&&x.id!==e.id).slice(0,2).map(x=>`- "${x.objeto}" → finalidade aprovada: ${x.fin}`).join('\n');
+  const finOpts=(FINS[e.area]||[]).join(', ');
+
+  const prompt=`Você é especialista em planos de trabalho de transferências especiais (LC 210/2024, Portaria Conjunta nº 15/2025, IN TCU 93/2024).
+
+FONTE PRIMÁRIA — Objeto definido pelo parlamentar via SIOP (âncora de tudo):
+"${e.objeto}"
+
+FONTE SECUNDÁRIA — Objetos aprovados pelo mesmo órgão setorial (${e.orgao}):
+${exemplosMesmoOrgao||'Sem exemplos disponíveis.'}
+
+DADOS: Área: ${e.area} | Valor: ${fmt(e.valor)} | Município: ${e.municipio}/ES | Natureza: ${e.nat} | Prazo: ${e.prazo} meses
+
+FINALIDADES DISPONÍVEIS: ${finOpts}
+
+O detalhamento deve detalhar — nunca contradizer — o objeto do parlamentar.
+
+Retorne APENAS JSON válido (sem markdown):
+{"finalidade":"<da lista>","area":"<área confirmada>","detalhamento":"<3-5 linhas, técnico, verbos no infinitivo>","meta_desc":"<2-3 linhas mensuráveis>","meta_unidade":"<Unidade|Metro|Metro quadrado|Metro linear|Serviço|Kit|Conjunto>","meta_quantidade":<inteiro>,"meta_natureza":"<44905200|44905100|33903000|33904000>"}`;
+
+  try{
+    const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,messages:[{role:'user',content:prompt}]})});
+    const d=await r.json();
+    const res=JSON.parse((d.content?.find(c=>c.type==='text')?.text||'{}').replace(/```json|```/g,'').trim());
+    S.finalidade=res.finalidade||e.fin;S.area=res.area||e.area;S.det=res.detalhamento||'';
+    S.meta={desc:res.meta_desc||'',unidade:res.meta_unidade||'Unidade',quantidade:res.meta_quantidade||1,valor:e.valor,natureza:res.meta_natureza||e.nat,prazo:e.prazo};
+  }catch{
+    S.finalidade=e.fin;S.area=e.area;
+    S.det=`${e.objeto} O presente plano visa detalhar a execução da emenda parlamentar no município de ${e.municipio}/ES, em conformidade com a LC 210/2024 e a Portaria Conjunta nº 15/2025.`;
+    S.meta={desc:e.objeto,unidade:'Unidade',quantidade:1,valor:e.valor,natureza:e.nat,prazo:e.prazo};
+  }
+  clearInterval(iv);mostrarPlano();
+}
+
+function mostrarPlano(){
+  S.view='plano';mostrarView('plano');
+  const e=S.emenda;
+  _renderEmHdr('emenda-hdr-plano');
+  document.getElementById('campo-objeto').textContent=e.objeto;
+  _popularFins(S.area||e.area,S.finalidade);
+  setVal('f-area',S.area||e.area);setVal('f-det',S.det);
+  setVal('m-desc',S.meta.desc);setVal('m-unid',S.meta.unidade);
+  setVal('m-qtd',String(S.meta.quantidade||''));setVal('m-val',String(S.meta.valor||e.valor));
+  setVal('m-nat',S.meta.natureza);setVal('m-prazo',String(S.meta.prazo||e.prazo));
+  if(S.ente){setVal('f-beneficiario',S.beneficiario||S.ente.nome);setVal('f-cnpj',S.cnpj||S.ente.cnpj);}
+  setVal('f-responsavel',S.responsavel);setVal('f-executor',S.executor);
+  if(S.banco){document.getElementById('f-banco').value=S.banco;atualizarAgencia(S.agencia);}
+  _aplicarHist();renderConselhos();renderDocs();atualizarBarra();salvar();
+}
+
+function _popularFins(area,sel){const el=document.getElementById('f-finalidade');const opts=FINS[area]||[];el.innerHTML=opts.map(f=>`<option${f===sel?' selected':''}>${f}</option>`).join('');}
+function atualizarAgencia(presel){const banco=document.getElementById('f-banco').value;const el=document.getElementById('f-agencia');const lista=AGENCIAS[banco]||[];el.innerHTML=lista.length?lista.map(a=>`<option value="${a.val}"${presel&&a.val===presel?' selected':''}>${a.lbl}</option>`).join(''):'<option value="">Sem agências</option>';salvar();}
+function setVal(id,val){const el=document.getElementById(id);if(el&&val!==undefined&&String(val)!=='')el.value=val;}
+
+function atualizarBarra(){
+  const e=S.emenda;if(!e)return;
+  const v=parseFloat(document.getElementById('m-val')?.value)||0;
+  const pct=Math.min((v/e.valor)*100,100);
+  document.getElementById('fin-fill').style.width=pct+'%';
+  document.getElementById('fin-aloc').textContent=fmt(v)+' alocados';
+  document.getElementById('fin-tot').textContent='de '+fmt(e.valor);
+  const msg=document.getElementById('fin-msg');const diff=e.valor-v;
+  document.getElementById('fin-fill').style.background=v===0?'var(--border-strong)':diff>0.01?'var(--blue)':Math.abs(diff)<=0.01?'var(--teal)':'var(--red)';
+  if(v===0){msg.style.display='none';}
+  else if(diff>0.01){msg.style.display='flex';msg.className='fin-msg fin-warn';msg.innerHTML=`<i class="fas fa-exclamation-triangle"></i> Faltam ${fmt(diff)} para atingir 100%. O Transferegov exige alocação completa.`;}
+  else if(Math.abs(diff)<=0.01){msg.style.display='flex';msg.className='fin-msg fin-ok';msg.innerHTML=`<i class="fas fa-check-circle"></i> Valor totalmente alocado.`;}
+  else{msg.style.display='flex';msg.className='fin-msg fin-err';msg.innerHTML=`<i class="fas fa-times-circle"></i> Excesso de ${fmt(Math.abs(diff))}. Ajuste o valor da meta.`;}
+}
+
+async function regerarFinalidade(){
+  const e=S.emenda;if(!e)return;const btn=document.getElementById('btn-rf');btn.disabled=true;btn.innerHTML='<i class="fas fa-spinner fa-spin"></i>';
+  const area=document.getElementById('f-area').value;const opts=(FINS[area]||[]).join(', ');
+  try{const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:80,messages:[{role:'user',content:`Objeto: "${e.objeto}" (área: ${area}, órgão: ${e.orgao}). Escolha a finalidade mais compatível: ${opts}. Retorne APENAS o nome exato.`}]})});const d=await r.json();_popularFins(area,(d.content?.find(c=>c.type==='text')?.text||'').trim());salvar();}catch{}finally{btn.disabled=false;btn.innerHTML='<i class="fas fa-redo"></i> Regenerar';}
+}
+async function regerarDet(){
+  const e=S.emenda;if(!e)return;const btn=document.getElementById('btn-rd');btn.disabled=true;btn.innerHTML='<i class="fas fa-spinner fa-spin"></i>';
+  const el=document.getElementById('f-det');if(el)el.value='Gerando...';
+  try{const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:500,messages:[{role:'user',content:`Detalhamento do objeto de execução para o Transferegov. Objeto: "${e.objeto}". Município: ${e.municipio}/ES. Valor: ${fmt(e.valor)}. Técnico, 3-5 linhas, verbos no infinitivo. Apenas o texto.`}]})});const d=await r.json();const txt=d.content?.find(c=>c.type==='text')?.text||'';if(el){el.value=txt;S.det=txt;salvar();}}catch(err){if(el)el.value=S.det;}finally{btn.disabled=false;btn.innerHTML='<i class="fas fa-redo"></i> Regenerar';}
+}
+
+function coletar(){
+  const g=id=>{const el=document.getElementById(id);return el?el.value:''};
+  S.finalidade=g('f-finalidade');S.area=g('f-area');S.acao=g('f-acao');S.det=g('f-det');
+  S.meta.desc=g('m-desc');S.meta.unidade=g('m-unid');S.meta.quantidade=g('m-qtd');S.meta.valor=g('m-val');S.meta.natureza=g('m-nat');S.meta.prazo=g('m-prazo');
+  S.beneficiario=g('f-beneficiario');S.cnpj=g('f-cnpj');S.responsavel=g('f-responsavel');S.executor=g('f-executor');
+  S.banco=g('f-banco');S.agencia=g('f-agencia');S.contaExist=g('f-conta-exist');
+}
+function addConselho(){const el=document.getElementById('f-conselho');const v=el.value.trim();if(!v)return;S.conselhos.push(v);el.value='';renderConselhos();salvar();}
+function renderConselhos(){const el=document.getElementById('tags-conselho');if(el)el.innerHTML=S.conselhos.map((c,i)=>`<div class="itag">${c}<button onclick="S.conselhos.splice(${i},1);renderConselhos()">×</button></div>`).join('');}
+function addDoc(){const el=document.getElementById('f-doc');const v=el.value.trim();if(!v)return;S.docs.push(v);el.value='';renderDocs();salvar();}
+function renderDocs(){const el=document.getElementById('tags-doc');if(el)el.innerHTML=S.docs.map((d,i)=>`<div class="itag">${d}<button onclick="S.docs.splice(${i},1);renderDocs()">×</button></div>`).join('');}
+
+function irExportar(){
+  coletar();salvar();S.view='exportar';mostrarView('exp');
+  _renderEmHdr('emenda-hdr-exp');
+  const e=S.emenda;const mv=parseFloat(S.meta.valor)||0;
+  const ok=Math.abs(mv-e.valor)<1&&S.det&&S.beneficiario&&S.finalidade&&S.meta.desc;
+  const st=document.getElementById('status-exp');
+  st.className='tg-status '+(ok?'ts-ok':'ts-warn');
+  st.innerHTML=ok?`<i class="fas fa-check-circle"></i> Plano completo. Pronto para inserir no Transferegov.`:`<i class="fas fa-exclamation-triangle"></i> Atenção: verifique campos incompletos antes de inserir no sistema.`;
+  const cs=['presidencia@ales.es.gov.br (ALES)','protocolo@tce.es.gov.br (TCE-ES)','transparencia@sefaz.es.gov.br (Transparência Capixaba)',...S.conselhos].join('<br>');
+  document.getElementById('mapa-campos').innerHTML=`<div class="mapa">
+    <div class="mapa-hdr"><i class="fas fa-database"></i> Aba: Dados Básicos</div>
+    ${mr('Objeto de execução','<em style="color:var(--ink-40)">somente leitura — vem do SIOP</em>')}
+    ${mr('Finalidade ✦',S.finalidade||'—')}${mr('Área temática ✦',S.area||'—')}
+    ${mr('Ação orçamentária',S.acao||'(confirmar com setorial)')}
+    ${mr('Beneficiário',S.beneficiario||'—')}${mr('CNPJ',S.cnpj||'—')}
+    <div class="mapa-hdr"><i class="fas fa-clipboard-list"></i> Aba: Plano de Trabalho</div>
+    ${mr('Detalhamento do objeto ✦',S.det||'—')}
+    ${mr('Meta 1 — Descrição ✦',S.meta.desc||'—')}
+    ${mr('Meta 1 — Unid./Qtd.',`${S.meta.unidade||'—'} / ${S.meta.quantidade||'—'}`)}
+    ${mr('Meta 1 — Valor',S.meta.valor?fmt(S.meta.valor):'—')}
+    ${mr('Meta 1 — Natureza',S.meta.natureza||'—')}
+    ${mr('Meta 1 — Prazo',S.meta.prazo?S.meta.prazo+' meses':'—')}
+    ${mr('Executor',S.executor||S.beneficiario||'—')}
+    ${mr('Banco / Agência',S.banco&&S.agencia?S.banco+' — '+S.agencia:'—')}
+    ${mr('E-mails notificação',cs)}
+  </div>`;
+  renderPreview();
+}
+function mr(c,v){return`<div class="mapa-row"><span class="mc">${c}</span><span class="mv">${v}</span></div>`;}
+
+function renderPreview(){
+  const e=S.emenda;const mv=parseFloat(S.meta.valor)||0;
+  document.getElementById('preview-full').innerHTML=`
+    <div class="prev-blk"><div class="prev-lbl">Emenda</div><div class="prev-val"><strong>${e.objeto}</strong>\n${e.parlamentar} (${e.partido}) · ${e.plano} · ${e.municipio}/ES · ${fmt(e.valor)} · ${e.prazo} meses</div></div>
+    <div class="prev-blk"><div class="prev-lbl">Dados básicos</div><div class="prev-val">Finalidade ✦: ${S.finalidade||'—'}\nÁrea: ${S.area||'—'}\nAção orçamentária: ${S.acao||'(a confirmar)'}\nBeneficiário: ${S.beneficiario||'—'} — CNPJ: ${S.cnpj||'—'}\nResponsável: ${S.responsavel||'—'}${S.executor?'\nExecutor: '+S.executor:''}</div></div>
+    <div class="prev-blk"><div class="prev-lbl">Detalhamento do objeto ✦</div><div class="prev-val">${S.det||'—'}</div></div>
+    <div class="prev-blk"><div class="prev-lbl">Meta 1 ✦</div><div class="prev-val">${S.meta.desc||'—'}\n${S.meta.unidade} · Qtd: ${S.meta.quantidade||'—'} · ${S.meta.valor?fmt(S.meta.valor):'—'} · ${S.meta.natureza||'—'} · ${S.meta.prazo||'—'} meses\n\nValor emenda: ${fmt(e.valor)} | Alocado: ${fmt(mv)} | Saldo: ${fmt(e.valor-mv)}</div></div>
+    <div class="prev-blk"><div class="prev-lbl">Notificações automáticas</div><div class="prev-val">presidencia@ales.es.gov.br (ALES — fixo)\nprotocolo@tce.es.gov.br (TCE-ES — fixo)\ntransparencia@sefaz.es.gov.br (Transparência Capixaba — fixo)${S.conselhos.length?'\n'+S.conselhos.join('\n'):''}</div></div>
+    ${S.docs.length?`<div class="prev-blk"><div class="prev-lbl">Documentos</div><div class="prev-val">${S.docs.join('\n')}</div></div>`:''}`;
+}
+
+function _renderEmHdr(id){
+  const e=S.emenda;if(!e)return;
+  document.getElementById(id).innerHTML=`<div class="emenda-hdr">
+    <div class="emenda-hdr-plano">${e.plano} · ${e.prazo} meses</div>
+    <div class="emenda-hdr-obj">${e.objeto}</div>
+    <div class="emenda-hdr-meta">
+      <span><i class="fas fa-user-tie"></i> ${e.parlamentar} (${e.partido})</span>
+      <span><i class="fas fa-map-marker-alt"></i> ${e.municipio}/ES</span>
+      <span><i class="fas fa-building"></i> ${e.orgao}</span>
+    </div>
+    <div class="emenda-hdr-valor">${fmt(e.valor)}</div>
+  </div>`;
+}
+
+function _updateWizard(step){
+  [1,2,3].forEach(i=>{
+    const el=document.getElementById('ws'+i);
+    el.className='wz-step'+(i===step?' active':i<step?' done':'');
+    if(i<step)el.onclick=()=>step===2?irPlano():step===3?irPlano():voltarSel();
+    if(i===1)el.onclick=i<step?voltarSel:null;
+    if(i===2)el.onclick=i<step?irPlano:null;
+  });
+  document.getElementById('ws1').onclick=step>1?voltarSel:null;
+  document.getElementById('ws2').onclick=step>2?irPlano:null;
+}
+
+function irPlano(){S.view='plano';mostrarView('plano');mostrarPlano();_updateWizard(2);}
+function voltarSel(){mostrarView('sel');filtrar();_updateWizard(1);}
+function mostrarView(v){['sel','gen','plano','exp'].forEach(x=>document.getElementById('v-'+x).style.display=x===v?'block':'none');}
+
+// Override de gerarPlano para atualizar wizard
+const _gerarOriginal=gerarPlano;
+async function gerarPlano(){_updateWizard(2);await _gerarOriginal();}
+async function irExportar_inner(){
+  coletar();salvar();S.view='exportar';mostrarView('exp');_updateWizard(3);
+  _renderEmHdr('emenda-hdr-exp');
+  const e=S.emenda;const mv=parseFloat(S.meta.valor)||0;
+  const ok=Math.abs(mv-e.valor)<1&&S.det&&S.beneficiario&&S.finalidade&&S.meta.desc;
+  const st=document.getElementById('status-exp');
+  st.className='tg-status '+(ok?'ts-ok':'ts-warn');
+  st.innerHTML=ok?`<i class="fas fa-check-circle"></i> Plano completo. Pronto para inserir no Transferegov.`:`<i class="fas fa-exclamation-triangle"></i> Atenção: verifique campos incompletos antes de inserir no sistema.`;
+  const cs=['presidencia@ales.es.gov.br (ALES)','protocolo@tce.es.gov.br (TCE-ES)','transparencia@sefaz.es.gov.br (Transparência Capixaba)',...S.conselhos].join('<br>');
+  document.getElementById('mapa-campos').innerHTML=`<div class="mapa">
+    <div class="mapa-hdr"><i class="fas fa-database"></i> Aba: Dados Básicos</div>
+    ${mr('Objeto de execução','<em style="color:var(--ink-40)">somente leitura — vem do SIOP</em>')}
+    ${mr('Finalidade ✦',S.finalidade||'—')}${mr('Área temática ✦',S.area||'—')}
+    ${mr('Ação orçamentária',S.acao||'(confirmar com setorial)')}
+    ${mr('Beneficiário',S.beneficiario||'—')}${mr('CNPJ',S.cnpj||'—')}
+    <div class="mapa-hdr"><i class="fas fa-clipboard-list"></i> Aba: Plano de Trabalho</div>
+    ${mr('Detalhamento do objeto ✦',S.det||'—')}
+    ${mr('Meta 1 — Descrição ✦',S.meta.desc||'—')}
+    ${mr('Meta 1 — Unid./Qtd.',`${S.meta.unidade||'—'} / ${S.meta.quantidade||'—'}`)}
+    ${mr('Meta 1 — Valor',S.meta.valor?fmt(S.meta.valor):'—')}
+    ${mr('Meta 1 — Natureza',S.meta.natureza||'—')}
+    ${mr('Meta 1 — Prazo',S.meta.prazo?S.meta.prazo+' meses':'—')}
+    ${mr('Executor',S.executor||S.beneficiario||'—')}
+    ${mr('Banco / Agência',S.banco&&S.agencia?S.banco+' — '+S.agencia:'—')}
+    ${mr('E-mails notificação',cs)}
+  </div>`;
+  renderPreview();
+}
+// Substituir irExportar
+window.irExportar=irExportar_inner;
+
+/* FEEDBACK */
+let starVal=0;
+function abrirFeedback(){document.getElementById('modal-fb').style.display='flex';}
+function fecharFeedback(){document.getElementById('modal-fb').style.display='none';}
+function setStar(n){starVal=n;const lbls=['','Muito ruim','Ruim','Regular','Bom','Excelente'];document.getElementById('star-lbl').textContent=lbls[n]||'';document.querySelectorAll('.star').forEach((s,i)=>s.classList.toggle('on',i<n));}
+function enviarFeedback(){
+  if(!starVal){alert('Selecione uma nota antes de enviar.');return;}
+  const payload={nota:starVal,comentario:document.getElementById('fb-txt').value.trim(),ente:S.ente?.nome||'—',emenda:S.emenda?.plano||'—',ts:new Date().toISOString()};
+  console.log('Feedback:',payload);
+  fecharFeedback();
+  alert(`Obrigado pela avaliação (${starVal}/5)!`);
+}
+
+/* EXPORTAÇÃO */
+function gerarTexto(){
+  const e=S.emenda;const hoje=new Date().toLocaleDateString('pt-BR');
+  let t=`TRANSFEREGOV ASSISTENTE — PLANO DE TRABALHO PRÉ-PREENCHIDO\nSEFAZ-ES | Tesouro Estadual · Espírito Santo · 2026\n${'='.repeat(60)}\n\n`;
+  t+=`EMENDA\nPlano: ${e.plano}\nObjeto de execução: ${e.objeto}\nParlamentar: ${e.parlamentar} (${e.partido})\nMunicípio: ${e.municipio}/ES · Órgão: ${e.orgao}\nValor: ${fmt(e.valor)} · Prazo: ${e.prazo} meses\n\n`;
+  t+=`DADOS BÁSICOS\nFinalidade [✦ confirme]: ${S.finalidade||'—'}\nÁrea temática [✦ confirme]: ${S.area||'—'}\nAção orçamentária: ${S.acao||'(a confirmar)'}\nBeneficiário: ${S.beneficiario||'—'} — CNPJ: ${S.cnpj||'—'}\nResponsável: ${S.responsavel||'—'}${S.executor?'\nExecutor: '+S.executor:''}\n\n`;
+  t+=`PLANO DE TRABALHO\nDetalhamento do objeto [✦ confirme]:\n${S.det||'—'}\n\nMETA 1 [✦ confirme]:\n${S.meta.desc||'—'}\nUnidade: ${S.meta.unidade} · Qtd: ${S.meta.quantidade||'—'} · Valor: ${S.meta.valor?fmt(S.meta.valor):'—'} · Natureza: ${S.meta.natureza||'—'} · Prazo: ${S.meta.prazo||'—'} meses\n\nBANCO/AGÊNCIA: ${S.banco||'—'} · ${S.agencia||'—'}\n\n`;
+  t+=`NOTIFICAÇÕES AUTOMÁTICAS\npresidencia@ales.es.gov.br (ALES — fixo)\nprotocolo@tce.es.gov.br (TCE-ES — fixo)\ntransparencia@sefaz.es.gov.br (Transparência Capixaba — fixo)\n`;
+  if(S.conselhos.length)t+=S.conselhos.join('\n')+'\n';
+  if(S.docs.length)t+=`\nDOCUMENTOS\n${S.docs.join('\n')}\n`;
+  t+=`\n${'='.repeat(60)}\nGerado em ${hoje} — TransfereGov Assistente · SEFAZ-ES | Tesouro Estadual\n[✦] Campos confirmados automaticamente — verifique antes de inserir no Transferegov.\n`;
+  return t;
+}
+function exportarDoc(){coletar();const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([gerarTexto()],{type:'application/msword'}));a.download=`TransfereGov-Assistente-${S.emenda?.plano||'rascunho'}.doc`;a.click();}
+function copiar(){coletar();navigator.clipboard.writeText(gerarTexto()).then(()=>alert('Texto copiado. Campos [✦] foram gerados automaticamente — confirme antes de inserir no Transferegov.')).catch(()=>alert('Use o botão de download.'));}
+</script>
+</body>
+</html>
