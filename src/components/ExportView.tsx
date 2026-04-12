@@ -77,7 +77,7 @@ export default function ExportView({ state, onBack, onFeedback, onSave }: Export
     t += `NOTIFICA\u00c7\u00d5ES AUTOM\u00c1TICAS\npresidencia@al.es.gov.br (ALES \u2014 fixo)\npresidencia@tce.es.gov.br (TCE-ES \u2014 fixo)\ntransparencia@sefaz.es.gov.br (Transpar\u00eancia Capixaba \u2014 fixo)\n`;
     if (state.conselhos.length) t += state.conselhos.join("\n") + "\n";
     if (state.docs.length) t += `\nDOCUMENTOS\n${state.docs.join("\n")}\n`;
-    t += `\n${"=".repeat(60)}\nGerado em ${hoje} \u2014 TransfereGov Assistente \u00b7 SEFAZ-ES | Tesouro Estadual\n[\u2666] Campos confirmados automaticamente \u2014 verifique antes de inserir no Transferegov.\n`;
+    t += `\n${"=".repeat(60)}\nGerado em ${hoje} \u2014 TransfereGov Assistente \u00b7 SEFAZ-ES | Tesouro Estadual\n[\u2666] Campos confirmados automaticamente \u2014 verifique antes de inserir no TransfereGov.\n`;
     return t;
   };
 
@@ -93,7 +93,7 @@ export default function ExportView({ state, onBack, onFeedback, onSave }: Export
   const copiarTexto = async () => {
     try {
       await navigator.clipboard.writeText(gerarTexto());
-      alert("Texto copiado. Campos [\u2666] foram gerados automaticamente \u2014 confirme antes de inserir no Transferegov.");
+      alert("Texto copiado. Campos [\u2666] foram gerados automaticamente \u2014 confirme antes de inserir no TransfereGov.");
     } catch {
       alert("Use o bot\u00e3o de download.");
     }
@@ -110,7 +110,7 @@ export default function ExportView({ state, onBack, onFeedback, onSave }: Export
           </h2>
           <div className="h-0.5 bg-gov-blue w-9 rounded mb-2" />
           <p className="text-[13px] text-n-4">
-            Use o guia abaixo com o Transferegov aberto ao lado. Copie cada campo na ordem indicada.
+            Use o guia abaixo com o TransfereGov aberto ao lado. Copie cada campo na ordem indicada.
           </p>
         </div>
 
@@ -118,7 +118,7 @@ export default function ExportView({ state, onBack, onFeedback, onSave }: Export
         <div className="bg-gov-blue-dark1 text-white rounded-lg px-5 py-3.5 mb-4 no-print">
           <div className="text-[13px] font-medium mb-1">
             <i className="fas fa-external-link-alt mr-2" />
-            Abra o Transferegov em outra aba e copie cada campo abaixo na ordem indicada.
+            Abra o TransfereGov em outra aba e copie cada campo abaixo na ordem indicada.
           </div>
           <div className="text-[11px] text-white/60">
             Clique em [Copiar] para copiar o texto exato de cada campo.
@@ -129,7 +129,7 @@ export default function ExportView({ state, onBack, onFeedback, onSave }: Export
         <div className={`px-4 py-3 rounded-lg text-[13px] mb-4 flex items-center gap-2.5 font-medium border-l-[3px] ${isComplete ? "bg-green-50 text-gov-green border-l-gov-green" : "bg-amber-50 text-amber-700 border-l-amber-500"}`}>
           <i className={`fas ${isComplete ? "fa-check-circle" : "fa-exclamation-triangle"}`} />
           {isComplete
-            ? "Plano completo. Pronto para inserir no Transferegov."
+            ? "Plano completo. Pronto para inserir no TransfereGov."
             : "Aten\u00e7\u00e3o: verifique campos incompletos antes de inserir no sistema."}
         </div>
 
@@ -232,7 +232,7 @@ export default function ExportView({ state, onBack, onFeedback, onSave }: Export
       <div className="w-full lg:w-52 shrink-0 no-print hidden lg:block">
         <div className="sticky top-28 bg-white border border-n-2 rounded-lg shadow-sm p-4">
           <div className="text-[11px] font-bold uppercase tracking-wider text-n-4 mb-3">
-            Progresso no Transferegov
+            Progresso no TransfereGov
           </div>
           {[
             "Aba Dados B\u00e1sicos preenchida",

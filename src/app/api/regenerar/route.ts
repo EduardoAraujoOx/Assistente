@@ -7,7 +7,7 @@ export async function POST(req: NextRequest) {
   if (campo === "finalidade") {
     prompt = `Objeto: "${emenda.objeto}" (\u00e1rea: ${area}, \u00f3rg\u00e3o: ${orgao}). Escolha a finalidade mais compat\u00edvel: ${finOpts}. Retorne APENAS o nome exato.`;
   } else {
-    prompt = `Detalhamento do objeto de execu\u00e7\u00e3o para o Transferegov. Objeto: "${emenda.objeto}". Munic\u00edpio: ${emenda.municipio}/ES. Valor: R$ ${emenda.valor.toLocaleString("pt-BR")}. T\u00e9cnico, 3-5 linhas, verbos no infinitivo. Apenas o texto.`;
+    prompt = `Detalhamento do objeto de execu\u00e7\u00e3o para o TransfereGov. Objeto: "${emenda.objeto}". Munic\u00edpio: ${emenda.municipio}/ES. Valor: R$ ${emenda.valor.toLocaleString("pt-BR")}. T\u00e9cnico, 3-5 linhas, verbos no infinitivo. Apenas o texto.`;
   }
 
   const maxTokens = campo === "finalidade" ? 80 : 500;

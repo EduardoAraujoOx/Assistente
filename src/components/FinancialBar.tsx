@@ -57,7 +57,7 @@ export default function FinancialBar({ allocated, total }: FinancialBarProps) {
             ? "Valor totalmente alocado."
             : isOver
             ? `Excesso de ${formatBRL(Math.abs(diff))}. Ajuste o valor da meta.`
-            : `Faltam ${formatBRL(diff)} para atingir 100%. O Transferegov exige aloca\u00e7\u00e3o completa.`}
+            : `Faltam ${formatBRL(diff)} para atingir 100%. O TransfereGov exige aloca\u00e7\u00e3o completa.`}
         </div>
       )}
     </div>

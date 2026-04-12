@@ -79,11 +79,11 @@ export default function Home() {
               <div>
                 <div className="mb-5">
                   <h2 className="text-xl font-medium text-gov-blue-dark2 tracking-tight mb-1">
-                    Selecione sua emenda parlamentar
+                    Seleção da emenda parlamentar
                   </h2>
                   <div className="h-0.5 bg-gov-blue w-9 rounded mb-2" />
                   <p className="text-[13px] text-n-4">
-                    Escolha o ente p&uacute;blico e a emenda. O plano de trabalho ser&aacute; gerado automaticamente.
+                    Escolha o ente público beneficiário e a emenda. O plano de trabalho será pré-preenchido automaticamente.
                   </p>
                 </div>
 
@@ -91,9 +91,9 @@ export default function Home() {
                 <div className="bg-gov-blue-pale border-l-[3px] border-l-gov-blue rounded-lg px-4 py-3.5 mb-5 flex gap-3.5 items-start">
                   <i className="fas fa-info-circle text-gov-blue text-xl mt-0.5 shrink-0" />
                   <div>
-                    <h4 className="text-[13px] font-bold text-gov-blue-dark1 mb-1">Como funciona</h4>
+                    <h4 className="text-[13px] font-bold text-gov-blue-dark1 mb-1">Fluxo de preenchimento</h4>
                     <p className="text-xs text-n-4 leading-relaxed">
-                      Selecione o ente p&uacute;blico, encontre sua emenda na lista e clique em <strong>&ldquo;Gerar Plano Pr&eacute;-preenchido&rdquo;</strong>. O sistema preencher&aacute; automaticamente os campos do Plano de Trabalho com base no objeto definido pelo parlamentar e em refer&ecirc;ncias aprovadas. Voc&ecirc; revisa, ajusta o necess&aacute;rio e exporta para inserir no Transferegov.
+                      Selecione o ente p&uacute;blico, encontre sua emenda na lista e clique em <strong>&ldquo;Gerar plano pré-preenchido&rdquo;</strong>. O sistema sugere automaticamente os campos do Plano de Trabalho com base no objeto definido pelo parlamentar e no histórico de planos aprovados. Você revisa, ajusta e exporta para inserir no TransfereGov.
                     </p>
                   </div>
                 </div>
@@ -103,7 +103,7 @@ export default function Home() {
                   {[
                     { num: 1, title: "Selecione", desc: "Escolha o ente e a emenda" },
                     { num: 2, title: "Revise", desc: "Confira os campos gerados" },
-                    { num: 3, title: "Exporte", desc: "Copie para o Transferegov" },
+                    { num: 3, title: "Exporte", desc: "Copie os campos para o TransfereGov" },
                   ].map((p, i) => (
                     <div
                       key={p.num}
@@ -135,7 +135,7 @@ export default function Home() {
                     disabled={!state.emenda}
                     className="bg-gov-blue text-white border-none px-5 py-[9px] rounded text-[13px] font-bold inline-flex items-center gap-[7px] hover:bg-gov-blue-dark1 disabled:bg-n-3 disabled:text-n-4 disabled:cursor-not-allowed"
                   >
-                    <i className="fas fa-magic" /> Gerar Plano Pr&eacute;-preenchido
+                    <i className="fas fa-magic" /> Gerar plano pré-preenchido
                   </button>
                 </div>
               </div>
