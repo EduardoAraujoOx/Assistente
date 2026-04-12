@@ -46,7 +46,7 @@ export default function EmendaTable({
           Emendas 2026
         </div>
         <span className="text-[10px] font-semibold px-[7px] py-[2px] rounded-sm uppercase tracking-wider bg-n-1 text-n-4 border border-n-2 self-start sm:self-auto truncate max-w-full">
-          {ente ? ente.nome : "Nenhum ente selecionado"}
+          {ente ? ente.nome : "Nenhum ente público selecionado"}
         </span>
       </div>
 
@@ -73,14 +73,14 @@ export default function EmendaTable({
         {/* Table */}
         <div className="border border-n-2 rounded overflow-hidden">
           {/* Header (desktop only) */}
-          <div className="hidden md:grid grid-cols-[1fr_130px_90px] bg-gov-blue-dark2 px-3.5 py-2 gap-2">
-            <span className="text-[11px] font-medium text-white/65 uppercase tracking-wider">
+          <div className="hidden md:grid grid-cols-[1fr_130px_90px] bg-n-1 px-3.5 py-2 gap-2 border-b border-n-2">
+            <span className="text-[11px] font-medium text-n-4 uppercase tracking-wider">
               Objeto da emenda
             </span>
-            <span className="text-[11px] font-medium text-white/65 uppercase tracking-wider">
+            <span className="text-[11px] font-medium text-n-4 uppercase tracking-wider">
               Parlamentar
             </span>
-            <span className="text-[11px] font-medium text-white/65 uppercase tracking-wider text-right">
+            <span className="text-[11px] font-medium text-n-4 uppercase tracking-wider text-right">
               Valor
             </span>
           </div>
@@ -100,8 +100,8 @@ export default function EmendaTable({
                   onClick={() => onSelect(e)}
                   className={`flex flex-col gap-2 md:grid md:grid-cols-[1fr_130px_90px] px-3.5 py-2.5 md:gap-2 border-t border-n-2 cursor-pointer transition-colors md:items-start first:border-t-0 ${
                     selected?.id === e.id
-                      ? "bg-gov-blue-pale border-l-[3px] border-l-gov-blue"
-                      : "hover:bg-gov-blue-pale/50"
+                      ? "bg-gov-blue-pale border-l-[3px] border-l-gov-blue-dark1"
+                      : "hover:bg-n-1"
                   }`}
                 >
                   <div className="min-w-0">
@@ -133,7 +133,7 @@ export default function EmendaTable({
                   <div className="flex items-center justify-between md:block">
                     <span className="text-[10px] uppercase tracking-wider text-n-4 md:hidden">Valor</span>
                     <div>
-                      <div className="text-[13px] font-bold text-gov-blue md:text-right font-mono">
+                      <div className="text-[13px] font-bold text-gov-blue-dark1 md:text-right font-mono">
                         {formatBRL(e.valor)}
                       </div>
                       <div className="text-[10.5px] text-n-4 md:text-right mt-0.5">
