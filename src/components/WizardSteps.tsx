@@ -12,7 +12,7 @@ const steps = [
 
 export default function WizardSteps({ currentStep }: WizardStepsProps) {
   return (
-    <div className="bg-white border-b border-n-2 px-6 flex items-center gap-0 no-print md:hidden">
+    <div className="bg-white border-b border-n-2 px-3 sm:px-6 flex items-center gap-0 no-print md:hidden overflow-x-auto whitespace-nowrap">
       {steps.map((s, idx) => {
         const isActive = currentStep === s.num;
         const isDone = currentStep > s.num;

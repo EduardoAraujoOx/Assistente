@@ -20,15 +20,17 @@ function FieldRow({ label, value, tag, copyValue }: { label: string; value: stri
   };
 
   return (
-    <div className={`flex items-start gap-3 px-3.5 py-2.5 border-b border-n-1 last:border-b-0 ${tag ? bgStyles[tag] : ""}`}>
-      <span className="text-xs font-medium text-n-4 w-[185px] shrink-0 pt-0.5">
+    <div className={`flex flex-col md:flex-row md:items-start gap-1 md:gap-3 px-3.5 py-2.5 border-b border-n-1 last:border-b-0 ${tag ? bgStyles[tag] : ""}`}>
+      <span className="text-[11px] md:text-xs font-medium text-n-4 md:w-[185px] md:shrink-0 md:pt-0.5 uppercase md:normal-case tracking-wider md:tracking-normal">
         {label}
         {tag === "ia" && <span className="ml-1 text-purple-600">&diams;</span>}
       </span>
-      <span className="text-xs text-n-5 flex-1 leading-relaxed whitespace-pre-wrap">{value || "\u2014"}</span>
-      {tag !== "lock" && value && (
-        <CopyButton text={copyValue || value} className="no-print" />
-      )}
+      <div className="flex items-start gap-2 flex-1 min-w-0">
+        <span className="text-xs text-n-5 flex-1 leading-relaxed whitespace-pre-wrap break-words">{value || "\u2014"}</span>
+        {tag !== "lock" && value && (
+          <CopyButton text={copyValue || value} className="no-print shrink-0" />
+        )}
+      </div>
     </div>
   );
 }
@@ -98,7 +100,7 @@ export default function ExportView({ state, onBack, onFeedback, onSave }: Export
   };
 
   return (
-    <div className="flex gap-6">
+    <div className="flex flex-col lg:flex-row gap-6">
       {/* Main content */}
       <div className="flex-1 min-w-0">
         {/* Page header */}
@@ -227,7 +229,7 @@ export default function ExportView({ state, onBack, onFeedback, onSave }: Export
       </div>
 
       {/* ═══ MINI CHECKLIST ═══ */}
-      <div className="w-52 shrink-0 no-print hidden lg:block">
+      <div className="w-full lg:w-52 shrink-0 no-print hidden lg:block">
         <div className="sticky top-28 bg-white border border-n-2 rounded-lg shadow-sm p-4">
           <div className="text-[11px] font-bold uppercase tracking-wider text-n-4 mb-3">
             Progresso no Transferegov

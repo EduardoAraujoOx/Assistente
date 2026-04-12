@@ -81,7 +81,7 @@ export default function PlanoForm({ state, onChange, onMetaChange, onExport, onB
 
       {/* ═══ CARD 1: DADOS BÁSICOS ═══ */}
       <div className="bg-white border border-n-2 rounded-lg mb-4 shadow-sm overflow-hidden">
-        <div className="bg-n-1 border-b border-n-2 px-[18px] py-[11px] flex items-center justify-between">
+        <div className="bg-n-1 border-b border-n-2 px-[18px] py-[11px] flex items-center justify-between gap-2 flex-wrap">
           <div className="text-xs font-bold text-gov-blue-dark1 flex items-center gap-[7px] uppercase tracking-wider">
             <i className="fas fa-info-circle text-gov-blue" /> Dados B&aacute;sicos
           </div>
@@ -169,7 +169,7 @@ export default function PlanoForm({ state, onChange, onMetaChange, onExport, onB
 
       {/* ═══ CARD 2: PLANO DE TRABALHO ═══ */}
       <div className="bg-white border border-n-2 rounded-lg mb-4 shadow-sm overflow-hidden">
-        <div className="bg-n-1 border-b border-n-2 px-[18px] py-[11px] flex items-center justify-between">
+        <div className="bg-n-1 border-b border-n-2 px-[18px] py-[11px] flex items-center justify-between gap-2 flex-wrap">
           <div className="text-xs font-bold text-gov-blue-dark1 flex items-center gap-[7px] uppercase tracking-wider">
             <i className="fas fa-tasks text-gov-blue" /> Plano de Trabalho
           </div>
@@ -232,7 +232,7 @@ export default function PlanoForm({ state, onChange, onMetaChange, onExport, onB
               </div>
             </div>
 
-            <div className="grid grid-cols-3 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               <div>
                 <label className="block text-[11.5px] font-medium text-n-4 mb-1">Unidade</label>
                 <select
@@ -263,7 +263,7 @@ export default function PlanoForm({ state, onChange, onMetaChange, onExport, onB
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-3 mt-2.5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-2.5">
               <div>
                 <label className="block text-[11.5px] font-medium text-n-4 mb-1">Natureza de despesa</label>
                 <select
@@ -293,7 +293,7 @@ export default function PlanoForm({ state, onChange, onMetaChange, onExport, onB
 
       {/* ═══ CARD 3: EXECUÇÃO DOS RECURSOS ═══ */}
       <div className="bg-white border border-n-2 rounded-lg mb-4 shadow-sm overflow-hidden">
-        <div className="bg-n-1 border-b border-n-2 px-[18px] py-[11px] flex items-center justify-between">
+        <div className="bg-n-1 border-b border-n-2 px-[18px] py-[11px] flex items-center justify-between gap-2 flex-wrap">
           <div className="text-xs font-bold text-gov-blue-dark1 flex items-center gap-[7px] uppercase tracking-wider">
             <i className="fas fa-university text-gov-blue" /> Execu&ccedil;&atilde;o dos Recursos
           </div>
