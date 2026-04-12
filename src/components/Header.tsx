@@ -26,7 +26,7 @@ export default function Header({ onNovoPlano }: HeaderProps) {
             Transferegov Assistente
           </div>
           <div className="text-white/45 text-[11px] mt-px hidden md:block">
-            Plano de Trabalho Pr\u00e9-preenchido &mdash; Transfer\u00eancias Especiais
+            Plano de Trabalho Pré-preenchido &mdash; Transferências Especiais
           </div>
         </div>
 
@@ -49,9 +49,9 @@ export default function Header({ onNovoPlano }: HeaderProps) {
       {/* Faixa breadcrumb */}
       <div className="bg-gov-blue-dark1 px-3 md:px-6 py-2 text-white/60 text-[11px] flex items-center gap-2 no-print overflow-x-auto whitespace-nowrap">
         <i className="fas fa-home text-[10px]" />
-        <span className="hidden sm:inline">In\u00edcio</span>
+        <span className="hidden sm:inline">Início</span>
         <i className="fas fa-chevron-right text-[8px] mx-1 hidden sm:inline" />
-        <span className="text-white/90">Transfer\u00eancias Especiais 2026</span>
+        <span className="text-white/90">Transferências Especiais 2026</span>
         <i className="fas fa-chevron-right text-[8px] mx-1" />
         <span className="text-white/90">Plano de Trabalho</span>
       </div>
