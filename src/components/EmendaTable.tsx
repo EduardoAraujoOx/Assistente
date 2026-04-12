@@ -40,12 +40,12 @@ export default function EmendaTable({
   return (
     <div className="bg-white border border-n-2 rounded-lg shadow-sm overflow-hidden">
       {/* Card header */}
-      <div className="bg-n-1 border-b border-n-2 px-[18px] py-[11px] flex items-center justify-between gap-2.5">
+      <div className="bg-n-1 border-b border-n-2 px-[18px] py-[11px] flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-2.5">
         <div className="text-xs font-bold text-gov-blue-dark1 flex items-center gap-[7px] uppercase tracking-wider">
           <i className="fas fa-list-alt text-gov-blue" />
           Emendas 2026
         </div>
-        <span className="text-[10px] font-semibold px-[7px] py-[2px] rounded-sm uppercase tracking-wider bg-n-1 text-n-4 border border-n-2">
+        <span className="text-[10px] font-semibold px-[7px] py-[2px] rounded-sm uppercase tracking-wider bg-n-1 text-n-4 border border-n-2 self-start sm:self-auto truncate max-w-full">
           {ente ? ente.nome : "Nenhum ente selecionado"}
         </span>
       </div>
@@ -72,12 +72,12 @@ export default function EmendaTable({
 
         {/* Table */}
         <div className="border border-n-2 rounded overflow-hidden">
-          {/* Header */}
-          <div className="grid grid-cols-[1fr_130px_90px] bg-gov-blue-dark2 px-3.5 py-2 gap-2">
+          {/* Header (desktop only) */}
+          <div className="hidden md:grid grid-cols-[1fr_130px_90px] bg-gov-blue-dark2 px-3.5 py-2 gap-2">
             <span className="text-[11px] font-medium text-white/65 uppercase tracking-wider">
               Objeto da emenda
             </span>
-            <span className="text-[11px] font-medium text-white/65 uppercase tracking-wider hidden md:block">
+            <span className="text-[11px] font-medium text-white/65 uppercase tracking-wider">
               Parlamentar
             </span>
             <span className="text-[11px] font-medium text-white/65 uppercase tracking-wider text-right">
@@ -86,7 +86,7 @@ export default function EmendaTable({
           </div>
 
           {/* Body */}
-          <div className="max-h-[300px] overflow-y-auto scrollbar-thin">
+          <div className="max-h-[300px] md:max-h-[300px] overflow-y-auto scrollbar-thin">
             {filtradas.length === 0 ? (
               <div className="p-8 text-center text-n-4 text-[13px]">
                 {ente
@@ -98,13 +98,13 @@ export default function EmendaTable({
                 <div
                   key={e.id}
                   onClick={() => onSelect(e)}
-                  className={`grid grid-cols-[1fr_130px_90px] md:grid-cols-[1fr_130px_90px] px-3.5 py-2.5 gap-2 border-t border-n-2 cursor-pointer transition-colors items-start first:border-t-0 ${
+                  className={`flex flex-col gap-2 md:grid md:grid-cols-[1fr_130px_90px] px-3.5 py-2.5 md:gap-2 border-t border-n-2 cursor-pointer transition-colors md:items-start first:border-t-0 ${
                     selected?.id === e.id
                       ? "bg-gov-blue-pale border-l-[3px] border-l-gov-blue"
                       : "hover:bg-gov-blue-pale/50"
                   }`}
                 >
-                  <div>
+                  <div className="min-w-0">
                     <div className="text-[12.5px] font-medium text-n-5 leading-[1.35] mb-1">
                       {e.objeto}
                     </div>
@@ -118,18 +118,27 @@ export default function EmendaTable({
                       <span>{e.municipio}/ES</span>
                     </div>
                   </div>
-                  <div className="hidden md:block">
-                    <div className="text-xs text-n-5">{e.parlamentar}</div>
-                    <div className="text-[10.5px] text-n-4 mt-0.5">
+                  {/* Parlamentar/partido: inline on mobile, column on md+ */}
+                  <div className="md:block">
+                    <div className="text-xs text-n-5 md:text-xs">
+                      <span className="md:hidden text-[10px] uppercase tracking-wider text-n-4 mr-1">Parlamentar:</span>
+                      {e.parlamentar}
+                      <span className="text-[10.5px] text-n-4 md:hidden"> &middot; {e.partido}</span>
+                    </div>
+                    <div className="text-[10.5px] text-n-4 mt-0.5 hidden md:block">
                       {e.partido}
                     </div>
                   </div>
-                  <div>
-                    <div className="text-[13px] font-bold text-gov-blue text-right font-mono">
-                      {formatBRL(e.valor)}
-                    </div>
-                    <div className="text-[10.5px] text-n-4 text-right mt-0.5">
-                      {e.prazo}m
+                  {/* Valor: inline on mobile (flex row), right-aligned on md+ */}
+                  <div className="flex items-center justify-between md:block">
+                    <span className="text-[10px] uppercase tracking-wider text-n-4 md:hidden">Valor</span>
+                    <div>
+                      <div className="text-[13px] font-bold text-gov-blue md:text-right font-mono">
+                        {formatBRL(e.valor)}
+                      </div>
+                      <div className="text-[10.5px] text-n-4 md:text-right mt-0.5">
+                        {e.prazo}m
+                      </div>
                     </div>
                   </div>
                 </div>

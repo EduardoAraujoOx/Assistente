@@ -21,16 +21,18 @@ export default function EnteSelector({ selected, onChange }: EnteSelectorProps) 
     : "";
 
   return (
-    <div className="bg-white border border-n-2 rounded-lg p-4 mb-3.5 flex items-center gap-3.5 shadow-sm">
-      <i className="fas fa-building text-gov-blue text-base shrink-0" />
-      <label htmlFor="sel-ente" className="text-[13px] font-medium text-n-5 whitespace-nowrap">
-        Ente p\u00fablico:
-      </label>
+    <div className="bg-white border border-n-2 rounded-lg p-3 md:p-4 mb-3.5 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3.5 shadow-sm">
+      <div className="flex items-center gap-2 shrink-0">
+        <i className="fas fa-building text-gov-blue text-base shrink-0" />
+        <label htmlFor="sel-ente" className="text-[13px] font-medium text-n-5 whitespace-nowrap">
+          Ente p\u00fablico:
+        </label>
+      </div>
       <select
         id="sel-ente"
         value={currentValue}
         onChange={handleChange}
-        className="flex-1 px-2.5 py-2 border border-n-3 rounded text-[13px] font-sans bg-white text-n-5 focus:outline-none focus:border-gov-blue focus:ring-2 focus:ring-gov-blue/15"
+        className="w-full flex-1 px-2.5 py-2 border border-n-3 rounded text-[13px] font-sans bg-white text-n-5 focus:outline-none focus:border-gov-blue focus:ring-2 focus:ring-gov-blue/15 min-w-0"
       >
         <option value="">&mdash; Selecione o munic\u00edpio ou estado &mdash;</option>
         {ENTES.map((grupo) => (

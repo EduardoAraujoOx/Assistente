@@ -18,7 +18,7 @@ export default function Sidebar({
   canGoToStep,
 }: SidebarProps) {
   return (
-    <aside className="w-56 bg-white border-r border-n-2 sticky top-[calc(3.5rem+2rem)] h-[calc(100vh-3.5rem-2rem)] shrink-0 no-print overflow-y-auto">
+    <aside className="hidden md:block w-56 bg-white border-r border-n-2 sticky top-[calc(3.5rem+2rem)] h-[calc(100vh-3.5rem-2rem)] shrink-0 no-print overflow-y-auto">
       <div className="px-4 pt-6 pb-3">
         <div className="text-[10px] font-bold uppercase tracking-widest text-n-4 mb-4">
           Etapas

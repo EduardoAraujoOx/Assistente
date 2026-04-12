@@ -57,7 +57,7 @@ export default function Home() {
           {/* Wizard steps (mobile) */}
           <WizardSteps currentStep={currentStep} />
 
-          <div className="max-w-[760px] mx-auto px-6 py-7 pb-16">
+          <div className="max-w-[760px] mx-auto px-3 sm:px-6 py-5 md:py-7 pb-16">
             {/* Restore bar */}
             {showRestore && (
               <div className="bg-gov-blue-pale border border-blue-200 rounded-lg px-4 py-2.5 mb-5 text-[13px] text-gov-blue-dark1 flex items-center justify-between gap-3 font-medium">
@@ -99,7 +99,7 @@ export default function Home() {
                 </div>
 
                 {/* 3 passos */}
-                <div className="flex gap-0 mb-6 border border-n-2 rounded-lg overflow-hidden">
+                <div className="flex flex-col sm:flex-row gap-0 mb-6 border border-n-2 rounded-lg overflow-hidden">
                   {[
                     { num: 1, title: "Selecione", desc: "Escolha o ente e a emenda" },
                     { num: 2, title: "Revise", desc: "Confira os campos gerados" },
@@ -107,7 +107,7 @@ export default function Home() {
                   ].map((p, i) => (
                     <div
                       key={p.num}
-                      className={`flex-1 px-4 py-3 bg-white flex gap-2.5 items-start ${i < 2 ? "border-r border-n-2" : ""}`}
+                      className={`flex-1 px-4 py-3 bg-white flex gap-2.5 items-start ${i < 2 ? "border-b sm:border-b-0 sm:border-r border-n-2" : ""}`}
                     >
                       <div className="w-6 h-6 rounded-full bg-gov-blue text-white text-xs font-bold flex items-center justify-center shrink-0">
                         {p.num}
@@ -175,7 +175,7 @@ export default function Home() {
       </div>
 
       {/* Footer */}
-      <footer className="bg-gov-blue-dark2 text-white/40 px-6 py-3.5 text-[11px] flex items-center justify-between flex-wrap gap-2 no-print">
+      <footer className="bg-gov-blue-dark2 text-white/40 px-3 md:px-6 py-3.5 text-[11px] flex items-center justify-between flex-wrap gap-2 no-print">
         <div>TransfereGov Assistente &middot; SEFAZ-ES | Tesouro Estadual &middot; Esp&iacute;rito Santo &middot; 2026</div>
         <div>Plano de Trabalho Pr&eacute;-preenchido &mdash; Transfer&ecirc;ncias Especiais</div>
       </footer>
