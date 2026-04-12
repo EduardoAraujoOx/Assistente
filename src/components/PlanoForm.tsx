@@ -29,12 +29,34 @@ function FieldTag({ type, children }: { type: "lock" | "ia" | "hist"; children: 
   );
 }
 
+function FieldOrigin({ type, text }: { type: "lock" | "ia" | "hist"; text: string }) {
+  const tone = {
+    lock: "bg-n-1 text-n-5 border-n-3",
+    ia: "bg-gov-blue-pale text-gov-blue-dark1 border-blue-200",
+    hist: "bg-green-50 text-gov-green border-green-200",
+  };
+  const icon = { lock: "fa-lock", ia: "fa-diamond", hist: "fa-check-circle" };
+  return (
+    <span className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-semibold border ${tone[type]}`}>
+      <i className={`fas ${icon[type]} text-[9px]`} />
+      {text}
+    </span>
+  );
+}
+
 export default function PlanoForm({ state, onChange, onMetaChange, onExport, onBack }: PlanoFormProps) {
   const [regenFin, setRegenFin] = useState(false);
   const [regenDet, setRegenDet] = useState(false);
   const emenda = state.emenda!;
   const finOptions = FINALIDADES[state.area] || FINALIDADES[emenda.area] || [];
   const agOptions = AGENCIAS[state.banco] || [];
+  const providedFields = [
+    { nome: "Objeto de execução", origem: "SIOP (somente leitura)", type: "lock" as const },
+    { nome: "Finalidade", origem: "Sugestão automática", type: "ia" as const },
+    { nome: "Área temática", origem: "Sugestão automática", type: "ia" as const },
+    { nome: "Detalhamento do objeto", origem: "Gerado automaticamente", type: "ia" as const },
+    { nome: "Meta 1", origem: "Gerada automaticamente", type: "ia" as const },
+  ];
 
   const regenerar = async (campo: "finalidade" | "detalhamento") => {
     const setLoading = campo === "finalidade" ? setRegenFin : setRegenDet;
@@ -64,19 +86,35 @@ export default function PlanoForm({ state, onChange, onMetaChange, onExport, onB
   return (
     <div>
       {/* Page header */}
-      <div className="mb-5">
+      <div className="mb-4">
         <h2 className="text-xl font-medium text-gov-blue-dark2 tracking-tight mb-1">
           Plano de Trabalho pré-preenchido
         </h2>
         <div className="h-0.5 bg-gov-blue w-9 rounded mb-2" />
         <p className="text-[13px] text-n-4">
-          Revise os campos e ajuste o necessário. Campos marcados com <strong>◆</strong> foram sugeridos automaticamente — valide antes de inserir no Transferegov.
+          Revise os campos e ajuste o necessário. A tela abaixo destaca com clareza quais campos foram fornecidos automaticamente.
         </p>
       </div>
 
-      {/* Status */}
-      <div className="px-4 py-3 rounded-lg text-[13px] mb-[18px] flex items-center gap-2.5 font-medium border-l-[3px] bg-gov-blue-pale text-gov-blue border-l-gov-blue">
-        <i className="fas fa-info-circle" /> Campos ◆ foram gerados com base no objeto do parlamentar e em planos aprovados. Confirme antes de salvar no Transferegov.
+      {/* Mapa de preenchimento */}
+      <div className="bg-white border border-n-2 rounded-lg p-4 mb-[18px] shadow-sm">
+        <div className="flex items-start justify-between gap-3 flex-wrap mb-3">
+          <div>
+            <h3 className="text-sm font-semibold text-gov-blue-dark1">Mapa dos campos pré-fornecidos</h3>
+            <p className="text-xs text-n-4 mt-0.5">Use esta referência para identificar rapidamente o que já veio preenchido.</p>
+          </div>
+          <div className="text-xs text-gov-blue-dark1 bg-gov-blue-pale border border-blue-200 rounded-full px-3 py-1 font-medium">
+            {providedFields.length} campos destacados
+          </div>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+          {providedFields.map((field) => (
+            <div key={field.nome} className="border border-n-2 rounded-md px-3 py-2 bg-n-1/50">
+              <div className="text-[12.5px] font-medium text-n-6 mb-1">{field.nome}</div>
+              <FieldOrigin type={field.type} text={field.origem} />
+            </div>
+          ))}
+        </div>
       </div>
 
       {/* ═══ CARD 1: DADOS BÁSICOS ═══ */}
@@ -92,14 +130,16 @@ export default function PlanoForm({ state, onChange, onMetaChange, onExport, onB
         <div className="p-[18px]">
           {/* Objeto (somente leitura) */}
           <div className="mb-3.5">
-            <label className="block text-xs font-medium text-n-4 mb-1">
-              Objeto de execu&ccedil;&atilde;o <span className="text-[10.5px] font-normal text-n-4">(definido pelo parlamentar via SIOP &mdash; somente leitura)</span>
-            </label>
-            <FieldTag type="lock">SIOP &mdash; somente leitura</FieldTag>
-            <div className="bg-n-1 border border-n-2 rounded p-2 text-[13px] text-n-4 leading-relaxed">
-              {emenda.objeto}
+              <label className="block text-xs font-medium text-n-4 mb-1">
+                Objeto de execu&ccedil;&atilde;o <span className="text-[10.5px] font-normal text-n-4">(definido pelo parlamentar via SIOP &mdash; somente leitura)</span>
+              </label>
+              <div className="mb-1.5">
+                <FieldOrigin type="lock" text="SIOP — somente leitura" />
+              </div>
+              <div className="bg-n-1 border border-n-2 rounded p-2 text-[13px] text-n-4 leading-relaxed">
+                {emenda.objeto}
+              </div>
             </div>
-          </div>
 
           {/* Finalidade + Área */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5 mt-3.5">
@@ -107,7 +147,9 @@ export default function PlanoForm({ state, onChange, onMetaChange, onExport, onB
               <label className="block text-xs font-medium text-n-4 mb-1">
                 Finalidade <span className="text-gov-red">*</span>
               </label>
-              <FieldTag type="ia">&diams; autom&aacute;tico</FieldTag>
+              <div className="mb-1.5">
+                <FieldOrigin type="ia" text="Sugestão automática" />
+              </div>
               <select
                 value={state.finalidade}
                 onChange={(e) => onChange({ finalidade: e.target.value })}
@@ -132,7 +174,9 @@ export default function PlanoForm({ state, onChange, onMetaChange, onExport, onB
               <label className="block text-xs font-medium text-n-4 mb-1">
                 &Aacute;rea tem&aacute;tica <span className="text-gov-red">*</span>
               </label>
-              <FieldTag type="ia">&diams; autom&aacute;tico</FieldTag>
+              <div className="mb-1.5">
+                <FieldOrigin type="ia" text="Sugestão automática" />
+              </div>
               <select
                 value={state.area}
                 onChange={(e) => {
@@ -183,7 +227,9 @@ export default function PlanoForm({ state, onChange, onMetaChange, onExport, onB
             <label className="block text-xs font-medium text-n-4 mb-1">
               Detalhamento do objeto de execu&ccedil;&atilde;o <span className="text-gov-red">*</span>
             </label>
-            <FieldTag type="ia">&diams; gerado com base no objeto do parlamentar</FieldTag>
+            <div className="mb-1.5">
+              <FieldOrigin type="ia" text="Gerado com base no objeto do parlamentar" />
+            </div>
             <textarea
               value={state.det}
               onChange={(e) => onChange({ det: e.target.value })}
@@ -216,7 +262,7 @@ export default function PlanoForm({ state, onChange, onMetaChange, onExport, onB
               <div className="text-[13px] font-medium text-gov-blue-dark1 flex items-center gap-1.5">
                 <i className="fas fa-bullseye text-gov-blue" /> Meta 1
               </div>
-              <FieldTag type="ia">&diams; autom&aacute;tico</FieldTag>
+              <FieldOrigin type="ia" text="Sugestão automática" />
             </div>
 
             <div className="mb-3">
