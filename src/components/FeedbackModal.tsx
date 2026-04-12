@@ -49,7 +49,7 @@ export default function FeedbackModal({ ente, emenda, onClose }: FeedbackModalPr
     >
       <div className="bg-white rounded-lg p-[26px] w-[400px] shadow-lg">
         <h3 className="text-base font-medium text-gov-blue-dark2 mb-1.5">
-          Avalie o TransfereGov Assistente
+          Avalie o Transferegov Assistente
         </h3>
         <p className="text-[13px] text-n-4 mb-4 leading-relaxed">
           Sua avalia\u00e7\u00e3o ajuda a melhorar a ferramenta para todos os gestores do ES.

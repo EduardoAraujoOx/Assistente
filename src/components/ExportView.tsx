@@ -77,7 +77,7 @@ export default function ExportView({ state, onBack, onFeedback, onSave }: Export
     t += `NOTIFICA\u00c7\u00d5ES AUTOM\u00c1TICAS\npresidencia@al.es.gov.br (ALES \u2014 fixo)\npresidencia@tce.es.gov.br (TCE-ES \u2014 fixo)\ntransparencia@sefaz.es.gov.br (Transpar\u00eancia Capixaba \u2014 fixo)\n`;
     if (state.conselhos.length) t += state.conselhos.join("\n") + "\n";
     if (state.docs.length) t += `\nDOCUMENTOS\n${state.docs.join("\n")}\n`;
-    t += `\n${"=".repeat(60)}\nGerado em ${hoje} \u2014 TransfereGov Assistente \u00b7 SEFAZ-ES | Tesouro Estadual\n[\u2666] Campos confirmados automaticamente \u2014 verifique antes de inserir no Transferegov.\n`;
+    t += `\n${"=".repeat(60)}\nGerado em ${hoje} \u2014 Transferegov Assistente \u00b7 SEFAZ-ES | Tesouro Estadual\n[\u2666] Campos confirmados automaticamente \u2014 verifique antes de inserir no Transferegov.\n`;
     return t;
   };
 
@@ -85,7 +85,7 @@ export default function ExportView({ state, onBack, onFeedback, onSave }: Export
     const blob = new Blob([gerarTexto()], { type: "application/msword" });
     const a = document.createElement("a");
     a.href = URL.createObjectURL(blob);
-    a.download = `TransfereGov-Assistente-${emenda.plano}.doc`;
+    a.download = `Transferegov-Assistente-${emenda.plano}.doc`;
     a.click();
     URL.revokeObjectURL(a.href);
   };
@@ -222,7 +222,7 @@ export default function ExportView({ state, onBack, onFeedback, onSave }: Export
 
         {/* Print header */}
         <div className="print-only mb-4">
-          <div className="text-base font-bold">TransfereGov Assistente &mdash; SEFAZ-ES</div>
+          <div className="text-base font-bold">Transferegov Assistente &mdash; SEFAZ-ES</div>
           <div className="text-xs text-n-4">Plano de Trabalho Pr&eacute;-preenchido &mdash; {emenda.plano} &mdash; {emenda.municipio}/ES</div>
           <div className="text-xs text-n-4">{emenda.parlamentar} ({emenda.partido}) &mdash; {formatBRL(emenda.valor)}</div>
         </div>

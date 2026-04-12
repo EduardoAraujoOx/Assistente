@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "TransfereGov Assistente \u2014 SEFAZ-ES",
+  title: "Transferegov Assistente \u2014 SEFAZ-ES",
   description:
     "Plano de Trabalho Pr\u00e9-preenchido \u2014 Transfer\u00eancias Especiais 2026",
 };
