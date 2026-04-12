@@ -17,9 +17,9 @@ interface PlanoFormProps {
 
 function FieldTag({ type, children }: { type: "lock" | "ia" | "hist"; children: React.ReactNode }) {
   const styles = {
-    lock: "bg-amber-50 text-amber-700 border-amber-300",
-    ia: "bg-purple-50 text-purple-700 border-purple-200",
-    hist: "bg-green-50 text-gov-green border-green-300",
+    lock: "bg-n-1 text-n-5 border-n-3",
+    ia: "bg-gov-blue-pale text-gov-blue-dark1 border-blue-200",
+    hist: "bg-n-1 text-gov-green border-green-200",
   };
   const icons = { lock: "fa-lock", ia: "fa-robot", hist: "fa-check-circle" };
   return (
@@ -66,17 +66,17 @@ export default function PlanoForm({ state, onChange, onMetaChange, onExport, onB
       {/* Page header */}
       <div className="mb-5">
         <h2 className="text-xl font-medium text-gov-blue-dark2 tracking-tight mb-1">
-          Plano de Trabalho Pr&eacute;-preenchido
+          Plano de Trabalho pré-preenchido
         </h2>
         <div className="h-0.5 bg-gov-blue w-9 rounded mb-2" />
         <p className="text-[13px] text-n-4">
-          Revise os campos e ajuste o necess&aacute;rio. Campos marcados com <strong>&diams;</strong> foram gerados automaticamente &mdash; confirme antes de inserir no Transferegov.
+          Revise os campos e ajuste o necessário. Campos marcados com <strong>◆</strong> foram sugeridos automaticamente — valide antes de inserir no Transferegov.
         </p>
       </div>
 
       {/* Status */}
       <div className="px-4 py-3 rounded-lg text-[13px] mb-[18px] flex items-center gap-2.5 font-medium border-l-[3px] bg-gov-blue-pale text-gov-blue border-l-gov-blue">
-        <i className="fas fa-info-circle" /> Campos &diams; foram gerados com base no objeto do parlamentar e em planos aprovados. Confirme antes de salvar no Transferegov.
+        <i className="fas fa-info-circle" /> Campos ◆ foram gerados com base no objeto do parlamentar e em planos aprovados. Confirme antes de salvar no Transferegov.
       </div>
 
       {/* ═══ CARD 1: DADOS BÁSICOS ═══ */}
@@ -301,7 +301,7 @@ export default function PlanoForm({ state, onChange, onMetaChange, onExport, onB
         </div>
         <div className="p-[18px]">
           <div className="mb-3.5">
-            <label className="block text-xs font-medium text-n-4 mb-1">Benefici&aacute;rio <span className="text-gov-red">*</span></label>
+            <label className="block text-xs font-medium text-n-4 mb-1">Ente público beneficiário <span className="text-gov-red">*</span></label>
             <input
               type="text"
               value={state.beneficiario}
@@ -379,7 +379,7 @@ export default function PlanoForm({ state, onChange, onMetaChange, onExport, onB
             </div>
           </div>
           <div className="mt-3.5">
-            <label className="block text-xs font-medium text-n-4 mb-1">Conta exclusiva para esta emenda</label>
+            <label className="block text-xs font-medium text-n-4 mb-1">Conta bancária exclusiva para esta emenda</label>
             <select
               value={state.contaExist}
               onChange={(e) => onChange({ contaExist: e.target.value })}
