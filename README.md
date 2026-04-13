@@ -1,80 +1,88 @@
-# Assistente Transferegov — SEFAZ/ES
+# TransfereGov Assistente — SEFAZ-ES v2
 
-Aplicação Next.js para apoiar o preenchimento de **Plano de Trabalho** (Transferências Especiais), com pré-preenchimento orientado por IA e histórico de planos aprovados.
+Aplicação HTML standalone para apoiar o preenchimento de **Plano de Trabalho**
+(Transferências Especiais, EC 105/2019), com integração direta à API TransfereGov
+e geração de campos por IA (Gemini 2.0 Flash).
 
-## Objetivo do projeto
+## Como usar
 
-- Reduzir retrabalho no preenchimento do plano.
-- Padronizar qualidade textual e coerência do detalhamento técnico.
-- Facilitar a revisão antes da inserção manual no Transferegov.
+Abra o arquivo `transferegov-assistente.html` diretamente no navegador.
+Nenhuma instalação necessária.
 
-## Plano de intervenções (executado nesta etapa)
+## Funcionalidades
 
-1. **Padronização de textos e rótulos**
-   - Correções de nomenclatura e melhoria da clareza (ex.: “Ente público beneficiário”).
-2. **Refino visual com estilo mais sóbrio**
-   - Redução de elementos muito chamativos e reforço de layout minimalista.
-3. **Integração com API Transferegov via cliente centralizado**
-   - Criação de camada de acesso com suporte a token, timeout e fallback.
-4. **Documentação para IA (Gemini)**
-   - Passo a passo para gerar e configurar chave de API.
+- Seleção de beneficiário com carregamento automático das emendas via API TransfereGov
+- Tabela de emendas disponíveis para plano de trabalho (Transferências Especiais 2025)
+- Geração de todos os campos do Plano de Trabalho e Detalhamento do Executor com IA
+- Regeneração individual de cada campo via botão ✦ IA
+- Cópia com um clique (⧉) de qualquer campo
+- Envio do resumo completo por e-mail (registro de uso)
+- Fallback para dados de demonstração quando a API não está acessível
 
-## Integração com Transferegov
+## Integração com APIs
 
-A consulta de histórico usa:
+### TransfereGov (dados abertos — sem autenticação)
 
-- Base padrão: `https://api.transferegov.gestao.gov.br/transferenciasespeciais`
-- Endpoint: `/v1/plano-acao`
-- Filtros: `uf`, `codigoIbge`, `situacaoPlanoAcao`, `page`, `size`
+Base: `https://api.transferegov.gestao.gov.br/transferenciasespeciais`
 
-### Variáveis de ambiente
+O sistema tenta múltiplos endpoints em sequência:
+1. `/proposta?cnpjProponente=eq.{CNPJ}&situacaoTransferencia=eq.AGUARDANDO_PLANO_DE_TRABALHO`
+2. `/proposta?cnpjProponente=eq.{CNPJ}&select=*&limit=30`
+3. `/v1/proposta?cnpjProponente={CNPJ}&page=0&size=20`
 
-Crie um arquivo `.env.local` com:
+Se todos falharem (CORS em ambiente de desenvolvimento local é esperado),
+o sistema cai silenciosamente nos dados de demonstração.
 
-```bash
-# IA (opcional, recomendada)
-GEMINI_API_KEY=sua_chave_gemini
+> **Nota sobre CORS**: Em produção, roteie as chamadas à API TransfereGov
+> através de um proxy servidor (Next.js API Route, Vercel Edge Function, etc.)
+> para evitar bloqueios CORS. A chave de autenticação, se necessária, deve
+> ficar exclusivamente no servidor.
 
-# Opcional: fallback adicional
-ANTHROPIC_API_KEY=sua_chave_anthropic
+### Gemini 2.0 Flash
 
-# API Transferegov
-TRANSFEREGOV_API_URL=https://api.transferegov.gestao.gov.br/transferenciasespeciais
-TRANSFEREGOV_API_TOKEN=seu_token_se_necessario
-```
+Modelo: `gemini-2.0-flash`
+Chave configurada diretamente no HTML (para prototipagem).
 
-> Se o ambiente da API exigir autenticação, use `TRANSFEREGOV_API_TOKEN`.
+> **Segurança**: Em produção, mova a chave Gemini para variável de ambiente
+> no servidor e roteie as chamadas por `/api/gemini`. Nunca exponha a chave
+> em código client-side em produção.
 
-## Como gerar chave Gemini (passo a passo)
+## Campos gerados
 
-1. Acesse o **Google AI Studio**: https://aistudio.google.com/
-2. Faça login com sua conta Google.
-3. No menu de API keys, clique em **Create API key**.
-4. Copie a chave gerada.
-5. No projeto, adicione no `.env.local`:
-   ```bash
-   GEMINI_API_KEY=cole_aqui_a_chave
-   ```
-6. Reinicie o servidor (`npm run dev`).
-7. Gere um plano no sistema para validar resposta da IA.
+### Aba "Plano de Trabalho"
+| Campo | Fonte |
+|-------|-------|
+| 1.1 Orçamento próprio do beneficiário | Fixo (SIM) |
+| 1.2 Classificação Orçamentária de Despesa | Histórico / IA |
+| 1.3 Declaração pessoal/dívida | Fixo (SIM) |
+| 1.4 Prazo de Execução | Histórico |
 
-### Boas práticas de segurança
+### Aba "Detalhamento do Executor"
+| Campo | Fonte |
+|-------|-------|
+| 2.1 Declaração pessoal/dívida | Fixo (SIM) |
+| 2.2 Executor | Histórico |
+| 2.3 Objeto de Execução | API TransfereGov |
+| 2.4 Lista de Detalhamentos | IA |
+| 2.5 Detalhamento do Objeto (Obrigatório) | IA |
+| 2.6 Finalidades | IA |
+| 2.7 Metas do Executor (Meta 1) | IA |
+| 2.8 Conta específica do executor | Fixo (SIM) |
+| 2.9 Lista de Conselhos | Histórico |
+| 2.10 Notificações aos Conselhos | Em branco |
 
-- Nunca commitar `.env.local` no Git.
-- Rotacionar chave em caso de vazamento.
-- Preferir restrição por projeto/ambiente quando disponível.
+## Deploy no Vercel (opcional)
 
-## Execução local
+Para deploy estático no Vercel, basta empurrar o repositório. O Vercel
+serve arquivos HTML estáticos automaticamente. Não é necessário nenhum
+framework ou build step.
 
-```bash
-npm install
-npm run dev
-```
-
-Aplicação disponível em `http://localhost:3000`.
+Se quiser resolver CORS e proteger as chaves, adicione um diretório `/api/`
+com funções serverless simples que proxy as chamadas externas.
 
 ## Stack
 
-- Next.js 14
-- React 18
-- Tailwind CSS
+- HTML5 + CSS3 (sem framework CSS)
+- JavaScript vanilla (sem bundler)
+- API TransfereGov (dados abertos, PostgREST)
+- Gemini 2.0 Flash (Google AI)
