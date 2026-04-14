@@ -873,7 +873,9 @@ function normalizarEmendas(list) {
     executor:    i.executor || i.nomeExecutor || '',
     prazo:       String(i.prazoExecucao || i.prazo || '36'),
     classificacao: i.classificacaoOrcamentaria || '',
-    conselhos:   i.emailConselho || ''
+    conselhos:   i.emailConselho || '',
+    finalidades: Array.isArray(i.finalidades) ? i.finalidades : [],
+    cnpjExecutor: i.cnpjExecutor || ''
   }));
 }
 
@@ -940,6 +942,10 @@ async function gerarPlano() {
    GEMINI — geração em lote
 ══════════════════════════════════════════ */
 async function geminiGerarPlano(em) {
+  const finalidadesLista = (em.finalidades || []).length
+    ? em.finalidades.join(' | ')
+    : '(nenhuma finalidade registrada na API — gere uma coerente com o objeto)';
+
   const prompt =
 `Você é especialista em Transferências Especiais do governo federal brasileiro (EC 105/2019, LC 210/2024).
 Beneficiário: ${S.nomeEnte}
@@ -947,16 +953,22 @@ Emenda: ${em.parlamentar}
 Objeto: ${em.objeto}
 Valor: ${em.valor}
 Executor indicado: ${em.executor || 'a definir'}
+Finalidades disponíveis (escolha UMA, a mais aderente ao objeto): ${finalidadesLista}
 
 Gere os campos do Plano de Trabalho para o TransfereGov.
+
+Regras de consolidação:
+- Sempre que possível, consolide TODAS as entregas em UMA única meta (descrição agregada).
+- Escolha UMA única finalidade, priorizando a lista acima. Se mais de uma se aplicar, escolha a predominante.
+
 Responda SOMENTE com JSON válido, sem markdown, sem texto fora do JSON:
 {
   "classificacao": "projeto/atividade com código SIOP, natureza 3.3.90.39.00 ou 4.4.90.XX.00 conforme objeto, fonte 1.706.311001",
   "executor": "CNPJ formatado e nome completo do executor mais adequado ao objeto e ao estado do ES",
   "detalhamento_lista": "Código — Categoria / Código — Subcategoria",
   "detalhamento_completo": "3 a 5 linhas: objeto, atividades, público-alvo, metodologia, compatível com LC 210/2024",
-  "finalidades": "Código — Categoria / Código — Subcategoria",
-  "metas": "- Descrição: [entrega principal]\\n- Unidade: [sigla]\\n- Quantidade: [inteiro]\\n- Meses Previstos: [12 a 48]"
+  "finalidades": "UMA única finalidade no formato 'Tipo — Área' (ex.: 'Urbanismo — Infraestrutura Urbana')",
+  "metas": "UMA única meta consolidada. Formato: - Descrição: [entrega agregada]\\n- Unidade: [sigla]\\n- Quantidade: [inteiro]\\n- Meses Previstos: [12 a 48]"
 }`;
 
   const r = await fetch(GEMINI_URL, {
@@ -974,13 +986,15 @@ Responda SOMENTE com JSON válido, sem markdown, sem texto fora do JSON:
 }
 
 function fallback(em) {
+  const finalidadePrimaria = (em.finalidades && em.finalidades[0])
+    || '23 — Comércio e Serviços / 691 — Promoção Comercial';
   return {
     classificacao: 'Projeto/atividade: [verificar no SIOP] — Natureza: 3.3.90.39.00 — Outros Serviços de Terceiros PJ — Fonte: 1.706.311001',
     executor: em.executor || '[CNPJ e nome do executor a preencher]',
-    detalhamento_lista: '23 — Comércio e Serviços / 691 — Promoção Comercial',
+    detalhamento_lista: finalidadePrimaria,
     detalhamento_completo: `Execução do objeto descrito na emenda: ${em.objeto}. Inclui contratação de serviços, aquisição de insumos e realização das atividades previstas no plano de ação.`,
-    finalidades: '23 — Comércio e Serviços / 691 — Promoção Comercial',
-    metas: `- Descrição: Execução das atividades previstas no objeto\n- Unidade: Un\n- Quantidade: 1\n- Meses Previstos: ${em.prazo || 36}`
+    finalidades: finalidadePrimaria,
+    metas: `- Descrição: Execução consolidada das entregas previstas no objeto\n- Unidade: Un\n- Quantidade: 1\n- Meses Previstos: ${em.prazo || 36}`
   };
 }
 
@@ -993,8 +1007,11 @@ const PROMPTS = {
   objeto:              em => `Reformule para o campo 2.3 do TransfereGov: "${em.objeto}". Compatível com a finalidade ministerial. Responda SOMENTE o texto.`,
   detalhamento_lista:  em => `Campo 2.4 TransfereGov para "${em.objeto}". Formato: "Código — Categoria / Código — Subcategoria". Responda SOMENTE o texto.`,
   detalhamento_completo: em => `Campo 2.5 TransfereGov para "${em.objeto}": 3 a 5 linhas com atividades, público-alvo, metodologia (LC 210/2024). Responda SOMENTE o texto.`,
-  finalidades:         em => `Campo 2.6 Finalidades TransfereGov para "${em.objeto}". Formato: "Código — Categoria / Código — Subcategoria". Responda SOMENTE o texto.`,
-  metas:               em => `Campo 2.7 TransfereGov para "${em.objeto}". Formato:\n- Descrição: ...\n- Unidade: ...\n- Quantidade: ...\n- Meses Previstos: ...\nResponda SOMENTE o texto.`
+  finalidades:         em => {
+    const lista = (em.finalidades||[]).length ? em.finalidades.join(' | ') : '(livre, coerente com o objeto)';
+    return `Campo 2.6 Finalidades do TransfereGov. Objeto: "${em.objeto}". Escolha UMA única finalidade (a mais aderente) desta lista: ${lista}. Formato de saída: "Tipo — Área" (ex.: "Urbanismo — Infraestrutura Urbana"). Responda SOMENTE o texto.`;
+  },
+  metas:               em => `Campo 2.7 do TransfereGov. Objeto: "${em.objeto}". Consolide em UMA única meta agregada. Formato:\n- Descrição: ...\n- Unidade: ...\n- Quantidade: ...\n- Meses Previstos: ...\nResponda SOMENTE o texto.`
 };
 
 async function regen(fieldId, tipo) {
@@ -1115,6 +1132,35 @@ function enviarEmail() {
 }
 
 const pause = ms => new Promise(r => setTimeout(r, ms));
+
+/* ══════════════════════════════════════════
+   CARREGAR LISTA DE ENTES (ES) DO BACKEND
+══════════════════════════════════════════ */
+async function carregarEntes() {
+  const sel = $('sel-benef');
+  if (!sel) return;
+  try {
+    const r = await fetch('/api/transferegov-entes', { signal: AbortSignal.timeout(8000) });
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    const entes = await r.json();
+    if (!Array.isArray(entes) || entes.length === 0) return; // mantém fallback hardcoded
+
+    // Preserva valor selecionado (se houver) e o placeholder inicial.
+    const prev = sel.value;
+    sel.innerHTML = '<option value="">— selecione o ente federado —</option>';
+    entes.forEach(e => {
+      const o = document.createElement('option');
+      o.value = e.cnpj;
+      o.textContent = `${e.cnpj} — ${e.nome}`;
+      sel.appendChild(o);
+    });
+    if (prev) sel.value = prev;
+  } catch (_) {
+    // Se o endpoint falhar, o dropdown hardcoded do HTML permanece como fallback.
+  }
+}
+
+carregarEntes();
 </script>
 </body>
 </html>
