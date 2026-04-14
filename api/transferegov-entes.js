@@ -10,6 +10,7 @@
 
 const TGOV_BASE = 'https://api.transferegov.gestao.gov.br/transferenciasespeciais';
 const UF_ALVO = 'ES';
+const SITUACAO_ALVO = 'AGUARDANDO_CONCLUSAO_PLANO_TRABALHO';
 const TIMEOUT_MS = 12000;
 
 async function getJson(url) {
@@ -31,8 +32,11 @@ async function getJson(url) {
 }
 
 function urlPlanoAcaoES() {
+  // Só lista entes que têm pelo menos um Plano de Ação AGUARDANDO conclusão
+  // de PT — que é exatamente o universo que o assistente atende.
   const qs = new URLSearchParams({
     uf_beneficiario_plano_acao: `eq.${UF_ALVO}`,
+    situacao_plano_acao: `eq.${SITUACAO_ALVO}`,
     select: 'cnpj_beneficiario_plano_acao,nome_beneficiario_plano_acao',
     limit: '1000',
   });
