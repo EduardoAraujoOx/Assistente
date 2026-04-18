@@ -152,8 +152,9 @@ export default async function handler(req, res) {
     }
 
     // 2. Verifica status do PT para cada PA (para filtrar ou rotular)
-    const ptRows   = await getJsonSafe(urlPtStatus(idsPA)) ?? [];
-    const ptByPa   = Object.fromEntries(ptRows.map(r => [r.id_plano_acao, r]));
+    const ptRaw  = await getJsonSafe(urlPtStatus(idsPA));
+    const ptRows = Array.isArray(ptRaw) ? ptRaw : [];   // guard: PostgREST pode retornar objeto em erro
+    const ptByPa = Object.fromEntries(ptRows.map(r => [r.id_plano_acao, r]));
 
     // 3. Em modo normal, exclui planos cujo PT já foi enviado/aprovado
     if (!modoTeste) {

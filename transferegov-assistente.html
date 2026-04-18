@@ -382,7 +382,10 @@
         </div>
         <div id="em-vazio"    class="placeholder">Selecione um beneficiário para carregar as emendas.</div>
         <div id="em-loading"  class="placeholder" style="display:none;">Consultando API TransfereGov...</div>
-        <div id="em-vazia"    class="placeholder" style="display:none;">Nenhuma emenda disponível para esse beneficiário.</div>
+        <div id="em-vazia" class="placeholder" style="display:none;">
+          Nenhuma emenda com PT pendente para esse beneficiário.<br>
+          <small style="color:#b87a00;">Se os planos já foram enviados e você quer testá-los, ative <strong>Modo Teste</strong> abaixo.</small>
+        </div>
         <div id="em-tabela"   class="table-wrap"  style="display:none;">
           <table class="emenda-table">
             <thead><tr>
@@ -733,29 +736,29 @@ const DEMO = {
     {
       parlamentar: '202627740006 — PAULO FOLLETTO',
       objeto: '487 — Feira de Negócios e Capacitação para Microempreendedores Individuais — Ministério do Empreendedorismo, da Microempresa e da Empresa de Pequeno Porte',
-      valor: 'R$ 1.990.000,00',
+      valor: 'R$ 1.990.000,00', valorBruto: 1990000,
       executor: '01.686.866/0001-07 | ADERES — Agência de Desenvolvimento em Rede do ES',
       prazo: '36',
       classificacao: 'Projeto/atividade: 23.691.0035.2062 — INOVA MERCADO\nNatureza de Despesa: 3.3.90.39.00 — Outros Serviços de Terceiros — Pessoa Jurídica\nFonte: 1.706.311001 e/ou 2.706.311001',
-      conselhos: 'presidencia@ales.es.gov.br'
+      conselhos: 'presidencia@ales.es.gov.br', finalidades: [],
     },
     {
       parlamentar: '202627740007 — CARMINHO CARETA',
       objeto: '488 — Fortalecimento da Agricultura Familiar e Agroindústria — Ministério do Desenvolvimento Agrário e Agricultura Familiar',
-      valor: 'R$ 850.000,00',
+      valor: 'R$ 850.000,00', valorBruto: 850000,
       executor: '27.080.530/0001-43 | SEAG-ES — Secretaria de Agricultura, Abastecimento, Aquicultura e Pesca',
       prazo: '24',
       classificacao: 'Projeto/atividade: 20.606.2014.211E — Apoio à Agricultura Familiar\nNatureza de Despesa: 3.3.90.39.00 — Outros Serviços de Terceiros — PJ\nFonte: 1.706.311001',
-      conselhos: 'presidencia@ales.es.gov.br'
+      conselhos: 'presidencia@ales.es.gov.br', finalidades: [],
     },
     {
       parlamentar: '202627740008 — LUCAS POLLON',
       objeto: '112 — Aquisição de Equipamentos de Saúde para Fortalecimento da Rede de Atenção — Ministério da Saúde',
-      valor: 'R$ 2.200.000,00',
+      valor: 'R$ 2.200.000,00', valorBruto: 2200000,
       executor: '27.080.530/0001-43 | SESA-ES — Secretaria de Estado da Saúde',
       prazo: '12',
       classificacao: 'Projeto/atividade: 10.302.2015.8585 — Atenção à Saúde da População\nNatureza de Despesa: 4.4.90.52.00 — Equipamentos e Material Permanente\nFonte: 1.706.311001',
-      conselhos: 'presidencia@ales.es.gov.br'
+      conselhos: 'presidencia@ales.es.gov.br', finalidades: [],
     }
   ],
   '27165120000173': [
@@ -1216,8 +1219,9 @@ function enviarEmail() {
     `2.6 Finalidades:  ${g('f26')}`,
     `2.7 Metas:\n${g('f27')}`,
     `2.8 Conta específica: ${ck('f28')}`,
-    `2.9 Conselhos:    ${g('f29')}`,
-    `2.10 Notificações: ${g('f210') || '(em branco)'}`,
+    `2.9 Banco:        ${g('f29banco')}`,
+    `2.10 Agência:     ${g('f210ag')}`,
+    `2.11 Conselhos:   ${g('f211')}`,
     '',
     '=== FIM ==='
   ].join('\n');
