@@ -943,9 +943,8 @@ function renderEmendas(emendas) {
 ══════════════════════════════════════════ */
 function prazoMaximo(valorBruto) {
   const v = Number(String(valorBruto).replace(/\D/g, '')) || 0;
-  if (v <= 500_000)   return 24;
-  if (v <= 1_500_000) return 36;
-  return 48;
+  if (v <= 500_000) return 24;
+  return 36;
 }
 
 /* ══════════════════════════════════════════
@@ -1027,6 +1026,7 @@ async function geminiGerarPlano(em, historico = []) {
     : '(nenhuma finalidade registrada na API — gere uma coerente com o objeto)';
 
   // Monta bloco de exemplos históricos aprovados
+  const prazoLegal = prazoMaximo(em.valorBruto);
   const exStr = historico.length
     ? historico.map((ex, i) => `
 Exemplo ${i+1} aprovado (${ex.ano}):
@@ -1037,7 +1037,7 @@ Exemplo ${i+1} aprovado (${ex.ano}):
   Classificação:     ${ex.classificacaoOrcamentaria || 'n/d'}
   Prazo (meses):     ${ex.prazoMeses || 'n/d'}
   Finalidade:        ${(ex.finalidades||[])[0] ? (ex.finalidades[0].tipoCodigo+'/'+ex.finalidades[0].areaCodigo+' — '+ex.finalidades[0].tipoDescricao+'/'+ex.finalidades[0].areaDescricao) : 'n/d'}
-  Meta:              ${(ex.metas||[])[0] ? (ex.metas[0].descricao+' | '+ex.metas[0].quantidade+' '+ex.metas[0].unidade) : 'n/d'}`
+  Meta:              ${(ex.metas||[])[0] ? (ex.metas[0].descricao+' | '+ex.metas[0].quantidade+' '+ex.metas[0].unidade+' | '+ex.metas[0].prazoMeses+'m') : 'n/d'}`
     ).join('\n')
     : '(nenhum exemplo similar encontrado no histórico)';
 
@@ -1052,13 +1052,15 @@ Beneficiário: ${S.nomeEnte}
 Emenda: ${em.parlamentar}
 Objeto (campo 2.3, definido pelo parlamentar): ${em.objeto}
 Valor total: ${em.valor}
+Prazo máximo legal para este valor: ${prazoLegal} meses
 Finalidades disponíveis (escolha UMA): ${finalidadesLista}
 
 REGRAS:
 - Replique os padrões dos exemplos aprovados, adaptando ao objeto atual.
+- Se os exemplos mostram o mesmo executor em todos os casos, USE ESSE EXECUTOR EXATAMENTE.
 - Consolide em UMA única meta sempre que possível.
-- Escolha UMA única finalidade.
-- Prazo máximo conforme legislação (já calculado externamente — não inclua no JSON).
+- Escolha UMA única finalidade coerente com o objeto (prefira a finalidade dos exemplos).
+- No campo "metas", use exatamente ${prazoLegal} meses em "Meses Previstos".
 
 Responda SOMENTE com JSON válido, sem markdown:
 {
@@ -1068,8 +1070,8 @@ Responda SOMENTE com JSON válido, sem markdown:
   "agencia": "número da agência (baseie-se nos exemplos se houver)",
   "detalhamento_lista": "Código — Categoria / Código — Subcategoria",
   "detalhamento_completo": "3 a 5 linhas: objeto, atividades, público-alvo, metodologia (LC 210/2024)",
-  "finalidades": "UMA única finalidade no formato 'Tipo/Área — Descrição' (ex.: 'Urbanismo — Infraestrutura Urbana')",
-  "metas": "UMA única meta. Formato:\\n- Descrição: [entrega]\\n- Unidade: [sigla]\\n- Quantidade: [inteiro]\\n- Meses Previstos: [número]"
+  "finalidades": "UMA única finalidade no formato 'Tipo/Área — Descrição' (ex.: 'Comércio e Serviços — Promoção Comercial')",
+  "metas": "UMA única meta. Formato:\\n- Descrição: [entrega]\\n- Unidade: [sigla]\\n- Quantidade: [inteiro]\\n- Meses Previstos: ${prazoLegal}"
 }`;
 
   const r = await fetch(GEMINI_PROXY, {

@@ -125,8 +125,8 @@ async function fetchFinalidades(idsExec) {
   if (!idsExec.length) return [];
   const qs = new URLSearchParams({
     id_executor: `in.(${idsExec.join(',')})`,
-    select: 'id_executor,cd_area_politica_publica_tipo,ds_area_politica_publica_tipo,' +
-            'cd_area_politica_publica,ds_area_politica_publica',
+    select: 'id_executor,cd_area_politica_publica_tipo_pt,area_politica_publica_tipo_pt,' +
+            'cd_area_politica_publica_pt,area_politica_publica_pt',
     limit: '500',
   });
   return await getJsonSafe(`${TGOV_BASE}/finalidade_especial?${qs}`) ?? [];
@@ -138,8 +138,8 @@ async function fetchMetas(idsExec) {
   if (!idsExec.length) return [];
   const qs = new URLSearchParams({
     id_executor: `in.(${idsExec.join(',')})`,
-    select: 'id_executor,desc_meta,qt_unidade_meta,un_medida_meta,' +
-            'vl_unitario_meta,vl_total_meta',
+    select: 'id_executor,desc_meta,qt_uniade_meta,un_medida_meta,' +
+            'vl_custeio_emenda_especial_meta,vl_investimento_emenda_especial_meta,qt_meses_meta',
     limit: '500',
   });
   return await getJsonSafe(`${TGOV_BASE}/meta_especial?${qs}`) ?? [];
@@ -221,17 +221,17 @@ async function main() {
       const pt  = ptByPa[e.id_plano_acao] ?? {};
       const inf = objMap[e.id_plano_acao]  ?? {};
       const fs  = (finalByExec[e.id_executor] ?? []).map(f => ({
-        tipoCodigo:  f.cd_area_politica_publica_tipo,
-        tipoDescricao: f.ds_area_politica_publica_tipo,
-        areaCodigo:  f.cd_area_politica_publica,
-        areaDescricao: f.ds_area_politica_publica,
+        tipoCodigo:    f.cd_area_politica_publica_tipo_pt,
+        tipoDescricao: f.area_politica_publica_tipo_pt,
+        areaCodigo:    f.cd_area_politica_publica_pt,
+        areaDescricao: f.area_politica_publica_pt,
       }));
       const ms  = (metasByExec[e.id_executor] ?? []).map(m => ({
-        descricao:    m.desc_meta,
-        quantidade:   m.qt_unidade_meta,
-        unidade:      m.un_medida_meta,
-        valorUnitario: m.vl_unitario_meta,
-        valorTotal:   m.vl_total_meta,
+        descricao:  m.desc_meta,
+        quantidade: m.qt_uniade_meta,
+        unidade:    m.un_medida_meta,
+        valorTotal: Number(m.vl_custeio_emenda_especial_meta || 0) + Number(m.vl_investimento_emenda_especial_meta || 0),
+        prazoMeses: m.qt_meses_meta,
       }));
 
       return {
