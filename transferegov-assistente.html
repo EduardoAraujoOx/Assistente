@@ -536,21 +536,19 @@
         <div class="field">
           <label class="field-label">
             2.4 Lista de Detalhamentos do Objeto de Execução <span class="req">*</span>
-            <span class="tag tag-ai">IA</span>
+            <span class="tag tag-api">API</span>
           </label>
           <div class="field-row">
             <input type="text" id="f24" placeholder="Código — Categoria / Código — Subcategoria">
-            <div class="btn-group">
-              <button class="icon-btn ai"   onclick="regen('f24','detalhamento_lista')">✦ IA</button>
-              <button class="icon-btn copy" onclick="copiar('f24')">⧉</button>
-            </div>
+            <button class="icon-btn copy" onclick="copiar('f24')">⧉</button>
           </div>
+          <p class="hint">Preenchido com o código e descrição do objeto padronizado SIOP. Ajuste se necessário.</p>
         </div>
 
         <div class="field">
           <label class="field-label">
             2.5 Detalhamento do Objeto de Execução <span class="req">*</span>
-            <span class="tag tag-ai">IA</span>
+            <span class="tag tag-hist">Hist</span>
           </label>
           <div class="field-row">
             <textarea id="f25" rows="5" placeholder="Descrição detalhada: atividades, metodologia, público-alvo..."></textarea>
@@ -559,6 +557,7 @@
               <button class="icon-btn copy" onclick="copiar('f25')">⧉</button>
             </div>
           </div>
+          <p class="hint">Baseado no texto do executor em planos aprovados similares. Use ✦ IA para adaptar ao objeto específico.</p>
         </div>
 
         <div class="field">
@@ -904,11 +903,11 @@ function normalizarEmendas(list) {
     parlamentar:  i.parlamentar || i.nomeParlamentar || i.nomeEmenda || i.codigoEmenda || 'N/D',
     objeto:       i.objeto || i.descricaoObjeto || i.objetoEmenda || 'N/D',
     valor:        fmt(i.valorTotal || i.valorRepasse || i.valor),
-    valorBruto:   i.valorTotal || i.valorRepasse || i.valor || 0,
+    valorBruto:   typeof i.valorBruto === 'number' ? i.valorBruto : (i.valorTotal || i.valorRepasse || i.valor || 0),
     executor:     i.executor || i.nomeExecutor || '',
     prazo:        String(i.prazoExecucao || i.prazo || ''),
     classificacao: i.classificacaoOrcamentaria || '',
-    conselhos:    i.emailConselho || '',
+    conselhos:    i.emailCamara || i.emailConselho || '',
     finalidades:  Array.isArray(i.finalidades) ? i.finalidades : [],
     cnpjExecutor: i.cnpjExecutor || '',
     situacaoPT:   i.situacaoPT || null,
@@ -942,10 +941,12 @@ function renderEmendas(emendas) {
    PRAZO MÁXIMO POR VALOR (LC 210/2024)
 ══════════════════════════════════════════ */
 function prazoMaximo(valorBruto) {
-  const v = Number(String(valorBruto).replace(/\D/g, '')) || 0;
-  if (v <= 500_000)   return 24;
-  if (v <= 1_500_000) return 36;
-  return 48;
+  // Aceita número (preferido) ou string formatada "R$ 1.234.567,89"
+  const v = typeof valorBruto === 'number'
+    ? valorBruto
+    : parseFloat(String(valorBruto).replace(/[R$\s]/g,'').replace(/\./g,'').replace(',','.')) || 0;
+  if (v <= 500_000) return 24;
+  return 36;
 }
 
 /* ══════════════════════════════════════════
@@ -968,6 +969,9 @@ async function gerarPlano() {
 
   $('loading-msg').textContent = 'Gerando campos com Gemini AI...';
 
+  // Guarda historico no estado para uso em regen() individual
+  S.historico = historico;
+
   let c;
   try   { c = await geminiGerarPlano(S.emenda, historico); }
   catch { c = fallback(S.emenda, historico); }
@@ -983,12 +987,18 @@ async function gerarPlano() {
     ? `${execHist.cnpj} — ${execHist.nome}`
     : (S.emenda.executor || c.executor);
 
-  setVal('f12', S.emenda.classificacao || c.classificacao);
+  // 2.4: código SIOP + descrição do objeto (diretamente da API, sem IA)
+  setVal('f24', S.emenda.objeto);
+
+  // 2.5: objeto_executor do plano mais similar aprovado (KB direto), fallback Gemini
+  const objetoExecHist = historico[0]?.objetoExecutor;
+  setVal('f25', objetoExecHist || c.detalhamento_completo);
+
+  // Classificação: KB direto > API > Gemini (evita alucinação)
+  setVal('f12', S.emenda.classificacao || historico[0]?.classificacaoOrcamentaria || c.classificacao);
   setVal('f14', prazoFinal);
   setVal('f22', execStr);
   setVal('f23', S.emenda.objeto);
-  setVal('f24', c.detalhamento_lista);
-  setVal('f25', c.detalhamento_completo);
   setVal('f26', c.finalidades);
   setVal('f27', c.metas);
   // Banco/Agência do executor histórico
@@ -1027,6 +1037,7 @@ async function geminiGerarPlano(em, historico = []) {
     : '(nenhuma finalidade registrada na API — gere uma coerente com o objeto)';
 
   // Monta bloco de exemplos históricos aprovados
+  const prazoLegal = prazoMaximo(em.valorBruto);
   const exStr = historico.length
     ? historico.map((ex, i) => `
 Exemplo ${i+1} aprovado (${ex.ano}):
@@ -1037,7 +1048,7 @@ Exemplo ${i+1} aprovado (${ex.ano}):
   Classificação:     ${ex.classificacaoOrcamentaria || 'n/d'}
   Prazo (meses):     ${ex.prazoMeses || 'n/d'}
   Finalidade:        ${(ex.finalidades||[])[0] ? (ex.finalidades[0].tipoCodigo+'/'+ex.finalidades[0].areaCodigo+' — '+ex.finalidades[0].tipoDescricao+'/'+ex.finalidades[0].areaDescricao) : 'n/d'}
-  Meta:              ${(ex.metas||[])[0] ? (ex.metas[0].descricao+' | '+ex.metas[0].quantidade+' '+ex.metas[0].unidade) : 'n/d'}`
+  Meta:              ${(ex.metas||[])[0] ? (ex.metas[0].descricao+' | '+ex.metas[0].quantidade+' '+ex.metas[0].unidade+' | '+ex.metas[0].prazoMeses+'m') : 'n/d'}`
     ).join('\n')
     : '(nenhum exemplo similar encontrado no histórico)';
 
@@ -1052,13 +1063,15 @@ Beneficiário: ${S.nomeEnte}
 Emenda: ${em.parlamentar}
 Objeto (campo 2.3, definido pelo parlamentar): ${em.objeto}
 Valor total: ${em.valor}
+Prazo máximo legal para este valor: ${prazoLegal} meses
 Finalidades disponíveis (escolha UMA): ${finalidadesLista}
 
 REGRAS:
-- Replique os padrões dos exemplos aprovados, adaptando ao objeto atual.
+- Se os exemplos mostram o mesmo executor em todos os casos, USE ESSE EXECUTOR EXATAMENTE.
 - Consolide em UMA única meta sempre que possível.
-- Escolha UMA única finalidade.
-- Prazo máximo conforme legislação (já calculado externamente — não inclua no JSON).
+- Escolha UMA única finalidade coerente com o objeto (prefira a finalidade dos exemplos).
+- No campo "metas", use exatamente ${prazoLegal} meses em "Meses Previstos".
+- NÃO inclua detalhamento_lista nem detalhamento_completo — esses campos são preenchidos por outra fonte.
 
 Responda SOMENTE com JSON válido, sem markdown:
 {
@@ -1066,10 +1079,8 @@ Responda SOMENTE com JSON válido, sem markdown:
   "executor": "CNPJ formatado — nome completo do executor (baseie-se nos exemplos se houver)",
   "banco": "código — nome do banco (baseie-se nos exemplos se houver)",
   "agencia": "número da agência (baseie-se nos exemplos se houver)",
-  "detalhamento_lista": "Código — Categoria / Código — Subcategoria",
-  "detalhamento_completo": "3 a 5 linhas: objeto, atividades, público-alvo, metodologia (LC 210/2024)",
-  "finalidades": "UMA única finalidade no formato 'Tipo/Área — Descrição' (ex.: 'Urbanismo — Infraestrutura Urbana')",
-  "metas": "UMA única meta. Formato:\\n- Descrição: [entrega]\\n- Unidade: [sigla]\\n- Quantidade: [inteiro]\\n- Meses Previstos: [número]"
+  "finalidades": "UMA única finalidade no formato 'Tipo/Área — Descrição' (ex.: 'Comércio e Serviços — Promoção Comercial')",
+  "metas": "UMA única meta. Formato:\\n- Descrição: [entrega]\\n- Unidade: [sigla]\\n- Quantidade: [inteiro]\\n- Meses Previstos: ${prazoLegal}"
 }`;
 
   const r = await fetch(GEMINI_PROXY, {
@@ -1108,8 +1119,19 @@ const PROMPTS = {
   banco:                em => `Sugira o banco (código — nome) mais usual para o executor de "${em.objeto}" no ES (Transferências Especiais EC 105/2019). Responda SOMENTE o texto no formato "001 — Banco do Brasil".`,
   agencia:              em => `Sugira o número de agência mais usual para executor de "${em.objeto}" no ES. Responda SOMENTE o número.`,
   objeto:               em => `Reformule para o campo 2.3 do TransfereGov: "${em.objeto}". Compatível com a finalidade ministerial. Responda SOMENTE o texto.`,
-  detalhamento_lista:   em => `Campo 2.4 TransfereGov para "${em.objeto}". Formato: "Código — Categoria / Código — Subcategoria". Responda SOMENTE o texto.`,
-  detalhamento_completo:em => `Campo 2.5 TransfereGov para "${em.objeto}": 3 a 5 linhas com atividades, público-alvo, metodologia (LC 210/2024). Responda SOMENTE o texto.`,
+  detalhamento_completo: em => {
+    const seed = (S.historico || [])[0]?.objetoExecutor;
+    if (seed) {
+      return `Adapte o texto abaixo (de plano similar já aprovado pelo ministério) ao novo plano, incorporando os elementos específicos do objeto parlamentar. Mantenha a estrutura e o nível de detalhamento. Responda SOMENTE o texto adaptado, sem comentários.
+
+Texto base aprovado:
+${seed}
+
+Objeto parlamentar do novo plano:
+${em.objeto}`;
+    }
+    return `Campo 2.5 do Plano de Trabalho (TransfereGov / LC 210/2024). Objeto: "${em.objeto}". Escreva 3 a 5 linhas descrevendo: o que será executado, atividades principais, público-alvo, metodologia. Responda SOMENTE o texto.`;
+  },
   finalidades:          em => {
     const lista = (em.finalidades||[]).length ? em.finalidades.join(' | ') : '(livre, coerente com o objeto)';
     return `Campo 2.6 Finalidades do TransfereGov. Objeto: "${em.objeto}". Escolha UMA única finalidade desta lista: ${lista}. Formato: "Tipo — Área". Responda SOMENTE o texto.`;

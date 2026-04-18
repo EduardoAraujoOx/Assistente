@@ -105,6 +105,11 @@ PLANO A PREENCHER:
   Objeto do parlamentar: ${planoAtual.objetoParlamentar ?? 'n/d'}
   Valor total: R$ ${planoAtual.valorTotal ?? 'n/d'}
 
+REGRAS:
+- Se os exemplos mostram o mesmo executor em todos os casos, USE ESSE EXECUTOR EXATAMENTE.
+- Escolha a finalidade mais coerente com o objeto (prefira a finalidade dos exemplos).
+- O prazoMeses deve refletir a escala do projeto; nunca invente valores fora do contexto dos exemplos.
+
 Responda SOMENTE com JSON válido, sem markdown:
 {
   "executorCnpj": "CNPJ do executor mais provável",
