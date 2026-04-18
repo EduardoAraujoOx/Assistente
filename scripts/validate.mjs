@@ -28,6 +28,7 @@ const ROOT      = join(__dirname, '..');
 const CNPJ_ESTADO_ES = '27080530000143';
 const GEMINI_KEY     = process.env.GEMINI_API_KEY;
 const GEMINI_URL     = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite:generateContent?key=${GEMINI_KEY}`;
+const GEMINI_DELAY_MS = 2500; // free tier: 30 RPM → ~2s entre chamadas
 
 const args        = process.argv.slice(2);
 const incluirMun  = args.includes('--all');
@@ -129,8 +130,10 @@ Responda SOMENTE com JSON válido, sem markdown:
 async function predict(planoAtual, exemplos, retries = 3) {
   if (!GEMINI_KEY) throw new Error('GEMINI_API_KEY não definida no ambiente.');
   const prompt = buildPrompt(planoAtual, exemplos);
+  // Espaçamento mínimo entre chamadas para respeitar o free tier (30 RPM)
+  await new Promise(r => setTimeout(r, GEMINI_DELAY_MS));
   for (let attempt = 0; attempt <= retries; attempt++) {
-    if (attempt > 0) await new Promise(r => setTimeout(r, 2000 * attempt));
+    if (attempt > 0) await new Promise(r => setTimeout(r, 5000 * attempt));
     const r = await fetch(GEMINI_URL, {
       method:  'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -139,7 +142,7 @@ async function predict(planoAtual, exemplos, retries = 3) {
         generationConfig: { temperature: 0.2, maxOutputTokens: 1200 },
       }),
     });
-    if (r.status === 429 && attempt < retries) { console.log(`    ↳ 429 rate limit, aguardando ${2*(attempt+1)}s...`); continue; }
+    if (r.status === 429 && attempt < retries) { console.log(`    ↳ 429 rate limit, aguardando ${5*(attempt+1)}s...`); continue; }
     if (!r.ok) throw new Error(`Gemini ${r.status}`);
     const d = await r.json();
     const raw = d.candidates?.[0]?.content?.parts?.[0]?.text ?? '';

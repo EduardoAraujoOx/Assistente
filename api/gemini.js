@@ -4,7 +4,7 @@
 // Body: { prompt: string, temperature?: number, maxTokens?: number }
 // Response: { text: string }
 
-const GEMINI_MODEL = 'gemini-2.0-flash';
+const GEMINI_MODEL = 'gemini-2.0-flash-lite';
 const TIMEOUT_MS   = 30000;
 
 export default async function handler(req, res) {
