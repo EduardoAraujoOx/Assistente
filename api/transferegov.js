@@ -118,6 +118,7 @@ function montar(pa, ptInfo) {
     codigoEmenda:       emenda.codigoEmendaFormatado || null,
     objeto:             objetoDe(pa) || 'Objeto de Execução não informado pela API.',
     valorTotal:         formatBRL(pa.valorTotal),
+    valorBruto:         Number(pa.valorTotal) || 0,
     valorCusteio:       formatBRL(pa.valorCusteio),
     valorInvestimento:  formatBRL(pa.valorInvestimento),
     nomeBeneficiario:   beneficiario.nome  || null,
@@ -126,6 +127,7 @@ function montar(pa, ptInfo) {
     cnpjExecutor:       beneficiario.cnpj  || null,
     prazoExecucao:      null,
     classificacaoOrcamentaria: '',
+    emailCamara:        pa.emailCamara || '',
     finalidades:        finalidadesDe(pa),
     areaPoliticaPublicaResumo: pa.objetoDetalhe || '',
   };

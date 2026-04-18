@@ -904,11 +904,11 @@ function normalizarEmendas(list) {
     parlamentar:  i.parlamentar || i.nomeParlamentar || i.nomeEmenda || i.codigoEmenda || 'N/D',
     objeto:       i.objeto || i.descricaoObjeto || i.objetoEmenda || 'N/D',
     valor:        fmt(i.valorTotal || i.valorRepasse || i.valor),
-    valorBruto:   i.valorTotal || i.valorRepasse || i.valor || 0,
+    valorBruto:   typeof i.valorBruto === 'number' ? i.valorBruto : (i.valorTotal || i.valorRepasse || i.valor || 0),
     executor:     i.executor || i.nomeExecutor || '',
     prazo:        String(i.prazoExecucao || i.prazo || ''),
     classificacao: i.classificacaoOrcamentaria || '',
-    conselhos:    i.emailConselho || '',
+    conselhos:    i.emailCamara || i.emailConselho || '',
     finalidades:  Array.isArray(i.finalidades) ? i.finalidades : [],
     cnpjExecutor: i.cnpjExecutor || '',
     situacaoPT:   i.situacaoPT || null,
@@ -942,7 +942,10 @@ function renderEmendas(emendas) {
    PRAZO MÁXIMO POR VALOR (LC 210/2024)
 ══════════════════════════════════════════ */
 function prazoMaximo(valorBruto) {
-  const v = Number(String(valorBruto).replace(/\D/g, '')) || 0;
+  // Aceita número (preferido) ou string formatada "R$ 1.234.567,89"
+  const v = typeof valorBruto === 'number'
+    ? valorBruto
+    : parseFloat(String(valorBruto).replace(/[R$\s]/g,'').replace(/\./g,'').replace(',','.')) || 0;
   if (v <= 500_000) return 24;
   return 36;
 }
@@ -982,7 +985,8 @@ async function gerarPlano() {
     ? `${execHist.cnpj} — ${execHist.nome}`
     : (S.emenda.executor || c.executor);
 
-  setVal('f12', S.emenda.classificacao || c.classificacao);
+  // Classificação: KB direto > API > Gemini (evita alucinação)
+  setVal('f12', S.emenda.classificacao || historico[0]?.classificacaoOrcamentaria || c.classificacao);
   setVal('f14', prazoFinal);
   setVal('f22', execStr);
   setVal('f23', S.emenda.objeto);
