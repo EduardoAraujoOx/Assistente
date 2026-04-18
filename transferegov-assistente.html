@@ -937,8 +937,11 @@ function renderEmendas(emendas) {
   show('em-tabela');
 }
 
+const CNPJ_ESTADO_ES = '27080530000143';
+
 /* ══════════════════════════════════════════
    LOOKUP: SIOP OBJETO → EXECUTOR ES
+   Aplicável APENAS ao ente Estado do ES.
    Derivado dos 15 planos aprovados/submetidos do Estado ES em 2026.
    Prioridade máxima — sobrepõe KB e Gemini.
 ══════════════════════════════════════════ */
@@ -1023,8 +1026,11 @@ async function gerarPlano() {
   // Guarda historico no estado para uso em regen() individual
   S.historico = historico;
 
-  // ── Lookup por código SIOP (prioridade máxima) ──────────────────────────
-  const codigoSIOP = codigoSIOPDe(S.emenda.objeto);
+  // ── Detecção: município ou Estado ES ────────────────────────────────────
+  const isMunicipio = S.cnpj !== CNPJ_ESTADO_ES;
+
+  // Lookup por código SIOP (somente para o Estado ES)
+  const codigoSIOP = isMunicipio ? null : codigoSIOPDe(S.emenda.objeto);
   const lookup     = codigoSIOP ? EXECUTOR_POR_OBJETO[codigoSIOP] : null;
 
   let c;
@@ -1038,46 +1044,73 @@ async function gerarPlano() {
     ?? prazoMaximo()
   );
 
-  // Executor: lookup SIOP > KB histórico > Gemini
+  // ── Executor ─────────────────────────────────────────────────────────────
   const execHist = historico[0]?.executor;
-  const execStr  = lookup
-    ? `${lookup.cnpj} — ${lookup.nome}`
-    : execHist
-      ? `${execHist.cnpj} — ${execHist.nome}`
-      : (S.emenda.executor || c.executor);
+  let execStr;
+  if (isMunicipio) {
+    // Municípios: executor = o próprio município (beneficiário) — regra empírica 29/30 planos
+    execStr = `${S.cnpj} — ${S.nomeEnte}`;
+  } else if (lookup) {
+    execStr = `${lookup.cnpj} — ${lookup.nome}`;
+  } else if (execHist) {
+    execStr = `${execHist.cnpj} — ${execHist.nome}`;
+  } else {
+    execStr = S.emenda.executor || c.executor;
+  }
 
-  // 2.4: código SIOP + descrição do objeto (diretamente da API, sem IA)
+  // ── Conta específica (f28) ────────────────────────────────────────────────
+  // Municípios: sempre Não. Estado: lookup define; padrão = Sim.
+  $('f28').checked = isMunicipio ? false : (lookup ? lookup.contaEspecifica === 'Sim' : true);
+
+  // 2.4: objeto do SIOP (diretamente da API, sem IA)
   setVal('f24', S.emenda.objeto);
 
-  // 2.5: KB direto para ADERES (obj 487) > Gemini; outros: Gemini adapta
+  // 2.5: KB histórico > Gemini
   const objetoExecHist = historico[0]?.objetoExecutor;
   setVal('f25', objetoExecHist || c.detalhamento_completo);
 
-  // Classificação: lookup > KB > Gemini
-  setVal('f12', S.emenda.classificacao
-    || (lookup?.classificacao || null)
-    || historico[0]?.classificacaoOrcamentaria
-    || c.classificacao);
+  // ── Classificação ─────────────────────────────────────────────────────────
+  // Municípios: LOA local, imprevisível pelo SIOP → KB se houver, senão vazio (usuário preenche)
+  // Estado: lookup > KB > Gemini
+  if (isMunicipio) {
+    setVal('f12', historico[0]?.classificacaoOrcamentaria || '');
+  } else {
+    setVal('f12', S.emenda.classificacao
+      || (lookup?.classificacao || null)
+      || historico[0]?.classificacaoOrcamentaria
+      || c.classificacao);
+  }
+
   setVal('f14', prazoFinal);
   setVal('f22', execStr);
   setVal('f23', S.emenda.objeto);
   setVal('f26', c.finalidades);
   setVal('f27', c.metas);
 
-  // Banco/Agência: lookup > KB > Gemini
-  setVal('f29banco', lookup?.banco
-    || (execHist?.banco?.codigo ? `${execHist.banco.codigo} — ${execHist.banco.nome}` : null)
-    || c.banco || '');
-  setVal('f210ag', lookup?.agencia
-    || (execHist?.agencia?.numero ? `${execHist.agencia.numero}${execHist.agencia.dv ? '-' + execHist.agencia.dv : ''}` : null)
-    || c.agencia || '');
+  // ── Banco / Agência ────────────────────────────────────────────────────────
+  // Municípios: banco e agência variam por município; usa KB se disponível, senão vazio
+  // Estado: lookup > KB > Gemini
+  const bancoKB  = execHist?.banco?.codigo ? `${execHist.banco.codigo} — ${execHist.banco.nome}` : null;
+  const agKB     = execHist?.agencia?.numero
+    ? `${execHist.agencia.numero}${execHist.agencia.dv ? '-' + execHist.agencia.dv : ''}`
+    : null;
+
+  if (isMunicipio) {
+    setVal('f29banco', bancoKB || '');
+    setVal('f210ag',   agKB   || '');
+  } else {
+    setVal('f29banco', lookup?.banco   || bancoKB || c.banco   || '');
+    setVal('f210ag',   lookup?.agencia || agKB    || c.agencia || '');
+  }
+
   setVal('f211', S.emenda.conselhos || 'presidencia@ales.es.gov.br');
 
   const fonteLookup = lookup ? `lookup SIOP obj.${codigoSIOP}` : null;
+  const fonteMun    = isMunicipio ? 'regra município (executor = beneficiário)' : null;
   const fonteKB     = historico.length ? `KB histórico (${historico.length} plano(s))` : null;
   const fonteIA     = 'Gemini 2.0 Flash';
   const fonteAPI    = S.usandoDemo ? 'dados de demonstração' : 'API TransfereGov';
-  const fontes = [fonteAPI, fonteLookup, fonteKB, fonteIA].filter(Boolean).join(' + ');
+  const fontes = [fonteAPI, fonteLookup, fonteMun, fonteKB, fonteIA].filter(Boolean).join(' + ');
   $('alerta-fonte').textContent =
     `Campos pré-preenchidos com: ${fontes}. Revise todos antes de inserir no TransfereGov.`;
   show('alerta-fonte');
@@ -1093,13 +1126,14 @@ async function gerarPlano() {
    GEMINI — geração em lote com contexto KB
 ══════════════════════════════════════════ */
 async function geminiGerarPlano(em, historico = [], lookup = null) {
+  const isMun = S.cnpj !== CNPJ_ESTADO_ES;
   const finalidadesLista = (em.finalidades || []).length
     ? em.finalidades.join(' | ')
     : '(nenhuma finalidade registrada na API — gere uma coerente com o objeto)';
 
   const prazoFinal = String(lookup?.prazoMeses ?? historico[0]?.prazoMeses ?? prazoMaximo());
 
-  // Bloco de contexto fixo (quando lookup disponível)
+  // Bloco de contexto fixo (quando lookup disponível — apenas Estado ES)
   const lookupCtx = lookup
     ? `DADOS CONFIRMADOS POR HISTÓRICO (use exatamente estes valores):
   Executor: ${lookup.cnpj} — ${lookup.nome}
@@ -1107,6 +1141,13 @@ async function geminiGerarPlano(em, historico = [], lookup = null) {
   Agência: ${lookup.agencia}
   Classificação orçamentária: ${lookup.classificacao || '(a determinar)'}
   Prazo: ${lookup.prazoMeses} meses\n`
+    : '';
+
+  // Para municípios, informa que executor/banco/agência/classificação serão preenchidos externamente
+  const munCtx = isMun
+    ? `CONTEXTO: beneficiário MUNICIPAL (${S.nomeEnte}).
+Executor, banco, agência e classificação orçamentária serão determinados pelo sistema — NÃO os inclua no JSON.
+Foque em gerar: finalidade coerente com o objeto, meta objetiva e detalhamento descritivo.\n`
     : '';
 
   const exStr = historico.length
@@ -1124,7 +1165,7 @@ Exemplo ${i+1} aprovado (${ex.ano}):
   const prompt =
 `Você é especialista em Transferências Especiais (EC 105/2019, LC 210/2024).
 
-${lookupCtx}
+${lookupCtx}${munCtx}
 EXEMPLOS DE PLANOS APROVADOS (referência adicional):
 ${exStr}
 
@@ -1150,7 +1191,7 @@ Responda SOMENTE com JSON válido, sem markdown:
   "agencia": "número-DV da agência",
   "finalidades": "UMA finalidade: 'Tipo — Área'",
   "metas": "UMA meta. Formato:\\n- Descrição: [entrega]\\n- Unidade: [sigla]\\n- Quantidade: [inteiro]\\n- Meses Previstos: ${prazoFinal}",
-  "detalhamento_completo": "3 a 5 linhas: o que será feito, atividades, público-alvo (só se NÃO houver lookup)"
+  "detalhamento_completo": "3 a 5 linhas: o que será feito, atividades, público-alvo"
 }`;
 
   const r = await fetch(GEMINI_PROXY, {
