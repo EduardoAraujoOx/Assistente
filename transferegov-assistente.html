@@ -938,15 +938,66 @@ function renderEmendas(emendas) {
 }
 
 /* ══════════════════════════════════════════
-   PRAZO MÁXIMO POR VALOR (LC 210/2024)
+   LOOKUP: SIOP OBJETO → EXECUTOR ES
+   Derivado dos 15 planos aprovados/submetidos do Estado ES em 2026.
+   Prioridade máxima — sobrepõe KB e Gemini.
 ══════════════════════════════════════════ */
-function prazoMaximo(valorBruto) {
-  // Aceita número (preferido) ou string formatada "R$ 1.234.567,89"
-  const v = typeof valorBruto === 'number'
-    ? valorBruto
-    : parseFloat(String(valorBruto).replace(/[R$\s]/g,'').replace(/\./g,'').replace(',','.')) || 0;
-  if (v <= 500_000) return 24;
+const EXECUTOR_POR_OBJETO = {
+  '487': {
+    cnpj: '01683866000107', nome: 'AGENCIA DE DESENVOLVIMENTO DAS MICRO E PEQUENAS EMPRESAS E DO EMPREENDEDORISMO - ADERES',
+    banco: '001 — Banco do Brasil', agencia: '3665-X', contaEspecifica: 'Sim', prazoMeses: 36,
+    classificacao: 'Projeto/atividade: 23.691.0035.2062 – INOVA MERCADO - Natureza de Despesa: 3.3.90.39.00 - Outros Serviços de Terceiros - Pessoa Jurídica - Fonte: 1.706.311001 e/ou 2.706.311001',
+  },
+  '182': {
+    cnpj: '27080555000147', nome: 'SECRETARIA DE ESTADO DA AGRICULTURA, ABASTECIMENTO, AQUICULTURA E PESCA - SEAG',
+    banco: '001 — Banco do Brasil', agencia: '3665-X', contaEspecifica: 'Sim', prazoMeses: 36,
+    classificacao: 'Programa de Trabalho: 31.101.20.608.0038.1037 - Apoio às cadeias produtivas de origem animal, vegetal e a agroecologia.',
+  },
+  '260': {
+    cnpj: '27080555000147', nome: 'SECRETARIA DE ESTADO DA AGRICULTURA, ABASTECIMENTO, AQUICULTURA E PESCA - SEAG',
+    banco: '001 — Banco do Brasil', agencia: '3665-X', contaEspecifica: 'Sim', prazoMeses: 36,
+    classificacao: 'Programa de Trabalho: 31.101.20.608.0038.2244 - Apoio a capacitação técnica no meio rural, pesqueiro e agricola.',
+  },
+  '501': {
+    cnpj: '08750791000189', nome: 'SECRETARIA DE ESTADO DO TURISMO',
+    banco: '001 — Banco do Brasil', agencia: '3665-X', contaEspecifica: 'Sim', prazoMeses: 36,
+    classificacao: 'Programa de Trabalho: .695.0113.2258 – Promoção da Atividade Turística - Natureza da Despesa: 3.3.50.41 – Contribuições.',
+  },
+  '218': {
+    cnpj: '03252312000180', nome: 'SECRETARIA DE ESTADO DE TRABALHO, ASSISTENCIA E DESENVOLVIMENTO SOCIAL - SETADES',
+    banco: '001 — Banco do Brasil', agencia: '3665-X', contaEspecifica: 'Sim', prazoMeses: 36,
+    classificacao: '449052 - EQUIPAMENTOS E MATERIAL PERMANENTE',
+  },
+  '437': {
+    cnpj: '25217366000148', nome: 'SECRETARIA DE ESTADO DE DIREITOS HUMANOS',
+    banco: '001 — Banco do Brasil', agencia: '3665-X', contaEspecifica: 'Sim', prazoMeses: 36,
+    classificacao: 'Gestão/Unidade Orçamentária - UO: 0001/48101 - Unidade Gestora - UG: 480.101 - Programa de Trabalho: 10.48.101.14.422.0040.2',
+  },
+  '698': {
+    cnpj: '50235855000170', nome: 'SECRETARIA ESTADUAL DAS MULHERES',
+    banco: '104 — Caixa Econômica Federal', agencia: '167-8', contaEspecifica: 'Não', prazoMeses: 10,
+    classificacao: '',
+  },
+  '835': {
+    cnpj: '19481436000178', nome: 'AGENCIA ESTADUAL DE RECURSOS HIDRICOS - AGERH',
+    banco: '104 — Caixa Econômica Federal', agencia: '167-8', contaEspecifica: 'Não', prazoMeses: 12,
+    classificacao: '',
+  },
+};
+
+function codigoSIOPDe(objeto) {
+  const m = String(objeto || '').match(/^(\d+)/);
+  return m ? m[1] : null;
+}
+
+/* ══════════════════════════════════════════
+   PRAZO PADRÃO
+   Dado empírico: planos ES independente do valor usam 36m.
+   Exceções (698→10m, 835→12m) estão no EXECUTOR_POR_OBJETO.
+══════════════════════════════════════════ */
+function prazoMaximo() {
   return 36;
+}
 }
 
 /* ══════════════════════════════════════════
@@ -972,53 +1023,63 @@ async function gerarPlano() {
   // Guarda historico no estado para uso em regen() individual
   S.historico = historico;
 
+  // ── Lookup por código SIOP (prioridade máxima) ──────────────────────────
+  const codigoSIOP = codigoSIOPDe(S.emenda.objeto);
+  const lookup     = codigoSIOP ? EXECUTOR_POR_OBJETO[codigoSIOP] : null;
+
   let c;
-  try   { c = await geminiGerarPlano(S.emenda, historico); }
-  catch { c = fallback(S.emenda, historico); }
+  try   { c = await geminiGerarPlano(S.emenda, historico, lookup); }
+  catch { c = fallback(S.emenda, historico, lookup); }
 
-  // Prazo: legislação vence histórico quando for maior
-  const prazoLeg  = prazoMaximo(S.emenda.valorBruto);
-  const prazoHist = historico[0]?.prazoMeses ?? 0;
-  const prazoFinal = String(Math.max(prazoLeg, prazoHist || prazoLeg));
+  // Prazo: lookup > KB > padrão 36m
+  const prazoFinal = String(
+    lookup?.prazoMeses
+    ?? historico[0]?.prazoMeses
+    ?? prazoMaximo()
+  );
 
-  // Executor: prefere match histórico (CNPJ real aprovado) > Gemini > beneficiário
+  // Executor: lookup SIOP > KB histórico > Gemini
   const execHist = historico[0]?.executor;
-  const execStr  = execHist
-    ? `${execHist.cnpj} — ${execHist.nome}`
-    : (S.emenda.executor || c.executor);
+  const execStr  = lookup
+    ? `${lookup.cnpj} — ${lookup.nome}`
+    : execHist
+      ? `${execHist.cnpj} — ${execHist.nome}`
+      : (S.emenda.executor || c.executor);
 
   // 2.4: código SIOP + descrição do objeto (diretamente da API, sem IA)
   setVal('f24', S.emenda.objeto);
 
-  // 2.5: objeto_executor do plano mais similar aprovado (KB direto), fallback Gemini
+  // 2.5: KB direto para ADERES (obj 487) > Gemini; outros: Gemini adapta
   const objetoExecHist = historico[0]?.objetoExecutor;
   setVal('f25', objetoExecHist || c.detalhamento_completo);
 
-  // Classificação: KB direto > API > Gemini (evita alucinação)
-  setVal('f12', S.emenda.classificacao || historico[0]?.classificacaoOrcamentaria || c.classificacao);
+  // Classificação: lookup > KB > Gemini
+  setVal('f12', S.emenda.classificacao
+    || (lookup?.classificacao || null)
+    || historico[0]?.classificacaoOrcamentaria
+    || c.classificacao);
   setVal('f14', prazoFinal);
   setVal('f22', execStr);
   setVal('f23', S.emenda.objeto);
   setVal('f26', c.finalidades);
   setVal('f27', c.metas);
-  // Banco/Agência do executor histórico
-  setVal('f29banco', execHist?.banco?.codigo
-    ? `${execHist.banco.codigo} — ${execHist.banco.nome}`
-    : c.banco || '');
-  setVal('f210ag', execHist?.agencia?.numero
-    ? `${execHist.agencia.numero}${execHist.agencia.dv ? '-' + execHist.agencia.dv : ''}`
-    : c.agencia || '');
+
+  // Banco/Agência: lookup > KB > Gemini
+  setVal('f29banco', lookup?.banco
+    || (execHist?.banco?.codigo ? `${execHist.banco.codigo} — ${execHist.banco.nome}` : null)
+    || c.banco || '');
+  setVal('f210ag', lookup?.agencia
+    || (execHist?.agencia?.numero ? `${execHist.agencia.numero}${execHist.agencia.dv ? '-' + execHist.agencia.dv : ''}` : null)
+    || c.agencia || '');
   setVal('f211', S.emenda.conselhos || 'presidencia@ales.es.gov.br');
 
-  const fonteKB  = historico.length
-    ? `base histórica (${historico.length} plano(s) similar(es) encontrado(s))`
-    : 'sem histórico similar encontrado — campos gerados inteiramente por IA';
-  const fonteAPI = S.usandoDemo
-    ? 'dados de demonstração'
-    : 'API TransfereGov';
+  const fonteLookup = lookup ? `lookup SIOP obj.${codigoSIOP}` : null;
+  const fonteKB     = historico.length ? `KB histórico (${historico.length} plano(s))` : null;
+  const fonteIA     = 'Gemini 2.0 Flash';
+  const fonteAPI    = S.usandoDemo ? 'dados de demonstração' : 'API TransfereGov';
+  const fontes = [fonteAPI, fonteLookup, fonteKB, fonteIA].filter(Boolean).join(' + ');
   $('alerta-fonte').textContent =
-    `Campos pré-preenchidos com ${fonteAPI} + ${fonteKB} + Gemini 2.0 Flash. ` +
-    `Revise todos os campos antes de inserir no TransfereGov.`;
+    `Campos pré-preenchidos com: ${fontes}. Revise todos antes de inserir no TransfereGov.`;
   show('alerta-fonte');
 
   hideOverlay();
@@ -1031,56 +1092,65 @@ async function gerarPlano() {
 /* ══════════════════════════════════════════
    GEMINI — geração em lote com contexto KB
 ══════════════════════════════════════════ */
-async function geminiGerarPlano(em, historico = []) {
+async function geminiGerarPlano(em, historico = [], lookup = null) {
   const finalidadesLista = (em.finalidades || []).length
     ? em.finalidades.join(' | ')
     : '(nenhuma finalidade registrada na API — gere uma coerente com o objeto)';
 
-  // Monta bloco de exemplos históricos aprovados
-  const prazoLegal = prazoMaximo(em.valorBruto);
+  const prazoFinal = String(lookup?.prazoMeses ?? historico[0]?.prazoMeses ?? prazoMaximo());
+
+  // Bloco de contexto fixo (quando lookup disponível)
+  const lookupCtx = lookup
+    ? `DADOS CONFIRMADOS POR HISTÓRICO (use exatamente estes valores):
+  Executor: ${lookup.cnpj} — ${lookup.nome}
+  Banco: ${lookup.banco}
+  Agência: ${lookup.agencia}
+  Classificação orçamentária: ${lookup.classificacao || '(a determinar)'}
+  Prazo: ${lookup.prazoMeses} meses\n`
+    : '';
+
   const exStr = historico.length
     ? historico.map((ex, i) => `
 Exemplo ${i+1} aprovado (${ex.ano}):
   Objeto executor:   ${ex.objetoExecutor || ex.objetoParlamentar || 'n/d'}
   Executor:          ${ex.executor?.cnpj} — ${ex.executor?.nome}
-  Banco:             ${ex.executor?.banco?.codigo} — ${ex.executor?.banco?.nome}
-  Agência:           ${ex.executor?.agencia?.numero}
   Classificação:     ${ex.classificacaoOrcamentaria || 'n/d'}
   Prazo (meses):     ${ex.prazoMeses || 'n/d'}
   Finalidade:        ${(ex.finalidades||[])[0] ? (ex.finalidades[0].tipoCodigo+'/'+ex.finalidades[0].areaCodigo+' — '+ex.finalidades[0].tipoDescricao+'/'+ex.finalidades[0].areaDescricao) : 'n/d'}
   Meta:              ${(ex.metas||[])[0] ? (ex.metas[0].descricao+' | '+ex.metas[0].quantidade+' '+ex.metas[0].unidade+' | '+ex.metas[0].prazoMeses+'m') : 'n/d'}`
     ).join('\n')
-    : '(nenhum exemplo similar encontrado no histórico)';
+    : '(nenhum exemplo similar encontrado)';
 
   const prompt =
 `Você é especialista em Transferências Especiais (EC 105/2019, LC 210/2024).
 
-EXEMPLOS DE PLANOS JÁ APROVADOS PELO MINISTÉRIO (use como referência principal):
+${lookupCtx}
+EXEMPLOS DE PLANOS APROVADOS (referência adicional):
 ${exStr}
 
 PLANO A PREENCHER:
 Beneficiário: ${S.nomeEnte}
 Emenda: ${em.parlamentar}
-Objeto (campo 2.3, definido pelo parlamentar): ${em.objeto}
+Objeto (campo 2.3): ${em.objeto}
 Valor total: ${em.valor}
-Prazo máximo legal para este valor: ${prazoLegal} meses
+Prazo: ${prazoFinal} meses
 Finalidades disponíveis (escolha UMA): ${finalidadesLista}
 
 REGRAS:
-- Se os exemplos mostram o mesmo executor em todos os casos, USE ESSE EXECUTOR EXATAMENTE.
-- Consolide em UMA única meta sempre que possível.
-- Escolha UMA única finalidade coerente com o objeto (prefira a finalidade dos exemplos).
-- No campo "metas", use exatamente ${prazoLegal} meses em "Meses Previstos".
-- NÃO inclua detalhamento_lista nem detalhamento_completo — esses campos são preenchidos por outra fonte.
+- Se "DADOS CONFIRMADOS" estiver preenchido, use esses valores exatamente.
+- Consolide em UMA única meta.
+- Escolha UMA única finalidade coerente com o objeto.
+- Use exatamente ${prazoFinal} meses em "Meses Previstos" da meta.
 
 Responda SOMENTE com JSON válido, sem markdown:
 {
-  "classificacao": "projeto/atividade com código SIOP, natureza 3.3.90.39.00 ou 4.4.90.XX.00 conforme objeto, fonte 1.706.311001",
-  "executor": "CNPJ formatado — nome completo do executor (baseie-se nos exemplos se houver)",
-  "banco": "código — nome do banco (baseie-se nos exemplos se houver)",
-  "agencia": "número da agência (baseie-se nos exemplos se houver)",
-  "finalidades": "UMA única finalidade no formato 'Tipo/Área — Descrição' (ex.: 'Comércio e Serviços — Promoção Comercial')",
-  "metas": "UMA única meta. Formato:\\n- Descrição: [entrega]\\n- Unidade: [sigla]\\n- Quantidade: [inteiro]\\n- Meses Previstos: ${prazoLegal}"
+  "classificacao": "classificação orçamentária completa",
+  "executor": "CNPJ — nome do executor",
+  "banco": "código — nome do banco",
+  "agencia": "número-DV da agência",
+  "finalidades": "UMA finalidade: 'Tipo — Área'",
+  "metas": "UMA meta. Formato:\\n- Descrição: [entrega]\\n- Unidade: [sigla]\\n- Quantidade: [inteiro]\\n- Meses Previstos: ${prazoFinal}",
+  "detalhamento_completo": "3 a 5 linhas: o que será feito, atividades, público-alvo (só se NÃO houver lookup)"
 }`;
 
   const r = await fetch(GEMINI_PROXY, {
@@ -1093,20 +1163,22 @@ Responda SOMENTE com JSON válido, sem markdown:
   return JSON.parse((d.text || '').replace(/```json|```/g,'').trim());
 }
 
-function fallback(em, historico = []) {
-  const ex = historico[0];
+function fallback(em, historico = [], lookup = null) {
+  const ex    = historico[0];
+  const prazo = String(lookup?.prazoMeses ?? ex?.prazoMeses ?? prazoMaximo());
   const finalidadePrimaria = (em.finalidades && em.finalidades[0])
     || 'n/d — verificar na lista do TransfereGov';
   return {
-    classificacao: ex?.classificacaoOrcamentaria
+    classificacao: lookup?.classificacao
+      || ex?.classificacaoOrcamentaria
       || 'Projeto/atividade: [verificar no SIOP] — Natureza: 3.3.90.39.00 — Fonte: 1.706.311001',
-    executor: ex ? `${ex.executor?.cnpj} — ${ex.executor?.nome}` : (em.executor || '[a preencher]'),
-    banco:    ex ? `${ex.executor?.banco?.codigo} — ${ex.executor?.banco?.nome}` : '',
-    agencia:  ex?.executor?.agencia?.numero || '',
-    detalhamento_lista: finalidadePrimaria,
+    executor: lookup ? `${lookup.cnpj} — ${lookup.nome}`
+      : ex ? `${ex.executor?.cnpj} — ${ex.executor?.nome}` : (em.executor || '[a preencher]'),
+    banco:    lookup?.banco || (ex ? `${ex.executor?.banco?.codigo} — ${ex.executor?.banco?.nome}` : ''),
+    agencia:  lookup?.agencia || ex?.executor?.agencia?.numero || '',
     detalhamento_completo: `Execução do objeto: ${em.objeto}. Inclui contratação de serviços e realização das atividades previstas.`,
     finalidades: finalidadePrimaria,
-    metas: `- Descrição: Execução consolidada das entregas previstas\n- Unidade: Un\n- Quantidade: 1\n- Meses Previstos: ${prazoMaximo(em.valorBruto)}`,
+    metas: `- Descrição: Execução consolidada das entregas previstas\n- Unidade: Un\n- Quantidade: 1\n- Meses Previstos: ${prazo}`,
   };
 }
 
