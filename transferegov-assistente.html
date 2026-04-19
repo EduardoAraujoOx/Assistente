@@ -1210,12 +1210,14 @@ async function gerarPlano() {
 
   const cnpjExecNorm  = (isMunicipio ? S.cnpj : (execHist?.cnpj || '')).replace(/\D/g, '');
   const kbEntry       = lookupKB(cnpjExecNorm);
-  const bancoKBStatic = kbEntry?.banco ? `${kbEntry.banco} — ${kbEntry.bancoNome}` : null;
-  const agKBStatic    = kbEntry?.agencia || null;
+  // Banco para municípios: "sempre CEF" acerta 76% (melhor que KB histórico = 57%)
+  // Agência: KB lookup é útil — quando banco está certo, agência acerta 90%
+  const agKBStatic = kbEntry?.agencia || null;
+  const BANCO_CEF_DEFAULT = '104 — Caixa Econômica Federal';
 
   if (isMunicipio) {
-    setVal('f29banco', bancoKB || bancoKBStatic || '');
-    setVal('f210ag',   agKB   || agKBStatic    || '');
+    setVal('f29banco', bancoKB || BANCO_CEF_DEFAULT);
+    setVal('f210ag',   agKB   || agKBStatic || '');
   } else {
     setVal('f29banco', lookup?.banco   || bancoKB || c.banco   || '');
     setVal('f210ag',   lookup?.agencia || agKB    || c.agencia || '');
@@ -1335,6 +1337,7 @@ function fallback(em, historico = [], lookup = null) {
   const kbFb    = lookupKB((isMun ? S.cnpj : '').replace(/\D/g, ''));
   const bancoFb = lookup?.banco
     || (ex ? `${ex.executor?.banco?.codigo} — ${ex.executor?.banco?.nome}` : '')
+    || (isMun ? '104 — Caixa Econômica Federal' : '')
     || (kbFb?.banco ? `${kbFb.banco} — ${kbFb.bancoNome}` : '');
   const agFb    = lookup?.agencia || ex?.executor?.agencia?.numero || kbFb?.agencia || '';
   return {
@@ -1398,10 +1401,9 @@ async function regen(fieldId, tipo) {
     const isMun = S.cnpj !== CNPJ_ESTADO_ES;
     const cnpjExec = (isMun ? S.cnpj : (S.emenda.cnpjExecutor || '')).replace(/\D/g, '');
     const kb = lookupKB(cnpjExec);
-    if (kb) {
-      if (tipo === 'banco'   && kb.banco)   { el.value = `${kb.banco} — ${kb.bancoNome}`; return; }
-      if (tipo === 'agencia' && kb.agencia) { el.value = kb.agencia; return; }
-    }
+    // Banco municípios: CEF como padrão direto (76% acurácia, melhor que KB histórico)
+    if (tipo === 'banco' && isMun) { el.value = '104 — Caixa Econômica Federal'; return; }
+    if (tipo === 'agencia' && kb?.agencia) { el.value = kb.agencia; return; }
   }
 
   el.disabled = true;

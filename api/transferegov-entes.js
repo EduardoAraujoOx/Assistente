@@ -5,12 +5,11 @@
 //
 // Retorna: [{ cnpj: string(14 dígitos), nome: string }]
 //
-// Observação: a API pode ter várias linhas de PA para o mesmo beneficiário
-// (uma por emenda/parlamentar), então consolidamos server-side.
+// Sem filtro de situação — exibe todos os entes com PA no ES,
+// independente do status. A UI já mostra badges por situação.
 
 const TGOV_BASE = 'https://api.transferegov.gestao.gov.br/transferenciasespeciais';
 const UF_ALVO = 'ES';
-const SITUACAO_ALVO = 'AGUARDANDO_CONCLUSAO_PLANO_TRABALHO';
 const TIMEOUT_MS = 12000;
 
 async function getJson(url) {
@@ -31,21 +30,24 @@ async function getJson(url) {
   }
 }
 
-function urlPlanoAcaoES() {
-  // Só lista entes que têm pelo menos um Plano de Ação AGUARDANDO conclusão
-  // de PT — que é exatamente o universo que o assistente atende.
+function urlPlanoAcaoES(ano) {
   const qs = new URLSearchParams({
     uf_beneficiario_plano_acao: `eq.${UF_ALVO}`,
-    situacao_plano_acao: `eq.${SITUACAO_ALVO}`,
+    ano_plano_acao:             `eq.${ano}`,
     select: 'cnpj_beneficiario_plano_acao,nome_beneficiario_plano_acao',
-    limit: '1000',
+    limit:  '1000',
   });
   return `${TGOV_BASE}/plano_acao_especial?${qs.toString()}`;
 }
 
 export default async function handler(req, res) {
   try {
-    const rows = await getJson(urlPlanoAcaoES());
+    const anoAtual = new Date().getFullYear();
+    let rows = await getJson(urlPlanoAcaoES(anoAtual));
+    if (!Array.isArray(rows) || rows.length === 0) {
+      rows = await getJson(urlPlanoAcaoES(anoAtual - 1));
+    }
+    if (!Array.isArray(rows)) rows = [];
 
     // Deduplica por CNPJ; mantém o primeiro nome encontrado.
     const byCnpj = new Map();
@@ -61,7 +63,6 @@ export default async function handler(req, res) {
       .map(([cnpj, nome]) => ({ cnpj, nome }))
       .sort((a, b) => a.nome.localeCompare(b.nome, 'pt-BR'));
 
-    // Cache mais longo — a lista muda com baixa frequência.
     res.setHeader('Cache-Control', 's-maxage=3600, stale-while-revalidate=86400');
     return res.status(200).json(entes);
   } catch (err) {
