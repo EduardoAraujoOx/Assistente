@@ -1216,7 +1216,7 @@ async function gerarPlano() {
     const classGemini = lookup && !lookup.classificacao ? null : c.classificacao;
     setVal('f12', classBase
       || classGemini
-      || `${ndSugerida}\n[Projeto/atividade SIOP: verificar no portal]`);
+      || `${ndSugerida}\n[Projeto/atividade: verificar na LOA do Estado ES (SIGEFES)]`);
   }
 
   setVal('f14', prazoFinal);
@@ -1371,7 +1371,7 @@ function fallback(em, historico = [], lookup = null) {
       || (kbFb?.classificacao || '')
       || (isMun
           ? `${naturezaDespesaDe(em)}\n[Código LOA municipal: verificar com a Secretaria de Planejamento]`
-          : `${naturezaDespesaDe(em)}\n[Projeto/atividade SIOP: verificar no portal]`),
+          : `${naturezaDespesaDe(em)}\n[Projeto/atividade: verificar na LOA do Estado ES (SIGEFES)]`),
     executor: lookup ? `${lookup.cnpj} — ${lookup.nome}`
       : ex ? `${ex.executor?.cnpj} — ${ex.executor?.nome}` : (em.executor || '[a preencher]'),
     banco:    bancoFb,
