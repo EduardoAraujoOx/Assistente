@@ -858,7 +858,7 @@ async function fetchEmendas(cnpj) {
   // 1) Tenta proxy servidor (sem CORS, disponível quando rodando via Next.js/Vercel)
   try {
     const r = await fetch(`${TGOV_API_PROXY}?cnpj=${cnpj}${modoTeste}`, {
-      signal: AbortSignal.timeout(5000)
+      signal: AbortSignal.timeout(20000)
     });
     if (r.ok) {
       const data = await r.json();
@@ -876,7 +876,7 @@ async function fetchEmendas(cnpj) {
     try {
       const r = await fetch(url, {
         headers: { 'Accept': 'application/json' },
-        signal: AbortSignal.timeout(5000)
+        signal: AbortSignal.timeout(20000)
       });
       if (r.ok) {
         const data = await r.json();
