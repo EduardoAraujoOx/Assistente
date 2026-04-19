@@ -28,7 +28,7 @@ const ROOT      = join(__dirname, '..');
 const CNPJ_ESTADO_ES  = '27080530000143';
 const GEMINI_KEY      = process.env.GEMINI_API_KEY;
 const VERCEL_URL      = (process.env.VERCEL_URL || '').replace(/\/$/, '');
-const GEMINI_DIRECT   = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite:generateContent?key=${GEMINI_KEY}`;
+const GEMINI_DIRECT   = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_KEY}`;
 const GEMINI_DELAY_MS = 2500; // free tier: 30 RPM → ~2s entre chamadas
 
 const args        = process.argv.slice(2);
