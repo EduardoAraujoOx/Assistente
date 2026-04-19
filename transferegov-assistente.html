@@ -383,7 +383,7 @@
         <div id="em-vazio"    class="placeholder">Selecione um beneficiário para carregar as emendas.</div>
         <div id="em-loading"  class="placeholder" style="display:none;">Consultando API TransfereGov...</div>
         <div id="em-vazia" class="placeholder" style="display:none;">
-          Nenhuma emenda com PT pendente para esse beneficiário.<br>
+          Nenhum plano de ação encontrado para esse beneficiário.<br>
           <small style="color:#b87a00;">Se os planos já foram enviados e você quer testá-los, ative <strong>Modo Teste</strong> abaixo.</small>
         </div>
         <div id="em-tabela"   class="table-wrap"  style="display:none;">
@@ -740,6 +740,7 @@ const DEMO = {
       prazo: '36',
       classificacao: 'Projeto/atividade: 23.691.0035.2062 — INOVA MERCADO\nNatureza de Despesa: 3.3.90.39.00 — Outros Serviços de Terceiros — Pessoa Jurídica\nFonte: 1.706.311001 e/ou 2.706.311001',
       conselhos: 'presidencia@ales.es.gov.br', finalidades: [],
+      situacaoPlanoAcao: 'AGUARDANDO_CONCLUSAO_PLANO_TRABALHO',
     },
     {
       parlamentar: '202627740007 — CARMINHO CARETA',
@@ -749,6 +750,8 @@ const DEMO = {
       prazo: '24',
       classificacao: 'Projeto/atividade: 20.606.2014.211E — Apoio à Agricultura Familiar\nNatureza de Despesa: 3.3.90.39.00 — Outros Serviços de Terceiros — PJ\nFonte: 1.706.311001',
       conselhos: 'presidencia@ales.es.gov.br', finalidades: [],
+      situacaoPlanoAcao: 'EM_ANALISE_PLANO_TRABALHO',
+      situacaoPT: 'Enviado para Análise',
     },
     {
       parlamentar: '202627740008 — LUCAS POLLON',
@@ -758,6 +761,7 @@ const DEMO = {
       prazo: '12',
       classificacao: 'Projeto/atividade: 10.302.2015.8585 — Atenção à Saúde da População\nNatureza de Despesa: 4.4.90.52.00 — Equipamentos e Material Permanente\nFonte: 1.706.311001',
       conselhos: 'presidencia@ales.es.gov.br', finalidades: [],
+      situacaoPlanoAcao: 'EM_EXECUCAO',
     }
   ],
   '27165120000173': [
@@ -768,7 +772,8 @@ const DEMO = {
       executor: '27.165.120/0001-73 | PMV — Prefeitura Municipal de Vitória',
       prazo: '24',
       classificacao: 'Projeto/atividade: 15.451.2014.1M20 — Infraestrutura Urbana\nNatureza de Despesa: 4.4.90.51.00 — Obras e Instalações\nFonte: 1.706.311001',
-      conselhos: 'camara@camara.vitoria.es.gov.br'
+      conselhos: 'camara@camara.vitoria.es.gov.br',
+      situacaoPlanoAcao: 'AGUARDANDO_CONCLUSAO_PLANO_TRABALHO',
     }
   ],
   '27161118000191': [
@@ -779,7 +784,8 @@ const DEMO = {
       executor: '27.161.118/0001-91 | PMVV — Prefeitura de Vila Velha',
       prazo: '18',
       classificacao: 'Projeto/atividade: 12.365.2015.10GD — Apoio à Educação Infantil\nNatureza de Despesa: 4.4.90.51.00 — Obras e Instalações\nFonte: 1.706.311001',
-      conselhos: 'cme@vilavelha.es.gov.br'
+      conselhos: 'cme@vilavelha.es.gov.br',
+      situacaoPlanoAcao: 'AGUARDANDO_CONCLUSAO_PLANO_TRABALHO',
     }
   ],
   '27153373000180': [],
@@ -791,7 +797,8 @@ const DEMO = {
       executor: '27.167.764/0001-80 | PMC — Prefeitura de Cariacica',
       prazo: '12',
       classificacao: 'Projeto/atividade: 04.122.2014.20YG — Eficiência Energética\nNatureza de Despesa: 3.3.90.39.00 — Outros Serviços de Terceiros — PJ\nFonte: 1.706.311001',
-      conselhos: ''
+      conselhos: '',
+      situacaoPlanoAcao: 'AGUARDANDO_CONCLUSAO_PLANO_TRABALHO',
     }
   ],
   '27169557000152': [],
@@ -899,38 +906,68 @@ function normalizarEmendas(list) {
     return String(v).startsWith('R$') ? v : `R$ ${v}`;
   };
   return list.map(i => ({
-    idPlanoAcao:  i.idPlanoAcao || null,
-    parlamentar:  i.parlamentar || i.nomeParlamentar || i.nomeEmenda || i.codigoEmenda || 'N/D',
-    objeto:       i.objeto || i.descricaoObjeto || i.objetoEmenda || 'N/D',
-    valor:        fmt(i.valorTotal || i.valorRepasse || i.valor),
-    valorBruto:   typeof i.valorBruto === 'number' ? i.valorBruto : (i.valorTotal || i.valorRepasse || i.valor || 0),
-    executor:     i.executor || i.nomeExecutor || '',
-    prazo:        String(i.prazoExecucao || i.prazo || ''),
-    classificacao: i.classificacaoOrcamentaria || '',
-    conselhos:    i.emailCamara || i.emailConselho || '',
-    finalidades:  Array.isArray(i.finalidades) ? i.finalidades : [],
-    cnpjExecutor: i.cnpjExecutor || '',
-    situacaoPT:   i.situacaoPT || null,
+    idPlanoAcao:       i.idPlanoAcao || null,
+    parlamentar:       i.parlamentar || i.nomeParlamentar || i.nomeEmenda || i.codigoEmenda || 'N/D',
+    objeto:            i.objeto || i.descricaoObjeto || i.objetoEmenda || 'N/D',
+    valor:             fmt(i.valorTotal || i.valorRepasse || i.valor),
+    valorBruto:        typeof i.valorBruto === 'number' ? i.valorBruto : (i.valorTotal || i.valorRepasse || i.valor || 0),
+    executor:          i.executor || i.nomeExecutor || '',
+    prazo:             String(i.prazoExecucao || i.prazo || ''),
+    classificacao:     i.classificacaoOrcamentaria || '',
+    conselhos:         i.emailCamara || i.emailConselho || '',
+    finalidades:       Array.isArray(i.finalidades) ? i.finalidades : [],
+    cnpjExecutor:      i.cnpjExecutor || '',
+    situacaoPT:        i.situacaoPT || null,
+    situacaoPlanoAcao: i.situacaoPlanoAcao || null,
   }));
 }
+
+/* Mapeamento de situações para label e cor */
+const SITUACAO_INFO = {
+  'AGUARDANDO_CONCLUSAO_PLANO_TRABALHO': { label: 'Aguardando PT',   cor: '#b45309', bg: '#fef3c7' },
+  'EM_ANALISE_PLANO_TRABALHO':           { label: 'Em Análise',      cor: '#1d4ed8', bg: '#dbeafe' },
+  'AGUARDANDO_EXECUCAO':                 { label: 'Aguardando Exec.', cor: '#6d28d9', bg: '#ede9fe' },
+  'EM_EXECUCAO':                         { label: 'Em Execução',     cor: '#065f46', bg: '#d1fae5' },
+  'CONCLUIDO':                           { label: 'Concluído',       cor: '#166534', bg: '#bbf7d0' },
+  'CANCELADO':                           { label: 'Cancelado',       cor: '#991b1b', bg: '#fee2e2' },
+  'SUSPENSO':                            { label: 'Suspenso',        cor: '#78350f', bg: '#fde68a' },
+};
+
+function situacaoBadge(situacao, situacaoPT) {
+  const info = situacao ? SITUACAO_INFO[situacao] : null;
+  const paTag = info
+    ? `<span style="display:inline-block;padding:1px 7px;border-radius:9px;font-size:.7rem;font-weight:600;color:${info.cor};background:${info.bg};white-space:nowrap;">${info.label}</span>`
+    : (situacao ? `<span style="display:inline-block;padding:1px 7px;border-radius:9px;font-size:.7rem;background:#f3f4f6;color:#374151;">${situacao}</span>` : '');
+  const ptTag = situacaoPT
+    ? `<span style="display:inline-block;padding:1px 7px;border-radius:9px;font-size:.7rem;color:#92400e;background:#fef3c7;margin-left:3px;">PT: ${situacaoPT}</span>`
+    : '';
+  return paTag + ptTag;
+}
+
+const AGUARDANDO = 'AGUARDANDO_CONCLUSAO_PLANO_TRABALHO';
 
 function renderEmendas(emendas) {
   const tbody = $('em-tbody');
   tbody.innerHTML = '';
   emendas.forEach(em => {
     const tr = document.createElement('tr');
-    const ptBadge = em.situacaoPT
-      ? `<br><small style="color:#b87a00;font-size:.75rem;">PT: ${em.situacaoPT}</small>`
-      : '';
+    const podeGerar = !em.situacaoPlanoAcao || em.situacaoPlanoAcao === AGUARDANDO;
+    if (!podeGerar) tr.style.opacity = '0.7';
+
+    const badge = situacaoBadge(em.situacaoPlanoAcao, em.situacaoPT);
     tr.innerHTML = `
       <td>${em.parlamentar}</td>
-      <td>${em.objeto}${ptBadge}</td>
+      <td>${em.objeto}${badge ? '<br>' + badge : ''}</td>
       <td><span class="valor-badge">${em.valor}</span></td>`;
     tr.onclick = () => {
       document.querySelectorAll('.emenda-table tbody tr').forEach(r => r.classList.remove('sel'));
       tr.classList.add('sel');
       S.emenda = em;
-      $('btn-gerar').disabled = false;
+      $('btn-gerar').disabled = !podeGerar;
+      if (!podeGerar) {
+        const sit = SITUACAO_INFO[em.situacaoPlanoAcao]?.label || em.situacaoPlanoAcao || 'outra situação';
+        alert(`Este plano está com status "${sit}" e não pode ser gerado novamente.`);
+      }
     };
     tbody.appendChild(tr);
   });
