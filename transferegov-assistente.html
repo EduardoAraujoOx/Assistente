@@ -1301,7 +1301,7 @@ Responda SOMENTE com JSON válido, sem markdown:
   const r = await fetch(GEMINI_PROXY, {
     method:  'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ prompt, temperature: 0.2, maxTokens: 1400 })
+    body: JSON.stringify({ prompt, temperature: 0.2, maxTokens: 2500 })
   });
   if (!r.ok) throw new Error('Gemini proxy ' + r.status);
   const d = await r.json();
@@ -1330,6 +1330,12 @@ function fallback(em, historico = [], lookup = null) {
 /* ══════════════════════════════════════════
    REGENERAÇÃO INDIVIDUAL
 ══════════════════════════════════════════ */
+const REGEN_TOKENS = {
+  detalhamento_completo: 1200,
+  classificacao:          900,
+  metas:                  400,
+};
+
 const PROMPTS = {
   classificacao:        em => `Gere a classificação orçamentária para emenda EC 105/2019: objeto "${em.objeto}", beneficiário "${S.nomeEnte}". Inclua: projeto/atividade com código SIOP, natureza (3.3.90.39.00 serviços ou 4.4.90.51.00 obras), fonte 1.706.311001. Responda SOMENTE o texto do campo.`,
   executor:             em => `Sugira o executor mais provável (CNPJ formatado — nome completo) para o objeto "${em.objeto}" no ES, com base em padrões de Transferências Especiais EC 105/2019. Responda SOMENTE o texto.`,
@@ -1372,7 +1378,7 @@ async function regen(fieldId, tipo) {
     const r = await fetch(GEMINI_PROXY, {
       method:  'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ prompt: fn(S.emenda), temperature: 0.4, maxTokens: 600 })
+      body: JSON.stringify({ prompt: fn(S.emenda), temperature: 0.4, maxTokens: REGEN_TOKENS[tipo] ?? 400 })
     });
     const d = await r.json();
     el.value = (d.text || orig).replace(/```/g,'').trim();
