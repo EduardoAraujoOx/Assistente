@@ -1199,18 +1199,19 @@ async function gerarPlano() {
   setVal('f25', objetoExecHist || c.detalhamento_completo);
 
   // ── Classificação ─────────────────────────────────────────────────────────
-  // Municípios: natureza de despesa STN (derivada de valorInvestimento + objeto) + fonte EC 105
-  //   + código LOA municipal (imprevisível → placeholder para o usuário completar)
-  // Estado: lookup SIOP > KB > Gemini
+  // Regra STN natureza de despesa aplica a ambos (município e estado).
+  // Municípios: natureza+fonte → placeholder LOA municipal
+  // Estado:     lookup SIOP > KB > Gemini; natureza+fonte como âncora no fallback
+  const ndSugerida = naturezaDespesaDe(S.emenda);
   if (isMunicipio) {
-    const ndSugerida = naturezaDespesaDe(S.emenda);
     const classHistorico = historico[0]?.classificacaoOrcamentaria || '';
     setVal('f12', classHistorico || `${ndSugerida}\n[Código LOA municipal: verificar com a Secretaria de Planejamento]`);
   } else {
     setVal('f12', S.emenda.classificacao
       || (lookup?.classificacao || null)
       || historico[0]?.classificacaoOrcamentaria
-      || c.classificacao);
+      || c.classificacao
+      || `${ndSugerida}\n[Projeto/atividade SIOP: verificar no portal]`);
   }
 
   setVal('f14', prazoFinal);
@@ -1365,7 +1366,7 @@ function fallback(em, historico = [], lookup = null) {
       || (kbFb?.classificacao || '')
       || (isMun
           ? `${naturezaDespesaDe(em)}\n[Código LOA municipal: verificar com a Secretaria de Planejamento]`
-          : 'Projeto/atividade: [verificar no SIOP] — Natureza: 3.3.90.39.00 — Fonte: 1.706.311001'),
+          : `${naturezaDespesaDe(em)}\n[Projeto/atividade SIOP: verificar no portal]`),
     executor: lookup ? `${lookup.cnpj} — ${lookup.nome}`
       : ex ? `${ex.executor?.cnpj} — ${ex.executor?.nome}` : (em.executor || '[a preencher]'),
     banco:    bancoFb,
