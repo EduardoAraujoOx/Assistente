@@ -1448,11 +1448,19 @@ async function carregarEntes() {
       o.textContent = `${e.cnpj} — ${e.nome}`;
       sel.appendChild(o);
     });
-    if (prev) sel.value = prev;
+    if (prev) {
+      sel.value = prev;
+      onBenefChange(); // restauração programática não dispara onchange
+    }
   } catch (_) {
     // Se o endpoint falhar, o dropdown hardcoded do HTML permanece como fallback.
   }
 }
+
+// Garante que seleção restaurada pelo browser (session restore) também carregue as emendas
+document.addEventListener('DOMContentLoaded', () => {
+  if ($('sel-benef')?.value) onBenefChange();
+});
 
 carregarEntes();
 </script>
