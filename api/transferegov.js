@@ -2,34 +2,22 @@
 //
 // Rota: GET /api/transferegov?cnpj=XXXXXXXXXXXXXX[&modoTeste=1]
 //
-// Regra de negócio padrão: exibe apenas Planos de Ação em
-// AGUARDANDO_CONCLUSAO_PLANO_TRABALHO cujo PT ainda não foi enviado.
+// Retorna TODOS os Planos de Ação do CNPJ (não apenas AGUARDANDO),
+// com campo situacaoPlanoAcao para que a UI mostre badge de status.
 //
-// modoTeste=1: inclui também PAs cujo PT já foi enviado/aprovado —
-// útil para testar o assistente com planos que já têm dados reais.
+// modoTeste=1: força inclusão de PAs de qualquer situação (garante
+//   sempre retornar dados para testes mesmo sem PA em aberto).
 //
 // Estratégia:
-//   1) PostgREST lista os id_plano_acao do CNPJ em ES com situação AGUARDANDO.
-//   2) PostgREST lista quais desses IDs já têm PT enviado (situacao_plano_trabalho
-//      != 'Em elaboração' e != null vazio).
-//   3) Em modo normal, filtra fora os que têm PT enviado.
-//   4) Para cada id restante, busca detalhes no portal backend (objetoDetalhe etc.).
+//   1) PostgREST lista todos os id_plano_acao do CNPJ em ES.
+//   2) PostgREST lista status do PT para cada PA.
+//   3) Para cada PA, busca detalhes no portal backend.
 
 const TGOV_BASE   = 'https://api.transferegov.gestao.gov.br/transferenciasespeciais';
 const PORTAL_BASE =
   'https://especiais.transferegov.sistema.gov.br/maisbrasil-transferencia-especial-backend/api';
-const UF_ALVO       = 'ES';
-const SITUACAO_ALVO = 'AGUARDANDO_CONCLUSAO_PLANO_TRABALHO';
-const TIMEOUT_MS    = 12000;
-
-// Situações do PT que indicam "já foi além do rascunho"
-const PT_ENVIADOS = new Set([
-  'Enviado para Análise',
-  'Enviado para análise',
-  'ENVIADO_PARA_ANALISE',
-  'Aprovado',
-  'APROVADO',
-]);
+const UF_ALVO    = 'ES';
+const TIMEOUT_MS = 12000;
 
 /* ────────── helpers ────────── */
 
@@ -56,20 +44,20 @@ async function getJsonSafe(url) {
   catch { return null; }
 }
 
-function urlIdsPlanoAcao(cnpj) {
+function urlTodosPlanos(cnpj) {
   const qs = new URLSearchParams({
-    uf_beneficiario_plano_acao:    `eq.${UF_ALVO}`,
-    cnpj_beneficiario_plano_acao:  `eq.${cnpj}`,
-    situacao_plano_acao:           `eq.${SITUACAO_ALVO}`,
-    select: 'id_plano_acao',
+    uf_beneficiario_plano_acao:   `eq.${UF_ALVO}`,
+    cnpj_beneficiario_plano_acao: `eq.${cnpj}`,
+    select: 'id_plano_acao,situacao_plano_acao',
     limit:  '200',
+    order:  'id_plano_acao.desc',
   });
   return `${TGOV_BASE}/plano_acao_especial?${qs}`;
 }
 
 function urlPtStatus(ids) {
   const qs = new URLSearchParams({
-    id_plano_acao:           `in.(${ids.join(',')})`,
+    id_plano_acao: `in.(${ids.join(',')})`,
     select: 'id_plano_acao,situacao_plano_trabalho',
     limit:  '200',
   });
@@ -106,13 +94,13 @@ function finalidadesDe(pa) {
   return out;
 }
 
-function montar(pa, ptInfo) {
+function montar(pa, ptInfo, situacaoPA) {
   const emenda       = pa.emendaParlamentar || {};
   const beneficiario = pa.beneficiario      || {};
   return {
     idPlanoAcao:        pa.id,
     codigoPlanoAcao:    pa.codigo,
-    situacaoPlanoAcao:  pa.situacao,
+    situacaoPlanoAcao:  situacaoPA || pa.situacao || null,
     situacaoPT:         ptInfo?.situacao_plano_trabalho ?? null,
     parlamentar:        emenda.nomeParlamentar       || null,
     codigoEmenda:       emenda.codigoEmendaFormatado || null,
@@ -144,41 +132,46 @@ export default async function handler(req, res) {
   }
 
   try {
-    // 1. IDs com PA em AGUARDANDO
-    const ids    = await getJson(urlIdsPlanoAcao(cnpj));
-    let idsPA    = ids.map(x => x.id_plano_acao).filter(x => x != null);
+    // 1. Todos os PAs do CNPJ em ES (com situação)
+    const rows  = await getJson(urlTodosPlanos(cnpj));
+    const todos = Array.isArray(rows) ? rows : [];
 
-    if (idsPA.length === 0) {
+    if (todos.length === 0) {
       res.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate=300');
       return res.status(200).json([]);
     }
 
-    // 2. Verifica status do PT para cada PA (para filtrar ou rotular)
+    const idsPA      = todos.map(x => x.id_plano_acao).filter(x => x != null);
+    const situacaoByPa = Object.fromEntries(todos.map(x => [x.id_plano_acao, x.situacao_plano_acao]));
+
+    // 2. Status do PT para cada PA
     const ptRaw  = await getJsonSafe(urlPtStatus(idsPA));
-    const ptRows = Array.isArray(ptRaw) ? ptRaw : [];   // guard: PostgREST pode retornar objeto em erro
+    const ptRows = Array.isArray(ptRaw) ? ptRaw : [];
     const ptByPa = Object.fromEntries(ptRows.map(r => [r.id_plano_acao, r]));
 
-    // 3. Em modo normal, exclui planos cujo PT já foi enviado/aprovado
-    if (!modoTeste) {
-      idsPA = idsPA.filter(id => {
-        const situacao = ptByPa[id]?.situacao_plano_trabalho;
-        return !situacao || !PT_ENVIADOS.has(situacao);
-      });
-    }
+    // 3. Detalhes do portal — busca apenas PAs com situação AGUARDANDO (reduz chamadas)
+    //    Em modo teste, busca todos para ter objetos completos.
+    const SITUACOES_DETALHE = new Set([
+      'AGUARDANDO_CONCLUSAO_PLANO_TRABALHO',
+      'EM_ANALISE_PLANO_TRABALHO',
+    ]);
+    const idsBuscar = modoTeste
+      ? idsPA
+      : idsPA.filter(id => SITUACOES_DETALHE.has(situacaoByPa[id]));
 
-    if (idsPA.length === 0) {
-      res.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate=300');
-      return res.status(200).json([]);
-    }
-
-    // 4. Detalhes do portal (objeto SIOP, valores etc.)
-    const detalhes = await Promise.all(
-      idsPA.map(id => getJson(urlPortalPA(id)).catch(() => null))
+    const detalhesMap = {};
+    await Promise.all(
+      idsBuscar.map(async id => {
+        const d = await getJson(urlPortalPA(id)).catch(() => null);
+        if (d) detalhesMap[id] = d;
+      })
     );
 
-    const itens = detalhes
-      .filter(Boolean)
-      .map(pa => montar(pa, ptByPa[pa.id]));
+    // 4. Monta resposta com todos os PAs
+    const itens = idsPA.map(id => {
+      const pa  = detalhesMap[id] || { id };
+      return montar(pa, ptByPa[id], situacaoByPa[id]);
+    });
 
     res.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate=300');
     return res.status(200).json(itens);
