@@ -110,6 +110,8 @@ function montar(pa, ptInfo, situacaoPA) {
     valorBruto:         Number(pa.valorTotal) || 0,
     valorCusteio:       formatBRL(pa.valorCusteio),
     valorInvestimento:  formatBRL(pa.valorInvestimento),
+    valorCusteioRaw:    Number(pa.valorCusteio)    || 0,
+    valorInvestimentoRaw: Number(pa.valorInvestimento) || 0,
     nomeBeneficiario:   beneficiario.nome  || null,
     emailBeneficiario:  beneficiario.email || null,
     nomeExecutor:       beneficiario.nome  || null,

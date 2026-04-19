@@ -1102,6 +1102,22 @@ function codigoSIOPDe(objeto) {
   return m ? m[1] : null;
 }
 
+// Regra STN para Transferências Especiais EC 105/2019:
+// natureza de despesa derivada do tipo de gasto (custeio vs. investimento)
+// e da descrição do objeto.
+function naturezaDespesaDe(em) {
+  const obj = (em.objeto || '').toLowerCase()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  const temInv = (em.valorInvestimentoRaw || 0) > 0;
+  const fonte  = 'Fonte: 1.706.311001';
+  if (temInv) {
+    const ehObra = /obra|construc|paviment|infraestrutur|reforma|amplia|instalac|saneament|drenagem|calcamento|asfalto|estrad/.test(obj);
+    if (ehObra) return `Natureza de Despesa: 4.4.90.51.00 — Obras e Instalações — ${fonte}`;
+    return `Natureza de Despesa: 4.4.90.52.00 — Equipamentos e Material Permanente — ${fonte}`;
+  }
+  return `Natureza de Despesa: 3.3.90.39.00 — Outros Serviços de Terceiros - Pessoa Jurídica — ${fonte}`;
+}
+
 /* ══════════════════════════════════════════
    PRAZO PADRÃO
    Dado empírico: planos ES independente do valor usam 36m.
@@ -1183,10 +1199,13 @@ async function gerarPlano() {
   setVal('f25', objetoExecHist || c.detalhamento_completo);
 
   // ── Classificação ─────────────────────────────────────────────────────────
-  // Municípios: LOA local, imprevisível pelo SIOP → KB se houver, senão vazio (usuário preenche)
-  // Estado: lookup > KB > Gemini
+  // Municípios: natureza de despesa STN (derivada de valorInvestimento + objeto) + fonte EC 105
+  //   + código LOA municipal (imprevisível → placeholder para o usuário completar)
+  // Estado: lookup SIOP > KB > Gemini
   if (isMunicipio) {
-    setVal('f12', historico[0]?.classificacaoOrcamentaria || '');
+    const ndSugerida = naturezaDespesaDe(S.emenda);
+    const classHistorico = historico[0]?.classificacaoOrcamentaria || '';
+    setVal('f12', classHistorico || `${ndSugerida}\n[Código LOA municipal: verificar com a Secretaria de Planejamento]`);
   } else {
     setVal('f12', S.emenda.classificacao
       || (lookup?.classificacao || null)
@@ -1344,7 +1363,9 @@ function fallback(em, historico = [], lookup = null) {
     classificacao: lookup?.classificacao
       || ex?.classificacaoOrcamentaria
       || (kbFb?.classificacao || '')
-      || 'Projeto/atividade: [verificar no SIOP] — Natureza: 3.3.90.39.00 — Fonte: 1.706.311001',
+      || (isMun
+          ? `${naturezaDespesaDe(em)}\n[Código LOA municipal: verificar com a Secretaria de Planejamento]`
+          : 'Projeto/atividade: [verificar no SIOP] — Natureza: 3.3.90.39.00 — Fonte: 1.706.311001'),
     executor: lookup ? `${lookup.cnpj} — ${lookup.nome}`
       : ex ? `${ex.executor?.cnpj} — ${ex.executor?.nome}` : (em.executor || '[a preencher]'),
     banco:    bancoFb,
@@ -1365,7 +1386,14 @@ const REGEN_TOKENS = {
 };
 
 const PROMPTS = {
-  classificacao:        em => `Gere a classificação orçamentária para emenda EC 105/2019: objeto "${em.objeto}", beneficiário "${S.nomeEnte}". Inclua: projeto/atividade com código SIOP, natureza (3.3.90.39.00 serviços ou 4.4.90.51.00 obras), fonte 1.706.311001. Responda SOMENTE o texto do campo.`,
+  classificacao: em => {
+    const nd = naturezaDespesaDe(em);
+    const isMun = S.cnpj !== CNPJ_ESTADO_ES;
+    if (isMun) {
+      return `Campo 1.2 Classificação Orçamentária do Plano de Trabalho (TransfereGov / EC 105/2019).\nBeneficiário municipal: ${S.nomeEnte}.\nObjeto: "${em.objeto}".\nNatureza de despesa já determinada: ${nd}.\nComplete com o código LOA do município (órgão, unidade, programa/ação) compatível com esse objeto. Responda SOMENTE o texto do campo completo.`;
+    }
+    return `Gere a classificação orçamentária para emenda EC 105/2019: objeto "${em.objeto}", beneficiário "${S.nomeEnte}". Inclua: projeto/atividade com código SIOP, natureza (3.3.90.39.00 serviços ou 4.4.90.51.00 obras), fonte 1.706.311001. Responda SOMENTE o texto do campo.`;
+  },
   executor:             em => `Sugira o executor mais provável (CNPJ formatado — nome completo) para o objeto "${em.objeto}" no ES, com base em padrões de Transferências Especiais EC 105/2019. Responda SOMENTE o texto.`,
   banco:                em => `Sugira o banco (código — nome) mais usual para o executor de "${em.objeto}" no ES (Transferências Especiais EC 105/2019). Responda SOMENTE o texto no formato "001 — Banco do Brasil".`,
   agencia:              em => `Sugira o número de agência mais usual para executor de "${em.objeto}" no ES. Responda SOMENTE o número.`,
