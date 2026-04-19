@@ -383,10 +383,14 @@
         <div id="em-vazio"    class="placeholder">Selecione um beneficiário para carregar as emendas.</div>
         <div id="em-loading"  class="placeholder" style="display:none;">Consultando API TransfereGov...</div>
         <div id="em-vazia" class="placeholder" style="display:none;">
-          Nenhum plano de ação encontrado para esse beneficiário.<br>
-          <small style="color:#b87a00;">Se os planos já foram enviados e você quer testá-los, ative <strong>Modo Teste</strong> abaixo.</small>
+          Nenhum plano de ação encontrado para esse beneficiário.
         </div>
         <div id="em-tabela"   class="table-wrap"  style="display:none;">
+          <div style="display:flex;justify-content:flex-end;margin-bottom:6px;">
+            <button class="icon-btn" onclick="atualizarEmendas()" title="Buscar dados mais recentes">
+              ↻ Atualizar
+            </button>
+          </div>
           <table class="emenda-table">
             <thead><tr>
               <th style="width:30%">Emenda Parlamentar</th>
@@ -844,13 +848,40 @@ async function onBenefChange() {
   renderEmendas(emendas);
 }
 
-/* ══════════════════════════════════════════
-   FETCH EMENDAS — proxy → direto → demo
-══════════════════════════════════════════ */
-async function fetchEmendas(cnpj) {
-  S.usandoDemo = false;
+function atualizarEmendas() {
+  if (!S.cnpj) return;
+  cacheClear(S.cnpj);
+  onBenefChange();
+}
 
-  // 1) Tenta proxy servidor (sem CORS, disponível quando rodando via Next.js/Vercel)
+/* ══════════════════════════════════════════
+   CACHE LOCAL (localStorage) — 6 horas
+══════════════════════════════════════════ */
+const CACHE_TTL_MS = 6 * 60 * 60 * 1000; // 6 horas
+
+function cacheGet(cnpj) {
+  try {
+    const raw = localStorage.getItem('tgov_' + cnpj);
+    if (!raw) return null;
+    const { ts, data } = JSON.parse(raw);
+    return (Date.now() - ts < CACHE_TTL_MS) ? data : null;
+  } catch { return null; }
+}
+
+function cacheSet(cnpj, data) {
+  try { localStorage.setItem('tgov_' + cnpj, JSON.stringify({ ts: Date.now(), data })); }
+  catch { /* quota excedida — silencia */ }
+}
+
+function cacheClear(cnpj) {
+  try { localStorage.removeItem('tgov_' + cnpj); } catch { }
+}
+
+/* ══════════════════════════════════════════
+   FETCH EMENDAS — cache → proxy → direto → demo
+══════════════════════════════════════════ */
+async function fetchEmendasReal(cnpj) {
+  // 1) Proxy servidor (sem CORS)
   try {
     const r = await fetch(`${TGOV_API_PROXY}?cnpj=${cnpj}`, {
       signal: AbortSignal.timeout(20000)
@@ -862,7 +893,7 @@ async function fetchEmendas(cnpj) {
     }
   } catch(_) { /* proxy não disponível */ }
 
-  // 2) Tenta chamada direta (funciona se a API liberar CORS futuramente ou em alguns ambientes)
+  // 2) Chamada direta (CORS bloqueado na maioria dos ambientes)
   const urls = [
     `${TGOV_DIRECT}/proposta?cnpjProponente=eq.${cnpj}&situacaoTransferencia=eq.AGUARDANDO_PLANO_DE_TRABALHO&limit=50`,
     `${TGOV_DIRECT}/proposta?cnpjProponente=eq.${cnpj}&limit=30`,
@@ -880,8 +911,30 @@ async function fetchEmendas(cnpj) {
       }
     } catch(_) { /* CORS bloqueado */ }
   }
+  return null; // sem dados reais
+}
 
-  // 3) Fallback: dados de demonstração
+async function fetchEmendas(cnpj) {
+  S.usandoDemo = false;
+
+  // Verifica cache local (< 6h)
+  const cached = cacheGet(cnpj);
+  if (cached) {
+    // Exibe imediatamente; atualiza em background sem bloquear a UI
+    fetchEmendasReal(cnpj).then(fresh => {
+      if (fresh && fresh.length) { cacheSet(cnpj, fresh); renderEmendas(fresh); }
+    }).catch(() => {});
+    return cached;
+  }
+
+  // Cache miss ou expirado — busca ao vivo
+  const dados = await fetchEmendasReal(cnpj);
+  if (dados && dados.length) {
+    cacheSet(cnpj, dados);
+    return dados;
+  }
+
+  // Fallback: demonstração
   S.usandoDemo = true;
   $('cors-banner').classList.add('show');
   return DEMO[cnpj] || [];

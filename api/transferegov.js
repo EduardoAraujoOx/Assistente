@@ -136,7 +136,7 @@ export default async function handler(req, res) {
     const todos = Array.isArray(rows) ? rows : [];
 
     if (todos.length === 0) {
-      res.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate=300');
+      res.setHeader('Cache-Control', 's-maxage=14400, stale-while-revalidate=86400');
       return res.status(200).json([]);
     }
 
@@ -165,7 +165,7 @@ export default async function handler(req, res) {
       return montar(pa, ptByPa[id], situacaoByPa[id]);
     });
 
-    res.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate=300');
+    res.setHeader('Cache-Control', 's-maxage=14400, stale-while-revalidate=86400');
     return res.status(200).json(itens);
   } catch (err) {
     return res.status(502).json({
