@@ -1449,8 +1449,22 @@ async function carregarEntes() {
 }
 
 // Disparado quando o browser restaura o valor do select antes do script async completar
+function triggerSeNaoCarregado() {
+  const val = $('sel-benef')?.value;
+  if (!val) return;
+  if ($('em-loading')?.style.display !== 'none') return; // já carregando
+  if ($('em-tabela')?.style.display  !== 'none') return; // já exibido
+  onBenefChange();
+}
+
 document.addEventListener('DOMContentLoaded', () => {
-  if ($('sel-benef')?.value) onBenefChange();
+  // Tentativa imediata
+  triggerSeNaoCarregado();
+  // iOS restaura o form DEPOIS do DOMContentLoaded — verifica com delays
+  setTimeout(triggerSeNaoCarregado, 600);
+  setTimeout(triggerSeNaoCarregado, 1800);
+  // blur: dispara quando o picker do iOS fecha, mesmo sem mudar o valor
+  $('sel-benef')?.addEventListener('blur', triggerSeNaoCarregado);
 });
 
 carregarEntes();
