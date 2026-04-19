@@ -42,9 +42,10 @@ function loadKb(ano) {
 }
 
 export default function handler(req, res) {
-  const q   = String(req.query.q   || '').trim();
-  const top = Math.min(Number(req.query.top || 3), 10);
-  const ano = Number(req.query.ano || 2025);
+  const q    = String(req.query.q    || '').trim();
+  const top  = Math.min(Number(req.query.top || 3), 10);
+  const ano  = Number(req.query.ano || 2025);
+  const cnpj = String(req.query.cnpj || '').replace(/\D/g, '');
 
   if (!q) return res.status(400).json({ error: 'Parâmetro "q" obrigatório.' });
 
@@ -55,14 +56,16 @@ export default function handler(req, res) {
   }
 
   const scored = kb
-    .map(plano => ({
-      ...plano,
-      _score: similarity(q, plano.objetoExecutor || plano.objetoParlamentar || ''),
-    }))
+    .map(plano => {
+      const sim = similarity(q, plano.objetoExecutor || plano.objetoParlamentar || '');
+      // Boost para planos do mesmo beneficiário (município ou estado)
+      const sameCnpj = cnpj && (plano.cnpjBeneficiario || '').replace(/\D/g,'') === cnpj;
+      return { ...plano, _score: sim * (sameCnpj ? 1.5 : 1) };
+    })
     .filter(p => p._score > 0)
     .sort((a, b) => b._score - a._score)
     .slice(0, top)
-    .map(({ _score, ...rest }) => rest); // remove campo interno
+    .map(({ _score, ...rest }) => rest);
 
   res.setHeader('Cache-Control', 's-maxage=3600, stale-while-revalidate=86400');
   return res.status(200).json({

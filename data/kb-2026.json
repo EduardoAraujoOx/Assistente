@@ -1,0 +1,1631 @@
+[
+  {
+    "idPlanoAcao": 90733,
+    "ano": 2026,
+    "nomeParlamentar": "Paulo Folletto",
+    "codigoEmenda": "202627740006-PAULO FOLLETTO",
+    "nomeBeneficiario": "MUNICIPIO DE JERONIMO MONTEIRO",
+    "cnpjBeneficiario": "27165653000187",
+    "valorTotal": 398000,
+    "valorCusteio": 0,
+    "valorInvestimento": 398000,
+    "objetoParlamentar": "662 - Pavimentação Urbana - Ministério das Cidades",
+    "objetoExecutor": "Pavimentação de vias públicas urbanas no município de Jerônimo Monteiro-ES",
+    "executor": {
+      "cnpj": "27165653000187",
+      "nome": "MUNICIPIO DE JERONIMO MONTEIRO",
+      "contaEspecifica": "Não",
+      "banco": {
+        "codigo": "001",
+        "nome": "Banco do Brasil"
+      },
+      "agencia": {
+        "numero": 281,
+        "dv": "X",
+        "nome": "ALEGRE"
+      },
+      "conta": {
+        "numero": 37662,
+        "dv": "0"
+      }
+    },
+    "classificacaoOrcamentaria": "Órgão: 070 - SECRETARIA MUNICIPAL DE DESENVOLVIMENTO URBANO, OBRAS PÚBLICAS E TRANSPORTES\nUnidade:  070001 – SECRETARIA MUNICIPAL DE DESENVOLVIMENTO URBANO, OBRAS PÚBLICAS E TRANSPORTES \nFunção: 15 – URBANISMO\nSubfunção: 451 – INFRA ESTRUTURA URBANA\nPrograma: 0021 – INFRA ESTRUTURA URBANA\nConta contábil: 44905100000 – OBRAS E INSTALAÇÕES\nProjeto/atividades: 1.057– PAVIMENTAÇÃO, DRENAGEM, ABERTURA E REFORMA DE RUAS, AVENIDAS E ÁREAS PÚBLICAS\nFonte de recurso: 1706\n",
+    "prazoMeses": 36,
+    "situacaoPT": "APROVADO",
+    "finalidades": [
+      {
+        "tipoCodigo": 15,
+        "tipoDescricao": "Urbanismo",
+        "areaCodigo": 451,
+        "areaDescricao": "Infraestrutura Urbana "
+      }
+    ],
+    "metas": [
+      {
+        "descricao": "Pavimentação de vias públicas urbanas no município de Jerônimo Monteiro-ES",
+        "quantidade": 3700,
+        "unidade": "M2",
+        "valorTotal": 398000,
+        "prazoMeses": 36
+      }
+    ]
+  },
+  {
+    "idPlanoAcao": 90068,
+    "ano": 2026,
+    "nomeParlamentar": "Da Vitoria",
+    "codigoEmenda": "202639480006-DA VITORIA",
+    "nomeBeneficiario": "MUNICIPIO DE AGUIA BRANCA",
+    "cnpjBeneficiario": "31796584000187",
+    "valorTotal": 995000,
+    "valorCusteio": 0,
+    "valorInvestimento": 995000,
+    "objetoParlamentar": "805 - Regularização Fundiária Urbana - Ministério das Cidades",
+    "objetoExecutor": "Execução de Regularização fundiária de interesse social (REURB-S) no Município de Águia Branca",
+    "executor": {
+      "cnpj": "31796584000187",
+      "nome": "MUNICIPIO DE AGUIA BRANCA",
+      "contaEspecifica": "Não",
+      "banco": {
+        "codigo": "004",
+        "nome": "Banco do Nordeste"
+      },
+      "agencia": {
+        "numero": 198,
+        "dv": "8",
+        "nome": ""
+      },
+      "conta": {
+        "numero": null,
+        "dv": null
+      }
+    },
+    "classificacaoOrcamentaria": "",
+    "prazoMeses": 36,
+    "situacaoPT": "APROVADO",
+    "finalidades": [
+      {
+        "tipoCodigo": 15,
+        "tipoDescricao": "Urbanismo",
+        "areaCodigo": 127,
+        "areaDescricao": "Ordenamento Territorial"
+      }
+    ],
+    "metas": [
+      {
+        "descricao": "Regularização Fundiária no Município de Águia Branca",
+        "quantidade": 990,
+        "unidade": "LOTE",
+        "valorTotal": 995000,
+        "prazoMeses": 36
+      }
+    ]
+  },
+  {
+    "idPlanoAcao": 90724,
+    "ano": 2026,
+    "nomeParlamentar": "Paulo Folletto",
+    "codigoEmenda": "202627740006-PAULO FOLLETTO",
+    "nomeBeneficiario": "MUNICIPIO DE PONTO BELO",
+    "cnpjBeneficiario": "01614334000118",
+    "valorTotal": 995000,
+    "valorCusteio": 0,
+    "valorInvestimento": 995000,
+    "objetoParlamentar": "805 - Regularização Fundiária Urbana - Ministério das Cidades",
+    "objetoExecutor": "Execução de regularização fundiária urbana de interesse social (REURB-S) no município de Ponto Belo. ",
+    "executor": {
+      "cnpj": "01614334000118",
+      "nome": "MUNICIPIO DE PONTO BELO",
+      "contaEspecifica": "Não",
+      "banco": {
+        "codigo": "104",
+        "nome": "Caixa Econômica Federal"
+      },
+      "agencia": {
+        "numero": 716,
+        "dv": "1",
+        "nome": "MONTANHA"
+      },
+      "conta": {
+        "numero": 569965851,
+        "dv": "0"
+      }
+    },
+    "classificacaoOrcamentaria": "110009.0448200791.027 - CONSTRUÇÃO, REFORMA E REGULARIZAÇÃO DE UNIDADES HABITACIONAIS DE INTERESSE SOCIAL\n44905100000 - OBRAS E INSTALAÇÕES\n",
+    "prazoMeses": 24,
+    "situacaoPT": "APROVADO",
+    "finalidades": [
+      {
+        "tipoCodigo": 15,
+        "tipoDescricao": "Urbanismo",
+        "areaCodigo": 127,
+        "areaDescricao": "Ordenamento Territorial"
+      }
+    ],
+    "metas": [
+      {
+        "descricao": "Execução de regularização fundiária urbana de interesse social (REURB-S) no município de Ponto Belo. ",
+        "quantidade": 660,
+        "unidade": "LOTE",
+        "valorTotal": 995000,
+        "prazoMeses": 12
+      }
+    ]
+  },
+  {
+    "idPlanoAcao": 91412,
+    "ano": 2026,
+    "nomeParlamentar": "Gilvan da Federal",
+    "codigoEmenda": "202643840003-GILVAN DA FEDERAL",
+    "nomeBeneficiario": "MUNICIPIO DE MIMOSO DO SUL",
+    "cnpjBeneficiario": "27174119000137",
+    "valorTotal": 1990000,
+    "valorCusteio": 0,
+    "valorInvestimento": 1990000,
+    "objetoParlamentar": "999 - Objeto Único Não Padronizado – Demais",
+    "objetoExecutor": "Meta 01 - Pavimentação de Via Pública URBANA Praça/Rua Cônego Ériton Luiz C. Nery, na sede do município de Mimoso do Sul, utilizando Bloco intertravado de concreto/concreto, totalizando 2800 metros quadrados.",
+    "executor": {
+      "cnpj": "27174119000137",
+      "nome": "MUNICIPIO DE MIMOSO DO SUL",
+      "contaEspecifica": "Não",
+      "banco": {
+        "codigo": "104",
+        "nome": "Caixa Econômica Federal"
+      },
+      "agencia": {
+        "numero": 1908,
+        "dv": "9",
+        "nome": "MIMOSO DO SUL"
+      },
+      "conta": {
+        "numero": 569610302,
+        "dv": "9"
+      }
+    },
+    "classificacaoOrcamentaria": "Órgão 013 - SECRETARIA MUNICIPAL DE OBRAS E SERVIÇOS URBANOS\nUnidade 001 - SECRETARIA MUNICIPAL DE OBRAS E SERVIÇOS URBANOS\n\n0130011545200191025 - ABERTURA, PAVIMENTAÇAO E DRENAGEM DE RUAS E AVENIDAS DA SEDE E DISTRITOS\n\n44905100000 - OBRAS E INSTALAÇÕES - 150000009999-AAAA - RECURSOS NÃO VINCULADOS DE IMPOSTOS E TRANSFERÊNCIAS DE IMPOSTOS\n\n44905100000 - OBRAS E INSTALAÇÕES - 170100009999-AAAA - OUTRAS TRANSFERÊNCIAS DE CONVÊNIOS OU INSTRUMENTOS CONGÊNERES DOS ESTADOS\n\n44905100000 - OBRAS E INSTALAÇÕES - 170500000000-AAAA - TRANSFERÊNCIAS DOS ESTADOS REFERENTES A COMPENSAÇÕES \nFINANCEIRAS PELA EXPLORAÇÃO DE RECURSOS...\n\n44905100000 - OBRAS E INSTALAÇÕES - 170600000000-3110 - TRANSFERÊNCIA ESPECIAL DA UNIÃO \n\n44905100000 - OBRAS E INSTALAÇÕES - 172000000000-AAAA - TRANSFERÊNCIAS DA UNIÃO REFERENTES ÀS PARTICIPAÇÕES NA EXPLORAÇÃO DE PETRÓLEO E GÁS NATURAL DES\n\n44905100000 - OBRAS E INSTALAÇÕES - 175500000000-AAAA - RECURSOS DE ALIENAÇÃO DE BENS/ATIVOS - ADMINISTRAÇÃO DIRETA \n44905100000 - OBRAS E INSTALAÇÕES - 189900000000-AAAA - OUTROS RECURSOS VINCULADOS \n\n44905100000 - OBRAS E INSTALAÇÕES - 270000009999-AAAA - OUTRAS TRANSFERÊNCIAS DE CONVÊNIOS OU INSTRUMENTOS CONGÊNERES DA UNIÃO\n\n44905100000 - OBRAS E INSTALAÇÕES - 270100009999-AAAA - OUTRAS TRANSFERÊNCIAS DE CONVÊNIOS OU INSTRUMENTOS CONGÊNERES DOS ESTADOS\n\n44905100000 - OBRAS E INSTALAÇÕES - 270600000000-3110 - TRANSFERÊNCIA ESPECIAL DA UNIÃO \n\n44905100000 - OBRAS E INSTALAÇÕES - 289900000000-AAAA - OUTROS RECURSOS VINCULADOS\n\nOBS.: CONSTA EM ANEXO O ORÇAMENTO 2026 DA SECRETARIA MUNICIPAL DE OBRAS, RESPONSÁVEL PELAS OBRAS DE PAVIMENTAÇÃO DE VIAS URBANAS.\n",
+    "prazoMeses": 36,
+    "situacaoPT": "APROVADO",
+    "finalidades": [
+      {
+        "tipoCodigo": 15,
+        "tipoDescricao": "Urbanismo",
+        "areaCodigo": 451,
+        "areaDescricao": "Infraestrutura Urbana "
+      }
+    ],
+    "metas": [
+      {
+        "descricao": "Pavimentação de Via Pública URBANA Praça/Rua Cônego Ériton Luiz C. Nery, na sede do município de Mimoso do Sul, utilizando Bloco intertravado de concreto/concreto, totalizando 2800 metros quadrados.",
+        "quantidade": 2800,
+        "unidade": "M2",
+        "valorTotal": 1990000,
+        "prazoMeses": 36
+      }
+    ]
+  },
+  {
+    "idPlanoAcao": 90343,
+    "ano": 2026,
+    "nomeParlamentar": "Gilson Daniel",
+    "codigoEmenda": "202643830005-GILSON DANIEL",
+    "nomeBeneficiario": "MUNICIPIO DE ANCHIETA",
+    "cnpjBeneficiario": "27142694000158",
+    "valorTotal": 398000,
+    "valorCusteio": 0,
+    "valorInvestimento": 398000,
+    "objetoParlamentar": "360 - Construção, Reforma Ou Ampliação De Infraestrutura Esportiva  - Ministério do Esporte",
+    "objetoExecutor": "Promover a reforma integral da quadra poliesportiva e revitalização da praça da comunidade de Limeira, garantindo a segurança, acessibilidade, funcionalidade e conforto dos espaços públicos para práticas esportivas, lazer, convívio social e eventos culturais. Sabendo-se que a prática esportiva é reconhecida como um instrumento de promoção da saúde física e mental, além de estimular valores como disciplina, cooperação, inclusão social e cidadania. O acesso a espaços adequados para o esporte e lazer contribui para a prevenção de doenças, diminuição da vulnerabilidade social e fortalecimento dos vínculos comunitários; Estímulo à prática esportiva, atividades culturais e recreativas; Valorização do espaço público e incremento da participação comunitária. Destacamos ainda que, o projeto está alinhado às diretrizes da Política Nacional de Esportes e Lazer, que prioriza o direito universal ao esporte, a democratização do acesso aos equipamentos esportivos, a promoção da inclusão social e a valorização da prática esportiva em todas as idades. A intervenção proposta reforça os princípios de equidade, participação cidadã e incentivo à prática regular de atividades físicas, contribuindo para a implementação de programas públicos de esporte e lazer. Desse modo, os resultados esperados são: Requalificação da quadra esportiva e da praça, com instalação de equipamentos modernos e seguros; Aumento da participação da comunidade em atividades esportivas, recreativas e culturais; Melhoria da saúde e bem-estar da população local; Fortalecimento da integração social e da coesão comunitária; Estímulo à inclusão de crianças, jovens, adultos e idosos em atividades esportivas regulares; e a Promoção de eventos esportivos e culturais, fortalecendo a identidade e a valorização da comunidade.",
+    "executor": {
+      "cnpj": "27142694000158",
+      "nome": "MUNICIPIO DE ANCHIETA",
+      "contaEspecifica": "Não",
+      "banco": {
+        "codigo": "104",
+        "nome": "Caixa Econômica Federal"
+      },
+      "agencia": {
+        "numero": 1978,
+        "dv": "0",
+        "nome": "PADRE ANCHIETA"
+      },
+      "conta": {
+        "numero": 569610299,
+        "dv": "5"
+      }
+    },
+    "classificacaoOrcamentaria": "Órgão: Secretaria Municipal de Esportes e da Juventude\nDotação: 02.15. 27.812.0046.1.161 Construção, Ampliação e Reforma dos Equipamentos Esportivos e de Recreação;\nNatureza de Despesa: 4.4.90.51.99\nFonte: 1500.0000.9999",
+    "prazoMeses": 36,
+    "situacaoPT": "APROVADO",
+    "finalidades": [
+      {
+        "tipoCodigo": 27,
+        "tipoDescricao": "Desporto e Lazer",
+        "areaCodigo": 812,
+        "areaDescricao": "Desporto Comunitário"
+      }
+    ],
+    "metas": [
+      {
+        "descricao": "00060973 -CONTRATAÇÃO DE EMPRESA DE ENGENHARIAESPECIALIZADA PARA EXECUÇÃO DE OBRA DE REFORMADE QUADRA POLIESPORTIVA E PRAÇA DA COMUNIDADE DELIMEIRA",
+        "quantidade": 1,
+        "unidade": "UN",
+        "valorTotal": 398000,
+        "prazoMeses": 36
+      }
+    ]
+  },
+  {
+    "idPlanoAcao": 90071,
+    "ano": 2026,
+    "nomeParlamentar": "Da Vitoria",
+    "codigoEmenda": "202639480006-DA VITORIA",
+    "nomeBeneficiario": "MUNICIPIO DE APIACA",
+    "cnpjBeneficiario": "27165604000144",
+    "valorTotal": 995000,
+    "valorCusteio": 0,
+    "valorInvestimento": 995000,
+    "objetoParlamentar": "662 - Pavimentação Urbana - Ministério das Cidades",
+    "objetoExecutor": "Pavimentação",
+    "executor": {
+      "cnpj": "27165604000144",
+      "nome": "MUNICIPIO DE APIACA",
+      "contaEspecifica": "Não",
+      "banco": {
+        "codigo": "104",
+        "nome": "Caixa Econômica Federal"
+      },
+      "agencia": {
+        "numero": 1734,
+        "dv": "5",
+        "nome": "SAO JOSE DO CALCADO"
+      },
+      "conta": {
+        "numero": 569925594,
+        "dv": "6"
+      }
+    },
+    "classificacaoOrcamentaria": "Orgão:110 Secretaria Municipal de Obras e Atividades Urbanas Unidade Orçamentária:110001 Secretaria Municipal de Obras e Atividades Urbanas Elemento de Despesa: 44905100000 Fonte de Recurso:170600000000",
+    "prazoMeses": 36,
+    "situacaoPT": "APROVADO",
+    "finalidades": [
+      {
+        "tipoCodigo": 15,
+        "tipoDescricao": "Urbanismo",
+        "areaCodigo": 451,
+        "areaDescricao": "Infraestrutura Urbana "
+      }
+    ],
+    "metas": [
+      {
+        "descricao": "Pavimentação urbana",
+        "quantidade": 4771,
+        "unidade": "M2",
+        "valorTotal": 995000,
+        "prazoMeses": 36
+      }
+    ]
+  },
+  {
+    "idPlanoAcao": 90727,
+    "ano": 2026,
+    "nomeParlamentar": "Paulo Folletto",
+    "codigoEmenda": "202627740006-PAULO FOLLETTO",
+    "nomeBeneficiario": "MUNICIPIO DE NOVA VENECIA",
+    "cnpjBeneficiario": "27167428000180",
+    "valorTotal": 3980000,
+    "valorCusteio": 0,
+    "valorInvestimento": 3980000,
+    "objetoParlamentar": "805 - Regularização Fundiária Urbana - Ministério das Cidades",
+    "objetoExecutor": "Execução de Regularização Fundiária Urbana de Interesse Social (REURB-S) no Município de Nova Venécia.",
+    "executor": {
+      "cnpj": "27167428000180",
+      "nome": "MUNICIPIO DE NOVA VENECIA",
+      "contaEspecifica": "Não",
+      "banco": {
+        "codigo": "104",
+        "nome": "Caixa Econômica Federal"
+      },
+      "agencia": {
+        "numero": 556,
+        "dv": "8",
+        "nome": "NOVA VENECIA"
+      },
+      "conta": {
+        "numero": 569879384,
+        "dv": "7"
+      }
+    },
+    "classificacaoOrcamentaria": "ÓRGÃO:            070 - Secretaria Municipal de Assistência Social\nUNIDADE:        004 - Fundo Municipal de Habitação\nFUNÇÃO:             16 - Habitação\nSUBFUNÇÃO:  482 - Habitação Urbana\nPROGRAMA:   074 - Fundo Municipal de Habitação\nATIVIDADE:     1.165 - Regularização Fundiária de Imóveis / Terrenos\nELEMENTO:    33903900000 - Outros Serviços de Terceiros - Pessoa Jurídica\nFICHA:              636\nFONTE DE RECURSOS: 1706000000000 - Transferência Especial da União       \n",
+    "prazoMeses": 36,
+    "situacaoPT": "APROVADO",
+    "finalidades": [
+      {
+        "tipoCodigo": 15,
+        "tipoDescricao": "Urbanismo",
+        "areaCodigo": 127,
+        "areaDescricao": "Ordenamento Territorial"
+      }
+    ],
+    "metas": [
+      {
+        "descricao": "Execução de Regularização Fundiária Urbana de Interesse Social (REURB-S) no Município de Nova Venécia.",
+        "quantidade": 2700,
+        "unidade": "LOTE",
+        "valorTotal": 3980000,
+        "prazoMeses": 36
+      }
+    ]
+  },
+  {
+    "idPlanoAcao": 90735,
+    "ano": 2026,
+    "nomeParlamentar": "Paulo Folletto",
+    "codigoEmenda": "202627740006-PAULO FOLLETTO",
+    "nomeBeneficiario": "MUNICIPIO DE CONCEICAO DA BARRA",
+    "cnpjBeneficiario": "27174077000134",
+    "valorTotal": 1990000,
+    "valorCusteio": 0,
+    "valorInvestimento": 1990000,
+    "objetoParlamentar": "805 - Regularização Fundiária Urbana - Ministério das Cidades",
+    "objetoExecutor": "Execução de regularização fundiária urbana de interesse social (REURB-S) no município de Conceição da Barra.",
+    "executor": {
+      "cnpj": "27174077000134",
+      "nome": "MUNICIPIO DE CONCEICAO DA BARRA",
+      "contaEspecifica": "Não",
+      "banco": {
+        "codigo": "004",
+        "nome": "Banco do Nordeste"
+      },
+      "agencia": {
+        "numero": 220,
+        "dv": "8",
+        "nome": ""
+      },
+      "conta": {
+        "numero": null,
+        "dv": null
+      }
+    },
+    "classificacaoOrcamentaria": "04.127.0003.1.0027 RECADASTRAMENTO IMOBILIÁRIO E REGULARIZAÇÃO FUNDIÁ\n3.3.90.39.05 Serviços Técniocs Profissionais \n",
+    "prazoMeses": 36,
+    "situacaoPT": "APROVADO",
+    "finalidades": [
+      {
+        "tipoCodigo": 15,
+        "tipoDescricao": "Urbanismo",
+        "areaCodigo": 127,
+        "areaDescricao": "Ordenamento Territorial"
+      }
+    ],
+    "metas": [
+      {
+        "descricao": "Execução de regularização fundiária urbana de interesse social (REURB-S) no município de Conceição da Barra.",
+        "quantidade": 1300,
+        "unidade": "LOTE",
+        "valorTotal": 1990000,
+        "prazoMeses": 36
+      },
+      {
+        "descricao": "Regularização Fundiária Urbana ",
+        "quantidade": 1400,
+        "unidade": "LOTE",
+        "valorTotal": 1990000,
+        "prazoMeses": 36
+      }
+    ]
+  },
+  {
+    "idPlanoAcao": 90081,
+    "ano": 2026,
+    "nomeParlamentar": "Da Vitoria",
+    "codigoEmenda": "202639480006-DA VITORIA",
+    "nomeBeneficiario": "MUNICIPIO DE PIUMA",
+    "cnpjBeneficiario": "27165695000118",
+    "valorTotal": 995000,
+    "valorCusteio": 0,
+    "valorInvestimento": 995000,
+    "objetoParlamentar": "270 - Cadastro Territorial Multifinalitário (Ctm) - Ministério das Cidades",
+    "objetoExecutor": "Contratação de empresa especializada para atualização da base cadastral e cartográfica, por meio de tecnologia de georreferenciamento.",
+    "executor": {
+      "cnpj": "27165695000118",
+      "nome": "MUNICIPIO DE PIUMA",
+      "contaEspecifica": "Não",
+      "banco": {
+        "codigo": "104",
+        "nome": "Caixa Econômica Federal"
+      },
+      "agencia": {
+        "numero": 2056,
+        "dv": "7",
+        "nome": "PIUMA"
+      },
+      "conta": {
+        "numero": 569610301,
+        "dv": "0"
+      }
+    },
+    "classificacaoOrcamentaria": "Secretaria Municipal de Fazenda e Planejamento\nClassificação Funcional:000003001.0412500053.004\nNatureza da Despesa: 33903900000 - Outros Serviços de Terceiros  - Pessoa Jurídica \nFonte de Recurso: 150000000000 - Recursos Não Vinculados de Impostos e Transferências de Impostos\nFicha: 0073",
+    "prazoMeses": 36,
+    "situacaoPT": "APROVADO",
+    "finalidades": [
+      {
+        "tipoCodigo": 15,
+        "tipoDescricao": "Urbanismo",
+        "areaCodigo": 127,
+        "areaDescricao": "Ordenamento Territorial"
+      }
+    ],
+    "metas": [
+      {
+        "descricao": "Contratação de empresa especializada para atualização da base cadastral e cartográfica, por meio de tecnologia de georreferenciamento.",
+        "quantidade": 2000,
+        "unidade": "LOTE",
+        "valorTotal": 995000,
+        "prazoMeses": 36
+      }
+    ]
+  },
+  {
+    "idPlanoAcao": 90328,
+    "ano": 2026,
+    "nomeParlamentar": "Gilson Daniel",
+    "codigoEmenda": "202643830005-GILSON DANIEL",
+    "nomeBeneficiario": "MUNICIPIO DE CARIACICA",
+    "cnpjBeneficiario": "27150549000119",
+    "valorTotal": 1990000,
+    "valorCusteio": 0,
+    "valorInvestimento": 1990000,
+    "objetoParlamentar": "662 - Pavimentação Urbana - Ministério das Cidades",
+    "objetoExecutor": "Pavimentação asfáltica em vias públicas urbanas no Município de Cariacica/ES",
+    "executor": {
+      "cnpj": "27150549000119",
+      "nome": "MUNICIPIO DE CARIACICA",
+      "contaEspecifica": "Não",
+      "banco": {
+        "codigo": "104",
+        "nome": "Caixa Econômica Federal"
+      },
+      "agencia": {
+        "numero": 590,
+        "dv": "8",
+        "nome": "CARIACICA"
+      },
+      "conta": {
+        "numero": 569836087,
+        "dv": "8"
+      }
+    },
+    "classificacaoOrcamentaria": "Classificação Funcional: 15.452.0009.2.0080\nNatureza de Despesa: 4.4.90.51.00\nVínculo: 1.706.0013.3110",
+    "prazoMeses": 12,
+    "situacaoPT": "APROVADO",
+    "finalidades": [
+      {
+        "tipoCodigo": 15,
+        "tipoDescricao": "Urbanismo",
+        "areaCodigo": 452,
+        "areaDescricao": "Serviços Urbanos"
+      }
+    ],
+    "metas": [
+      {
+        "descricao": "Recapeamento asfáltico da via pública Rua Oswaldo Prudêncio, localizada no Bairro Santa Luzia, Cariacica/ES",
+        "quantidade": 440,
+        "unidade": "M",
+        "valorTotal": 256479.34,
+        "prazoMeses": 6
+      },
+      {
+        "descricao": "Recapeamento asfáltico da via pública trecho da Rua P, localizada no Bairro Santa Luzia, Cariacica/ES",
+        "quantidade": 60,
+        "unidade": "M",
+        "valorTotal": 65635.68,
+        "prazoMeses": 6
+      },
+      {
+        "descricao": "Recapeamento asfáltico da via pública Estrada Roças Velhas, localizada no Bairro Santa Luzia, Cariacica/ES",
+        "quantidade": 600,
+        "unidade": "M",
+        "valorTotal": 667746.48,
+        "prazoMeses": 6
+      },
+      {
+        "descricao": "Recapeamento asfáltico da via pública Rua C, localizada no Bairro Santa Luzia, Cariacica/ES",
+        "quantidade": 210,
+        "unidade": "M",
+        "valorTotal": 253171.43,
+        "prazoMeses": 6
+      },
+      {
+        "descricao": "Recapeamento asfáltico da via pública Rua Ceará, localizada no Bairro Santa Luzia, Cariacica/ES",
+        "quantidade": 620,
+        "unidade": "M",
+        "valorTotal": 746967.07,
+        "prazoMeses": 6
+      }
+    ]
+  },
+  {
+    "idPlanoAcao": 90341,
+    "ano": 2026,
+    "nomeParlamentar": "Gilson Daniel",
+    "codigoEmenda": "202643830005-GILSON DANIEL",
+    "nomeBeneficiario": "MUNICIPIO DE VARGEM ALTA",
+    "cnpjBeneficiario": "31723570000133",
+    "valorTotal": 199000,
+    "valorCusteio": 199000,
+    "valorInvestimento": 0,
+    "objetoParlamentar": "501 - Fomento aos Eventos Turísticos - Ministério do Turismo",
+    "objetoExecutor": "Realização de despesas da 28ª Expo Vargem Alta\n•\tMunicípio: Vargem Alta – ES\n•\tLocal: Parque de Exposições / Espaço destinado a eventos agropecuários do município\n•\tPeríodo de Realização: 04 a 06 de dezembro de 2026\n•\tÓrgão Responsável: Prefeitura Municipal de Vargem Alta\n•\tSecretaria Executora: Secretaria Municipal de Cultura e Turismo\n•\tDemais Secretarias Envolvidas: Secretaria Municipal de Obras, Desenvolvimento e Serviços Urbanos; Secretaria Municipal de Saúde; Secretaria Municipal de Agricultura; Secretaria Municipal de Esportes e Juventude; Secretaria Municipal de Fazenda, Empreendedorismo, Inovação e Desenvolvimento Econômico; Secretaria Municipal de Assistência e Desenvolvimento Social; e Secretaria Municipal de Interior.\n\nOBJETIVO DO PROJETO\nO presente projeto tem por objetivo planejar, organizar e executar a 28ª Expo Vargem Alta, contemplando aspectos administrativos, operacionais, institucionais e financeiros, visando promover o fortalecimento do agronegócio, da cultura, do turismo e da economia local, em conformidade com os princípios da legalidade, transparência e eficiência da administração pública.\n\nOBJETIVOS DO EVENTO\n•\tValorizar o produtor rural e o agronegócio local;\n•\tIncentivar o desenvolvimento econômico, turístico e cultural do município;\n•\tPromover a integração social da comunidade;\n•\tOferecer programação cultural, artística e de lazer acessível à população;\n•\tFortalecer a imagem institucional do município.\n\nPROGRAMAÇÃO E ATRAÇÕES PREVISTAS\nA programação prevista para o evento contemplará atividades diversificadas, incluindo:\n•\tShows musicais com artistas locais, regionais e/ou nacionais;\n•\tApresentações culturais e artísticas;\n•\tExposição agropecuária, comercial e de serviços;\n•\tEspaço gastronômico com participação de comerciantes locais;\n•\tConcurso de Marcha;\n•\tConcurso de Motocross;\n•\tFazendinha;\n•\tAtividades voltadas ao produtor rural e ao empreendedorismo.\n\nEXPECTATIVA DE PÚBLICO\nDurante o período de realização da 28ª Expo Vargem Alta, estima-se um público total aproximado de 80 mil pessoas, considerando moradores do município e visitantes de cidades vizinhas, demonstrando a relevância regional do evento.\n\nESTRUTURA E LOGÍSTICA PREVISTAS\nO evento contará com infraestrutura adequada, composta por:\n•\tPalco principal com sistema de som e iluminação;\n•\tÁrea destinada a expositores;\n•\tEquipe de limpeza e manutenção;\n•\tÁrea destinada à alimentação;\n•\tAcessibilidade e áreas de circulação do público;\n•\tEspaço para estacionamento e apoio logístico.\n\nSEGURANÇA E ATENDIMENTO\nA segurança e o bem-estar do público serão assegurados por meio de:\n•\tApoio da Polícia Militar do Espírito Santo;\n•\tContratação de equipe de controle de acesso;\n•\tBrigadistas e apoio do Corpo de Bombeiros;\n•\tApoio da Secretaria Municipal de Saúde, com ambulância e equipe de prontidão.\n\nIMPACTO ECONÔMICO E SOCIAL ESPERADO\nA 28ª Expo Vargem Alta deverá proporcionar impactos positivos ao município, destacando-se:\n•\tAquecimento do comércio local;\n•\tGeração de renda temporária;\n•\tValorização da cultura e das tradições locais;\n•\tFortalecimento do turismo e da economia regional;\n•\tIncentivo ao empreendedorismo e à produção rural.\n\nPROGRAMAÇÃO \nSexta-Feira - 04 de dezembro de 2026\n18:00 – Abertura da Praça de Alimentação   \n19:30 – Abertura Oficial do Evento \n19:30 – Rodeio\n22:00 – SHOW NACIONAL ALEMÃO DO FORRÓ\n00:00 – Show Regional \n\nSábado – 05 de dezembro de 2026\n08:00 – Abertura do 4º Mega Poeirão  \n11:00 – Abertura da Praça de Alimentação  \n18:00 – Show Regional\n20:00 – Rodeio  \n22:00 –Show Regional \n23:30 – SHOW NACIONAL COM MARI FERNANDES    \n01:30 –Show Regional\n\nDomingo – 06 de dezembro de 2026\n08:00 – Abertura do Motocross  \n11:00 – Abertura da Praça de Alimentação \n16:00 – SHOW NACIONAL COM XANDE DE PILARES  \n18:00 – Rodeio\n19:30 – SHOW NACIONAL COM FELIPE E RODRIGO   \n\n*** PROGRAMAÇÃO SUJEITA A ALTERAÇÃO ULTIMA MODIFICAÇÃO 09/04/2026",
+    "executor": {
+      "cnpj": "31723570000133",
+      "nome": "MUNICIPIO DE VARGEM ALTA",
+      "contaEspecifica": "Não",
+      "banco": {
+        "codigo": "104",
+        "nome": "Caixa Econômica Federal"
+      },
+      "agencia": {
+        "numero": 4654,
+        "dv": "0",
+        "nome": "VARGEM ALTA"
+      },
+      "conta": {
+        "numero": null,
+        "dv": null
+      }
+    },
+    "classificacaoOrcamentaria": "150 - SECRETARIA MUNICIPAL DE CULTURA E TURISMO\n001 - SECRETARIA MUNICIPAL DE CULTURA E TURISMO\n695 - TURISMO\n150001.2769500762.057 - PROMOÇÃO E DIVULGAÇÃO TURÍSTICA\n33903900000 - OUTROS SERVICOS DE TERCEIROS-PESSOA JURIDICA\n\nLEI 1603/2025 - LEI ORÇAMENTÁRIA MUNICIPAL",
+    "prazoMeses": 36,
+    "situacaoPT": "APROVADO",
+    "finalidades": [
+      {
+        "tipoCodigo": 23,
+        "tipoDescricao": "Comércio e Serviços",
+        "areaCodigo": 695,
+        "areaDescricao": "Turismo"
+      }
+    ],
+    "metas": [
+      {
+        "descricao": "Pagamento de show artístico nacional \"Alemão do Forró\" ",
+        "quantidade": 1,
+        "unidade": "UN",
+        "valorTotal": 199000,
+        "prazoMeses": 36
+      }
+    ]
+  },
+  {
+    "idPlanoAcao": 90729,
+    "ano": 2026,
+    "nomeParlamentar": "Paulo Folletto",
+    "codigoEmenda": "202627740006-PAULO FOLLETTO",
+    "nomeBeneficiario": "MUNICIPIO DE MARILANDIA",
+    "cnpjBeneficiario": "27744176000104",
+    "valorTotal": 696500,
+    "valorCusteio": 0,
+    "valorInvestimento": 696500,
+    "objetoParlamentar": "270 - Cadastro Territorial Multifinalitário (Ctm) - Ministério das Cidades",
+    "objetoExecutor": "Contratação de serviços especializados para a elaboração da base cadastral e cartográfica do Município de Marilândia/ES, por meio da implantação de Cadastro Técnico Multifinalitário (CTM), utilizando tecnologias de geoprocessamento, sensoriamento remoto e sistemas de informações geográficas (SIG).\n\nO objeto contempla o levantamento, processamento, organização e integração de dados geoespaciais e cadastrais, incluindo mapeamento aerofotogramétrico ou por imagens de alta resolução, atualização da malha urbana e rural, cadastro imobiliário, identificação de logradouros, edificações, infraestrutura urbana e demais elementos territoriais relevantes.\n\nInclui ainda a estruturação de banco de dados geográficos, compatível com plataformas digitais, permitindo a gestão integrada das informações territoriais, bem como a capacitação de servidores municipais para utilização e atualização contínua do sistema.\n\nA execução do objeto visa subsidiar as ações de planejamento urbano, regularização fundiária, arrecadação tributária, gestão ambiental e demais serviços técnicos do município, promovendo maior eficiência administrativa, transparência e apoio à tomada de decisões.",
+    "executor": {
+      "cnpj": "27744176000104",
+      "nome": "MUNICIPIO DE MARILANDIA",
+      "contaEspecifica": "Não",
+      "banco": {
+        "codigo": "104",
+        "nome": "Caixa Econômica Federal"
+      },
+      "agencia": {
+        "numero": 1540,
+        "dv": "7",
+        "nome": "SAO SILVANO"
+      },
+      "conta": {
+        "numero": 569610303,
+        "dv": "7"
+      }
+    },
+    "classificacaoOrcamentaria": "",
+    "prazoMeses": 36,
+    "situacaoPT": "APROVADO",
+    "finalidades": [
+      {
+        "tipoCodigo": 15,
+        "tipoDescricao": "Urbanismo",
+        "areaCodigo": 127,
+        "areaDescricao": "Ordenamento Territorial"
+      }
+    ],
+    "metas": [
+      {
+        "descricao": "Implantar o Cadastro Técnico Multifinalitário (CTM) no Município de Marilândia/ES, por meio de base cadastral e cartográfica digital atualizada, visando aprimorar a gestão territorial, a arrecadação e o planejamento urbano e rural.",
+        "quantidade": 2000,
+        "unidade": "LOTE",
+        "valorTotal": 696500,
+        "prazoMeses": 36
+      }
+    ]
+  },
+  {
+    "idPlanoAcao": 90736,
+    "ano": 2026,
+    "nomeParlamentar": "Paulo Folletto",
+    "codigoEmenda": "202627740006-PAULO FOLLETTO",
+    "nomeBeneficiario": "MUNICIPIO DE PINHEIROS",
+    "cnpjBeneficiario": "27174085000180",
+    "valorTotal": 995000,
+    "valorCusteio": 0,
+    "valorInvestimento": 995000,
+    "objetoParlamentar": "805 - Regularização Fundiária Urbana - Ministério das Cidades",
+    "objetoExecutor": "Execução de regularização fundiária de interesse social (Reurb-S) no Município de Pinheiros.",
+    "executor": {
+      "cnpj": "27174085000180",
+      "nome": "MUNICIPIO DE PINHEIROS",
+      "contaEspecifica": "Não",
+      "banco": {
+        "codigo": "104",
+        "nome": "Caixa Econômica Federal"
+      },
+      "agencia": {
+        "numero": 3366,
+        "dv": "9",
+        "nome": "CIDADE DE PINHEIROS"
+      },
+      "conta": {
+        "numero": 569925595,
+        "dv": "4"
+      }
+    },
+    "classificacaoOrcamentaria": "Órgão : 022 - SECRETARIA MUNICIPAL DE FINANÇAS\nUnidade Orçamentária : 022 - SECRETARIA MUNICIPAL DE FINANÇAS\nFunção : 04 - Administração\nSubFunção : 129 - Administração de Receitas\nPrograma : 0030 - MANUTENÇÃO E REVITALIZAÇÃO DAS ATIVIDADES ADMINISTRATIVAS E FAZENDARIAS E PDM\nAtividade/Projeto : 2.147 - MANUT. AMPLIAÇÃO E MODERNIZAÇÃO DA ADM. TRIBUTARIA\nElemento Despesa : 33903900000 - OUTROS SERVICOS DE TERCEIROS-PESSOA JURIDICA\nFonte Recurso : 170400000000 - TRANSFERÊNCIAS DA UNIÃO REFERENTES A COMPENSAÇÕES FINANCEIRAS PELA EXPLORAÇÃO",
+    "prazoMeses": 36,
+    "situacaoPT": "APROVADO",
+    "finalidades": [
+      {
+        "tipoCodigo": 15,
+        "tipoDescricao": "Urbanismo",
+        "areaCodigo": 127,
+        "areaDescricao": "Ordenamento Territorial"
+      }
+    ],
+    "metas": [
+      {
+        "descricao": "Execução de regularização fundiária de interesse social (Reurb-S) no Município de Pinheiros.",
+        "quantidade": 660,
+        "unidade": "LOTE",
+        "valorTotal": 995000,
+        "prazoMeses": 36
+      }
+    ]
+  },
+  {
+    "idPlanoAcao": 90073,
+    "ano": 2026,
+    "nomeParlamentar": "Da Vitoria",
+    "codigoEmenda": "202639480006-DA VITORIA",
+    "nomeBeneficiario": "MUNICIPIO DE JERONIMO MONTEIRO",
+    "cnpjBeneficiario": "27165653000187",
+    "valorTotal": 895500,
+    "valorCusteio": 0,
+    "valorInvestimento": 895500,
+    "objetoParlamentar": "805 - Regularização Fundiária Urbana - Ministério das Cidades",
+    "objetoExecutor": "Execução de regularização fundiária urbana de interesse social (REURB-S) no município de Jerônimo Monteiro-ES, esta ação orçamentária se destina realizar a reurb do início ao fim, culminando com a expedição dos t´itulos em nome dos beneficiários. Desta forma, não é permitido que o objeto seja realização de estudos, produção cartográfica ou levantamentos diversos.",
+    "executor": {
+      "cnpj": "27165653000187",
+      "nome": "MUNICIPIO DE JERONIMO MONTEIRO",
+      "contaEspecifica": "Não",
+      "banco": {
+        "codigo": "001",
+        "nome": "Banco do Brasil"
+      },
+      "agencia": {
+        "numero": 281,
+        "dv": "X",
+        "nome": "ALEGRE"
+      },
+      "conta": {
+        "numero": 37631,
+        "dv": "0"
+      }
+    },
+    "classificacaoOrcamentaria": "Órgão: 040 - SECRETARIA MUNICIPAL DE PLANEJAMENTO\nUnidade:  040001 – SECRETARIA MUNICIPAL DE PLANEJAMENTO\t\nFunção: 04 – ADMINISTRAÇÃO\nSubfunção: 122 – ADMINISTRAÇÃO GERAL\nPrograma: 0101 – GESTÃO DO PLANEJAMENTO MUNICIPAL\nConta contábil: 33903900000 – OUTROS SERVICOS DE TERCEIROS-PESSOA JURIDICA\nProjeto/atividades: 2.215 – MANUTENÇÃO DOS SERVIÇOS ADMINISTRATIVOS\nFonte de recurso: 1706\n",
+    "prazoMeses": 36,
+    "situacaoPT": "APROVADO",
+    "finalidades": [
+      {
+        "tipoCodigo": 15,
+        "tipoDescricao": "Urbanismo",
+        "areaCodigo": 127,
+        "areaDescricao": "Ordenamento Territorial"
+      }
+    ],
+    "metas": [
+      {
+        "descricao": "Execução de regularização fundiária urbana de interesse social (REURB-S) no município de Jerônimo Monteiro-ES, esta ação orçamentária se destina realizar a reurb do início ao fim, culminando com a expedição dos t´itulos em nome dos beneficiários. ",
+        "quantidade": 600,
+        "unidade": "LOTE",
+        "valorTotal": 895500,
+        "prazoMeses": 36
+      }
+    ]
+  },
+  {
+    "idPlanoAcao": 90166,
+    "ano": 2026,
+    "nomeParlamentar": "Dr. Victor Linhalis",
+    "codigoEmenda": "202643620001-DR. VICTOR LINHALIS",
+    "nomeBeneficiario": "MUNICIPIO DE ATILIO VIVACQUA",
+    "cnpjBeneficiario": "27165620000137",
+    "valorTotal": 1990000,
+    "valorCusteio": 0,
+    "valorInvestimento": 1990000,
+    "objetoParlamentar": "663 - Pavimentação: Adequação De Vias, Pontes, Travessias e Obras de Artes Especiais em Área Urbana - Ministério das Cidades",
+    "objetoExecutor": "Pavimentação em diversas vias públicas localizadas no perímetro urbano do Município de Atílio Vivacqua/ES.",
+    "executor": {
+      "cnpj": "27165620000137",
+      "nome": "MUNICIPIO DE ATILIO VIVACQUA",
+      "contaEspecifica": "Não",
+      "banco": {
+        "codigo": "104",
+        "nome": "Caixa Econômica Federal"
+      },
+      "agencia": {
+        "numero": 171,
+        "dv": "6",
+        "nome": "CACHOEIRO DE ITAPEMIRIM"
+      },
+      "conta": {
+        "numero": null,
+        "dv": null
+      }
+    },
+    "classificacaoOrcamentaria": "Órgão: 05.00.00 - SECRET. MUNIC. DE OBRAS E SERVIÇOS URBANOS\nUnidade: 05.01.00 - SECRET. MUNIC. DE OBRAS\nClassificação Funcional: 27.813.0005.1.0029 -  CONSTRUÇÃO, REF E AMPL DE MUROS, VIAS, ESTRADAS.\nNatureza da Despesa: 4.4.90.51.99",
+    "prazoMeses": 36,
+    "situacaoPT": "APROVADO",
+    "finalidades": [
+      {
+        "tipoCodigo": 15,
+        "tipoDescricao": "Urbanismo",
+        "areaCodigo": 451,
+        "areaDescricao": "Infraestrutura Urbana "
+      }
+    ],
+    "metas": [
+      {
+        "descricao": "Pavimentação diversas ruas/bairros no Município de Atílio Vivacqua/ES.",
+        "quantidade": 25840,
+        "unidade": "M2",
+        "valorTotal": 1990000,
+        "prazoMeses": 36
+      }
+    ]
+  },
+  {
+    "idPlanoAcao": 95310,
+    "ano": 2026,
+    "nomeParlamentar": "Evair Vieira De Melo",
+    "codigoEmenda": "202630930005-EVAIR VIEIRA DE MELO",
+    "nomeBeneficiario": "MUNICIPIO DE BREJETUBA",
+    "cnpjBeneficiario": "01612674000100",
+    "valorTotal": 398000,
+    "valorCusteio": 0,
+    "valorInvestimento": 398000,
+    "objetoParlamentar": "301 - Cemitérios E Espaços Públicos Associados Ao Cemitério Como Capela Mortuária - Ministério das Cidades",
+    "objetoExecutor": "Execução de obra de construção de muro de fechamento no entorno do cemitério localizado no perímetro urbano do distrito de São Jorge, em Brejetuba/ES, incluindo serviços de engenharia necessários à implantação da estrutura de vedação perimetral, com a finalidade de garantir segurança, organização do espaço e preservação do patrimônio público, conforme projeto técnico a ser posteriormente elaborado.",
+    "executor": {
+      "cnpj": "01612674000100",
+      "nome": "MUNICIPIO DE BREJETUBA",
+      "contaEspecifica": "Não",
+      "banco": {
+        "codigo": "001",
+        "nome": "Banco do Brasil"
+      },
+      "agencia": {
+        "numero": 4986,
+        "dv": "7",
+        "nome": "BREJETUBA"
+      },
+      "conta": {
+        "numero": null,
+        "dv": null
+      }
+    },
+    "classificacaoOrcamentaria": "Os recursos serão alocados na função 15 – Urbanismo, subfunção 451 – Infraestrutura Urbana, em conformidade com o objeto proposto de construção de muro de fechamento de cemitério em área urbana.",
+    "prazoMeses": 12,
+    "situacaoPT": "APROVADO",
+    "finalidades": [
+      {
+        "tipoCodigo": 15,
+        "tipoDescricao": "Urbanismo",
+        "areaCodigo": 451,
+        "areaDescricao": "Infraestrutura Urbana "
+      }
+    ],
+    "metas": [
+      {
+        "descricao": "Construção de muro de fechamento no entorno do cemitério localizado no perímetro urbano do distrito de São Jorge, em Brejetuba/ES, com execução de serviços de engenharia, visando segurança e organização do espaço.",
+        "quantidade": 288,
+        "unidade": "M",
+        "valorTotal": 398000,
+        "prazoMeses": 12
+      }
+    ]
+  },
+  {
+    "idPlanoAcao": 90062,
+    "ano": 2026,
+    "nomeParlamentar": "Da Vitoria",
+    "codigoEmenda": "202639480006-DA VITORIA",
+    "nomeBeneficiario": "MUNICIPIO DE PONTO BELO",
+    "cnpjBeneficiario": "01614334000118",
+    "valorTotal": 995000,
+    "valorCusteio": 0,
+    "valorInvestimento": 995000,
+    "objetoParlamentar": "662 - Pavimentação Urbana - Ministério das Cidades",
+    "objetoExecutor": "Pavimentação Urbana de diversas ruas no Município de Ponto Belo",
+    "executor": {
+      "cnpj": "01614334000118",
+      "nome": "MUNICIPIO DE PONTO BELO",
+      "contaEspecifica": "Não",
+      "banco": {
+        "codigo": "104",
+        "nome": "Caixa Econômica Federal"
+      },
+      "agencia": {
+        "numero": 716,
+        "dv": "1",
+        "nome": "MONTANHA"
+      },
+      "conta": {
+        "numero": 569698616,
+        "dv": "8"
+      }
+    },
+    "classificacaoOrcamentaria": "050004.1545100131.004 - Calçamento e Asfaltamento de Vias Públicas\n44905100000 - Obras e Instalações",
+    "prazoMeses": 12,
+    "situacaoPT": "APROVADO",
+    "finalidades": [
+      {
+        "tipoCodigo": 15,
+        "tipoDescricao": "Urbanismo",
+        "areaCodigo": 451,
+        "areaDescricao": "Infraestrutura Urbana "
+      }
+    ],
+    "metas": [
+      {
+        "descricao": "Pavimentação Urbana com Blocos de pavi-s das ruas Rio de Janeiro, Santa Catarina, Paraná e Avenida Porto Alegre no município de Ponto Belo",
+        "quantidade": 4026,
+        "unidade": "M2",
+        "valorTotal": 995000,
+        "prazoMeses": 12
+      }
+    ]
+  },
+  {
+    "idPlanoAcao": 91512,
+    "ano": 2026,
+    "nomeParlamentar": "Helder Salomão",
+    "codigoEmenda": "202633120023-HELDER SALOMÃO",
+    "nomeBeneficiario": "MUNICIPIO DE VARGEM ALTA",
+    "cnpjBeneficiario": "31723570000133",
+    "valorTotal": 199000,
+    "valorCusteio": 199000,
+    "valorInvestimento": 0,
+    "objetoParlamentar": "999 - Objeto Único Não Padronizado – Demais",
+    "objetoExecutor": "Aquisição de uniformes e materiais esportivos para a realização de eventos organizados pela Secretaria Municipal de Esportes e Juventude\n\nAquisição de uniformes e materiais esportivos destinados à realização, apoio e fortalecimento das atividades esportivas promovidas pela Secretaria Municipal de Esportes e Juventude, incluindo projetos de iniciação esportiva (escolinhas) e eventos esportivos municipais.\nOs materiais serão utilizados na execução dos seguintes eventos e ações esportivas previstas para o exercício de 2026:\n•\tCampeonato Comunitário de Futebol 2026 (início previsto: maio de 2026), com participação de 14 comunidades; \n•\tCampeonato Municipal de Bocha (maio de 2026); \n•\tCampeonato Municipal de Sinuca (agosto de 2026); \n•\tTorneios de Futevôlei e Voleibol (julho de 2026); \n•\tCampeonato Municipal de Futsal (julho de 2026); \n•\tAtividades contínuas das escolinhas esportivas municipais. \n•\tCampeonato Municipal de Base 3 categorias (setembro 2026)\n•\tCaminhadas ecológica\n\nMetodologia\nA execução do objeto ocorrerá por meio da aquisição dos materiais esportivos e uniformes, que serão distribuídos e utilizados conforme o calendário esportivo da Secretaria Municipal de Esportes e Juventude ao longo do ano de 2026.\nOs materiais atenderão diretamente:\n•\tAs 5 escolinhas esportivas municipais, que juntas somam mais de 500 alunos e alunas, entre crianças e adolescentes; \n•\tConsiderando todos os eventos descritos acima, podemos considerar que serão beneficiadas cerca de 2.500 pessoas;\n•\tAs equipes e comunidades participantes dos eventos esportivos promovidos pela Secretaria; \n•\tO público envolvido nas competições e atividades esportivas realizadas no município. \n\nPeríodo de execução: maio de 2026 a dezembro de 2028.\nOs materiais adquiridos serão utilizados tanto na preparação (treinos) quanto na realização dos eventos, contribuindo para a melhoria da qualidade das atividades, incentivo à prática esportiva e fortalecimento do esporte comunitário.\n",
+    "executor": {
+      "cnpj": "31723570000133",
+      "nome": "MUNICIPIO DE VARGEM ALTA",
+      "contaEspecifica": "Não",
+      "banco": {
+        "codigo": "104",
+        "nome": "Caixa Econômica Federal"
+      },
+      "agencia": {
+        "numero": 4654,
+        "dv": "0",
+        "nome": "VARGEM ALTA"
+      },
+      "conta": {
+        "numero": 569610306,
+        "dv": "1"
+      }
+    },
+    "classificacaoOrcamentaria": "160 - SECRETARIA MUNICIPAL DE ESPORTES E JUVENTUDE\n001 - SECRETARIA MUNICIPAL DE ESPORTES E JUVENTUDE\n813 - LAZER\n160001.2781300932.069 - EVENTOS E COMPETIÇÕES ESPORTIVAS MUNICIPAIS\n\nLEI 1603/2025 - LEI ORÇAMENTÁRIA MUNICIPAL",
+    "prazoMeses": 36,
+    "situacaoPT": "APROVADO",
+    "finalidades": [
+      {
+        "tipoCodigo": 27,
+        "tipoDescricao": "Desporto e Lazer",
+        "areaCodigo": 813,
+        "areaDescricao": "Lazer"
+      }
+    ],
+    "metas": [
+      {
+        "descricao": "Jogo de bola de bocha",
+        "quantidade": 20,
+        "unidade": "UN",
+        "valorTotal": 16000,
+        "prazoMeses": 36
+      },
+      {
+        "descricao": "Carrinho marcador de linha de campo de futebol",
+        "quantidade": 1,
+        "unidade": "UN",
+        "valorTotal": 2000,
+        "prazoMeses": 36
+      },
+      {
+        "descricao": "Futmesa",
+        "quantidade": 1,
+        "unidade": "UN",
+        "valorTotal": 3000,
+        "prazoMeses": 36
+      },
+      {
+        "descricao": "Mesa de ping pong",
+        "quantidade": 1,
+        "unidade": "UN",
+        "valorTotal": 3225,
+        "prazoMeses": 36
+      },
+      {
+        "descricao": "Espirobol",
+        "quantidade": 1,
+        "unidade": "UN",
+        "valorTotal": 1100,
+        "prazoMeses": 36
+      },
+      {
+        "descricao": "Bola de futebol",
+        "quantidade": 200,
+        "unidade": "UN",
+        "valorTotal": 36225,
+        "prazoMeses": 36
+      },
+      {
+        "descricao": "Bola de futsal",
+        "quantidade": 80,
+        "unidade": "UN",
+        "valorTotal": 12000,
+        "prazoMeses": 36
+      },
+      {
+        "descricao": "Bola de voleibol",
+        "quantidade": 60,
+        "unidade": "UN",
+        "valorTotal": 12000,
+        "prazoMeses": 36
+      },
+      {
+        "descricao": "Bola de futevôlei",
+        "quantidade": 20,
+        "unidade": "UN",
+        "valorTotal": 4000,
+        "prazoMeses": 36
+      },
+      {
+        "descricao": "Bola de handebol",
+        "quantidade": 40,
+        "unidade": "UN",
+        "valorTotal": 4000,
+        "prazoMeses": 36
+      },
+      {
+        "descricao": "Bola de basquete",
+        "quantidade": 20,
+        "unidade": "UN",
+        "valorTotal": 4250,
+        "prazoMeses": 36
+      },
+      {
+        "descricao": "Rede de futebol de campo",
+        "quantidade": 40,
+        "unidade": "UN",
+        "valorTotal": 12000,
+        "prazoMeses": 36
+      },
+      {
+        "descricao": "Rede de futsal",
+        "quantidade": 55,
+        "unidade": "UN",
+        "valorTotal": 13100,
+        "prazoMeses": 36
+      },
+      {
+        "descricao": "Rede de voleibol",
+        "quantidade": 25,
+        "unidade": "UN",
+        "valorTotal": 5000,
+        "prazoMeses": 36
+      },
+      {
+        "descricao": "Fita de marcação para campo de areia",
+        "quantidade": 10,
+        "unidade": "UN",
+        "valorTotal": 600,
+        "prazoMeses": 36
+      },
+      {
+        "descricao": "Colete de treino",
+        "quantidade": 400,
+        "unidade": "UN",
+        "valorTotal": 17000,
+        "prazoMeses": 36
+      },
+      {
+        "descricao": "Medalhas personalizadas",
+        "quantidade": 800,
+        "unidade": "UN",
+        "valorTotal": 24000,
+        "prazoMeses": 36
+      },
+      {
+        "descricao": "Troféus personalizados",
+        "quantidade": 120,
+        "unidade": "UN",
+        "valorTotal": 6000,
+        "prazoMeses": 36
+      },
+      {
+        "descricao": "Mini-cones de treino",
+        "quantidade": 350,
+        "unidade": "UN",
+        "valorTotal": 525,
+        "prazoMeses": 36
+      },
+      {
+        "descricao": "Jogo de uniforme de futebol",
+        "quantidade": 20,
+        "unidade": "UN",
+        "valorTotal": 15000,
+        "prazoMeses": 36
+      },
+      {
+        "descricao": "Jogo de uniforme de basquete",
+        "quantidade": 10,
+        "unidade": "UN",
+        "valorTotal": 13000,
+        "prazoMeses": 36
+      },
+      {
+        "descricao": "Jogo de uniforme de voleibol",
+        "quantidade": 20,
+        "unidade": "UN",
+        "valorTotal": 20000,
+        "prazoMeses": 36
+      },
+      {
+        "descricao": "Antena rede de voleibol",
+        "quantidade": 10,
+        "unidade": "UN",
+        "valorTotal": 300,
+        "prazoMeses": 36
+      }
+    ]
+  },
+  {
+    "idPlanoAcao": 90352,
+    "ano": 2026,
+    "nomeParlamentar": "Gilson Daniel",
+    "codigoEmenda": "202643830005-GILSON DANIEL",
+    "nomeBeneficiario": "MUNICIPIO DE IRUPI",
+    "cnpjBeneficiario": "36403954000192",
+    "valorTotal": 298500,
+    "valorCusteio": 298500,
+    "valorInvestimento": 0,
+    "objetoParlamentar": "501 - Fomento aos Eventos Turísticos - Ministério do Turismo",
+    "objetoExecutor": "Realização de eventos no município de Irupi-ES, com o objetivo de aumento do fluxo turístico. Evento 1) Festa de São João Batista de Irupi - É um evento centenário que celebra a fé, a cultura e as tradições da comunidade local e da Região do Caparaó. Em sua 115ª edição, a festa se consolida como o maior evento de São João do Espírito Santo, sendo um importante vetor de desenvolvimento social e econômico.\n2) Dia do Evangélico de Irupi-ES, reconhecido por lei municipal desde 1994 (Lei 047/1994 de Irupi-ES) a festividade promove um noite de cultura, louvor e lazer a população sendo disponibilizada gratuitamente a publico.  \n3) Desfile de 07 de Setembro - Manifestação cultural e turística em todo o território brasileiro, promove dia de lazer e civismo a população e aumentando o fluxo de pessoas estimulando assim o comercio local.",
+    "executor": {
+      "cnpj": "36403954000192",
+      "nome": "MUNICIPIO DE IRUPI",
+      "contaEspecifica": "Não",
+      "banco": {
+        "codigo": "104",
+        "nome": "Caixa Econômica Federal"
+      },
+      "agencia": {
+        "numero": 1115,
+        "dv": "0",
+        "nome": "IUNA"
+      },
+      "conta": {
+        "numero": null,
+        "dv": null
+      }
+    },
+    "classificacaoOrcamentaria": "000100 000002 23 695 0002 2.107",
+    "prazoMeses": 36,
+    "situacaoPT": "APROVADO",
+    "finalidades": [
+      {
+        "tipoCodigo": 23,
+        "tipoDescricao": "Comércio e Serviços",
+        "areaCodigo": 695,
+        "areaDescricao": "Turismo"
+      }
+    ],
+    "metas": [
+      {
+        "descricao": "LOCAÇÃO DE GERADOR  - FESTA DE SÃO JOAO",
+        "quantidade": 8,
+        "unidade": "DIA",
+        "valorTotal": 26400,
+        "prazoMeses": 36
+      },
+      {
+        "descricao": "LOCAÇÃO DE PALCO GRANDE PORTE COMPLETO - DIA DO EVANGÉLICO",
+        "quantidade": 1,
+        "unidade": "DIA",
+        "valorTotal": 11899.9,
+        "prazoMeses": 36
+      },
+      {
+        "descricao": "LOCAÇÃO DE BANHEIRO QUIMICO POTÁTIL - DIA DO EVANGÉLICO",
+        "quantidade": 30,
+        "unidade": "DIA",
+        "valorTotal": 10917,
+        "prazoMeses": 36
+      },
+      {
+        "descricao": "LOCAÇÃO DE GERADOR - DIA DO EVANGÉLICO",
+        "quantidade": 1,
+        "unidade": "DIA",
+        "valorTotal": 3300,
+        "prazoMeses": 36
+      },
+      {
+        "descricao": "LOCAÇÃO DE PALCO GRANDE PORTE COMPLETO - DESFILE 07 SETEMBRO",
+        "quantidade": 1,
+        "unidade": "DIA",
+        "valorTotal": 11899.9,
+        "prazoMeses": 36
+      },
+      {
+        "descricao": "LOCAÇÃO DE BANHEIRO QUIMICO POTÁTIL - DESFILE DE 07 SETEMBRO",
+        "quantidade": 26,
+        "unidade": "DIA",
+        "valorTotal": 9461.4,
+        "prazoMeses": 36
+      },
+      {
+        "descricao": "LOCAÇÃO DE GERADOR - DESFILE DE 07 DE SETEMBRO",
+        "quantidade": 1,
+        "unidade": "DIA",
+        "valorTotal": 3300,
+        "prazoMeses": 36
+      },
+      {
+        "descricao": "LOCAÇÃO DE PALCO GRANDE PORTE COMPLETO - FESTA DE SÃO JOÃO",
+        "quantidade": 10,
+        "unidade": "DIA",
+        "valorTotal": 118999,
+        "prazoMeses": 36
+      },
+      {
+        "descricao": "LOCAÇÃO DE BANHEIRO QUIMICO POTÁTIL - FESTA DE SÃO JOÃO",
+        "quantidade": 280,
+        "unidade": "DIA",
+        "valorTotal": 102322.8,
+        "prazoMeses": 36
+      }
+    ]
+  },
+  {
+    "idPlanoAcao": 90162,
+    "ano": 2026,
+    "nomeParlamentar": "Dr. Victor Linhalis",
+    "codigoEmenda": "202643620001-DR. VICTOR LINHALIS",
+    "nomeBeneficiario": "MUNICIPIO DE ICONHA",
+    "cnpjBeneficiario": "27165646000185",
+    "valorTotal": 1990000,
+    "valorCusteio": 0,
+    "valorInvestimento": 1990000,
+    "objetoParlamentar": "663 - Pavimentação: Adequação De Vias, Pontes, Travessias e Obras de Artes Especiais em Área Urbana - Ministério das Cidades",
+    "objetoExecutor": "Execução de recapeamento asfáltico em Concreto Betuminoso Usinado a Quente (CBUQ), compreendendo os serviços de preparação do pavimento existente, reparos localizados, selagem de trincas, pintura de ligação e aplicação de camada de revestimento de CBUQ com espessura média de 5 cm, conforme especificações do projeto e normas técnicas aplicáveis, passando à melhoria da qualidade, durabilidade e trafegabilidade da malha viária Urbana\n- Localidade - Conjunto Habitacional Bairro Jardim Jandira",
+    "executor": {
+      "cnpj": "27165646000185",
+      "nome": "MUNICIPIO DE ICONHA",
+      "contaEspecifica": "Não",
+      "banco": {
+        "codigo": "104",
+        "nome": "Caixa Econômica Federal"
+      },
+      "agencia": {
+        "numero": 1836,
+        "dv": "8",
+        "nome": "ICONHA"
+      },
+      "conta": {
+        "numero": 569698666,
+        "dv": "4"
+      }
+    },
+    "classificacaoOrcamentaria": "000180001.1545200061.016 - Pavimentação, Drenagem, Galerias, melhorias de Ruas e Avenidas\n\n44905100000 Obras e Instalações",
+    "prazoMeses": 36,
+    "situacaoPT": "APROVADO",
+    "finalidades": [
+      {
+        "tipoCodigo": 15,
+        "tipoDescricao": "Urbanismo",
+        "areaCodigo": 451,
+        "areaDescricao": "Infraestrutura Urbana "
+      }
+    ],
+    "metas": [
+      {
+        "descricao": "Execução de recapeamento asfáltico em Concreto Betuminoso Usinado a Quente (CBUQ), compreendendo os serviços de preparação do pavimento existente, reparos localizados, selagem de trincas, pintura de ligação e aplicação de camada de revestimento de CBUQ co",
+        "quantidade": 1,
+        "unidade": "UN",
+        "valorTotal": 1990000,
+        "prazoMeses": 36
+      },
+      {
+        "descricao": "Execução de recapeamento asfáltico em Concreto Betuminoso Usinado a Quente (CBUQ) - Localidade - Conjunto Habitacional Bairro Jardim Jandira",
+        "quantidade": 800,
+        "unidade": "M",
+        "valorTotal": 1990000,
+        "prazoMeses": 36
+      }
+    ]
+  },
+  {
+    "idPlanoAcao": 90065,
+    "ano": 2026,
+    "nomeParlamentar": "Da Vitoria",
+    "codigoEmenda": "202639480006-DA VITORIA",
+    "nomeBeneficiario": "MUNICIPIO DE ICONHA",
+    "cnpjBeneficiario": "27165646000185",
+    "valorTotal": 945250,
+    "valorCusteio": 0,
+    "valorInvestimento": 945250,
+    "objetoParlamentar": "662 - Pavimentação Urbana - Ministério das Cidades",
+    "objetoExecutor": "Execução de obras de pavimentação em piso intertravado com pavers na zona urbana, compreendendo a preparação do leito, compactação, assentamento de camada de base, aplicação de pavers, colocação de miniguias e/ou bordaduras, regulação e compactação final, proporcionando melhoria da acessibilidade, segurança e qualidade de vida da população local do Bairro Novo Horizonte, conforme especificações técnicas, projeto e normas aplicáveis.",
+    "executor": {
+      "cnpj": "27165646000185",
+      "nome": "MUNICIPIO DE ICONHA",
+      "contaEspecifica": "Não",
+      "banco": {
+        "codigo": "104",
+        "nome": "Caixa Econômica Federal"
+      },
+      "agencia": {
+        "numero": 1836,
+        "dv": "8",
+        "nome": "ICONHA"
+      },
+      "conta": {
+        "numero": 569698665,
+        "dv": "6"
+      }
+    },
+    "classificacaoOrcamentaria": "000180001.1545200061.016 - Pavimentação, Drenagem, Galerias, melhorias de Ruas e Avenidas\n\n44905100000 Obras e Instalações",
+    "prazoMeses": 36,
+    "situacaoPT": "APROVADO",
+    "finalidades": [
+      {
+        "tipoCodigo": 15,
+        "tipoDescricao": "Urbanismo",
+        "areaCodigo": 451,
+        "areaDescricao": "Infraestrutura Urbana "
+      }
+    ],
+    "metas": [
+      {
+        "descricao": "Execução de obras de pavimentação em piso intertravado com pavers na zona urbana Bairro Novo Horizonte",
+        "quantidade": 500,
+        "unidade": "M",
+        "valorTotal": 945250,
+        "prazoMeses": 36
+      }
+    ]
+  },
+  {
+    "idPlanoAcao": 91508,
+    "ano": 2026,
+    "nomeParlamentar": "Helder Salomão",
+    "codigoEmenda": "202633120023-HELDER SALOMÃO",
+    "nomeBeneficiario": "ESTADO DO ESPIRITO SANTO",
+    "cnpjBeneficiario": "27080530000143",
+    "valorTotal": 497500,
+    "valorCusteio": 497500,
+    "valorInvestimento": 0,
+    "objetoParlamentar": "487 - Feira De Negócios E Capacitação Para Microempreendedores Individuais - Ministério do Empreendedorismo, da Microempresa e da Empresa de Pequeno Porte",
+    "objetoExecutor": "Feira de Negócios e Capacitação de MEI, além de promoção da comercialização dos produtos das micro e pequenas empresas, agroindústrias, produtores familiares, artesãos e\nda economia solidária do Espírito Santo, através da locação de estandes com espaço personalizado e exclusivo em eventos apoiados por esta Executora.",
+    "executor": {
+      "cnpj": "19481436000178",
+      "nome": "AGENCIA ESTADUAL DE RECURSOS HIDRICOS - AGERH",
+      "contaEspecifica": "Sim",
+      "banco": {
+        "codigo": "001",
+        "nome": "Banco do Brasil"
+      },
+      "agencia": {
+        "numero": 3665,
+        "dv": "X",
+        "nome": "SETOR PUBLICO ES"
+      },
+      "conta": {
+        "numero": null,
+        "dv": null
+      }
+    },
+    "classificacaoOrcamentaria": "Projeto/atividade: 23.691.0035.2062 – INOVA MERCADO - Natureza de Despesa: 3.3.90.39.00 - Outros Serviços de Terceiros - Pessoa Jurídica - Fonte: 1.706.311001 e/ou\n2.706.311001",
+    "prazoMeses": 36,
+    "situacaoPT": "APROVADO",
+    "finalidades": [
+      {
+        "tipoCodigo": 23,
+        "tipoDescricao": "Comércio e Serviços",
+        "areaCodigo": 691,
+        "areaDescricao": "Promoção Comercial"
+      }
+    ],
+    "metas": [
+      {
+        "descricao": "Contratação de serviço de locação de estandes com espaço personalizado e exclusivo para participação de empreendedores em feiras de negócios e comercialização/divulgação dos produtos.",
+        "quantidade": 765,
+        "unidade": "M2",
+        "valorTotal": 497500,
+        "prazoMeses": 36
+      }
+    ]
+  },
+  {
+    "idPlanoAcao": 90006,
+    "ano": 2026,
+    "nomeParlamentar": "Evair Vieira De Melo",
+    "codigoEmenda": "202630930004-EVAIR VIEIRA DE MELO",
+    "nomeBeneficiario": "ESTADO DO ESPIRITO SANTO",
+    "cnpjBeneficiario": "27080530000143",
+    "valorTotal": 1568122.99,
+    "valorCusteio": 1568122.99,
+    "valorInvestimento": 0,
+    "objetoParlamentar": "487 - Feira De Negócios E Capacitação Para Microempreendedores Individuais - Ministério do Empreendedorismo, da Microempresa e da Empresa de Pequeno Porte",
+    "objetoExecutor": "Feira de Negócios e Capacitação de MEI, além de promoção da comercialização dos produtos das micro e pequenas empresas, agroindústrias, produtores familiares, artesãos e da economia solidária do Espírito Santo, através da locação de estandes com espaço personalizado e exclusivo em eventos apoiados por esta Executora.",
+    "executor": {
+      "cnpj": "01683866000107",
+      "nome": "AGENCIA DE DESENVOLVIMENTO DAS MICRO E PEQUENAS EMPRESAS E DO EMPREENDEDORISMO - ADERES",
+      "contaEspecifica": "Sim",
+      "banco": {
+        "codigo": "001",
+        "nome": "Banco do Brasil"
+      },
+      "agencia": {
+        "numero": 3665,
+        "dv": "X",
+        "nome": "SETOR PUBLICO ES"
+      },
+      "conta": {
+        "numero": null,
+        "dv": null
+      }
+    },
+    "classificacaoOrcamentaria": "Projeto/atividade: 23.691.0035.2062 – INOVA MERCADO - Natureza de Despesa: 3.3.90.39.00 - Outros Serviços de Terceiros - Pessoa Jurídica - Fonte: 1.706.311001 e/ou 2.706.311001",
+    "prazoMeses": 36,
+    "situacaoPT": "APROVADO",
+    "finalidades": [
+      {
+        "tipoCodigo": 23,
+        "tipoDescricao": "Comércio e Serviços",
+        "areaCodigo": 691,
+        "areaDescricao": "Promoção Comercial"
+      }
+    ],
+    "metas": [
+      {
+        "descricao": "Contratação de serviço de locação de estandes com espaço personalizado e exclusivo para participação de empreendedores em feiras de negócios e comercialização/divulgação dos produtos.",
+        "quantidade": 2412,
+        "unidade": "M2",
+        "valorTotal": 1568122.99,
+        "prazoMeses": 36
+      }
+    ]
+  },
+  {
+    "idPlanoAcao": 90067,
+    "ano": 2026,
+    "nomeParlamentar": "Da Vitoria",
+    "codigoEmenda": "202639480006-DA VITORIA",
+    "nomeBeneficiario": "ESTADO DO ESPIRITO SANTO",
+    "cnpjBeneficiario": "27080530000143",
+    "valorTotal": 4278500,
+    "valorCusteio": 4278500,
+    "valorInvestimento": 0,
+    "objetoParlamentar": "487 - Feira De Negócios E Capacitação Para Microempreendedores Individuais - Ministério do Empreendedorismo, da Microempresa e da Empresa de Pequeno Porte",
+    "objetoExecutor": "Feira de Negócios e Capacitação de MEI, além de promoção da comercialização dos produtos das micro e pequenas empresas, agroindústrias, produtores familiares,artesãos e da economia solidária do Espírito Santo, através da locação de estandes com espaço personalizado e exclusivo em eventos apoiados por esta Executora.",
+    "executor": {
+      "cnpj": "01683866000107",
+      "nome": "AGENCIA DE DESENVOLVIMENTO DAS MICRO E PEQUENAS EMPRESAS E DO EMPREENDEDORISMO - ADERES",
+      "contaEspecifica": "Sim",
+      "banco": {
+        "codigo": "001",
+        "nome": "Banco do Brasil"
+      },
+      "agencia": {
+        "numero": 3665,
+        "dv": "X",
+        "nome": "SETOR PUBLICO ES"
+      },
+      "conta": {
+        "numero": null,
+        "dv": null
+      }
+    },
+    "classificacaoOrcamentaria": "Projeto/atividade: 23.691.0035.2062 – INOVA MERCADO - Natureza de Despesa: 3.3.90.39.00 - Outros Serviços de Terceiros - Pessoa Jurídica - Fonte: 1.706.311001 e/ou 2.706.311001",
+    "prazoMeses": 48,
+    "situacaoPT": "APROVADO",
+    "finalidades": [
+      {
+        "tipoCodigo": 23,
+        "tipoDescricao": "Comércio e Serviços",
+        "areaCodigo": 691,
+        "areaDescricao": "Promoção Comercial"
+      }
+    ],
+    "metas": [
+      {
+        "descricao": "Contratação de serviço de locação de estandes com espaço personalizado e exclusivo para participação de empreendedores em feiras de negócios e comercialização/divulgação dos produtos.",
+        "quantidade": 6582,
+        "unidade": "M2",
+        "valorTotal": 4278500,
+        "prazoMeses": 48
+      }
+    ]
+  },
+  {
+    "idPlanoAcao": 90163,
+    "ano": 2026,
+    "nomeParlamentar": "Dr. Victor Linhalis",
+    "codigoEmenda": "202643620001-DR. VICTOR LINHALIS",
+    "nomeBeneficiario": "ESTADO DO ESPIRITO SANTO",
+    "cnpjBeneficiario": "27080530000143",
+    "valorTotal": 3980000,
+    "valorCusteio": 3980000,
+    "valorInvestimento": 0,
+    "objetoParlamentar": "487 - Feira De Negócios E Capacitação Para Microempreendedores Individuais - Ministério do Empreendedorismo, da Microempresa e da Empresa de Pequeno Porte",
+    "objetoExecutor": "Feira de Negócios e Capacitação de MEI, além de promoção da comercialização dos produtos das micro e pequenas empresas, agroindústrias, produtores familiares, artesãos e da economia solidária do Espírito Santo, através da locação de estandes com espaço personalizado e exclusivo em eventos apoiados por esta Executora.",
+    "executor": {
+      "cnpj": "01683866000107",
+      "nome": "AGENCIA DE DESENVOLVIMENTO DAS MICRO E PEQUENAS EMPRESAS E DO EMPREENDEDORISMO - ADERES",
+      "contaEspecifica": "Sim",
+      "banco": {
+        "codigo": "001",
+        "nome": "Banco do Brasil"
+      },
+      "agencia": {
+        "numero": 3665,
+        "dv": "X",
+        "nome": "SETOR PUBLICO ES"
+      },
+      "conta": {
+        "numero": null,
+        "dv": null
+      }
+    },
+    "classificacaoOrcamentaria": "Projeto/atividade: 23.691.0035.2062 – INOVA MERCADO - Natureza de Despesa: 3.3.90.39.00 - Outros Serviços de Terceiros - Pessoa Jurídica - Fonte: 1.706.311001 e/ou 2.706.311001",
+    "prazoMeses": 48,
+    "situacaoPT": "APROVADO",
+    "finalidades": [
+      {
+        "tipoCodigo": 23,
+        "tipoDescricao": "Comércio e Serviços",
+        "areaCodigo": 691,
+        "areaDescricao": "Promoção Comercial"
+      }
+    ],
+    "metas": [
+      {
+        "descricao": "Contratação de serviço de locação de estandes com espaço personalizado e exclusivo para participação de empreendedores em feiras de negócios e comercialização/divulgação dos produtos.",
+        "quantidade": 6123,
+        "unidade": "M2",
+        "valorTotal": 3980000,
+        "prazoMeses": 48
+      }
+    ]
+  },
+  {
+    "idPlanoAcao": 90908,
+    "ano": 2026,
+    "nomeParlamentar": "Amaro Neto",
+    "codigoEmenda": "202639120006-AMARO NETO",
+    "nomeBeneficiario": "ESTADO DO ESPIRITO SANTO",
+    "cnpjBeneficiario": "27080530000143",
+    "valorTotal": 1492500,
+    "valorCusteio": 1492500,
+    "valorInvestimento": 0,
+    "objetoParlamentar": "487 - Feira De Negócios E Capacitação Para Microempreendedores Individuais - Ministério do Empreendedorismo, da Microempresa e da Empresa de Pequeno Porte",
+    "objetoExecutor": "Feira de Negócios e Capacitação de MEI, além de promoção da comercialização dos produtos das micro e pequenas empresas, agroindústrias, produtores familiares, artesãos e da economia solidária do Espírito Santo, através da locação de estandes com espaço personalizado e exclusivo em eventos apoiados por esta Executora.",
+    "executor": {
+      "cnpj": "01683866000107",
+      "nome": "AGENCIA DE DESENVOLVIMENTO DAS MICRO E PEQUENAS EMPRESAS E DO EMPREENDEDORISMO - ADERES",
+      "contaEspecifica": "Sim",
+      "banco": {
+        "codigo": "001",
+        "nome": "Banco do Brasil"
+      },
+      "agencia": {
+        "numero": 3665,
+        "dv": "X",
+        "nome": "SETOR PUBLICO ES"
+      },
+      "conta": {
+        "numero": null,
+        "dv": null
+      }
+    },
+    "classificacaoOrcamentaria": "Projeto/atividade: 23.691.0035.2062 – INOVA MERCADO - Natureza de Despesa: 3.3.90.39.00 - Outros Serviços de Terceiros - Pessoa Jurídica - Fonte: 1.706.311001 e/ou\n2.706.311001",
+    "prazoMeses": 36,
+    "situacaoPT": "APROVADO",
+    "finalidades": [
+      {
+        "tipoCodigo": 23,
+        "tipoDescricao": "Comércio e Serviços",
+        "areaCodigo": 691,
+        "areaDescricao": "Promoção Comercial"
+      }
+    ],
+    "metas": [
+      {
+        "descricao": "Contratação de serviço de locação de estandes com espaço personalizado e exclusivo para participação de empreendedores em feiras de negócios e comercialização/divulgação dos produtos.",
+        "quantidade": 2296,
+        "unidade": "M2",
+        "valorTotal": 1492500,
+        "prazoMeses": 36
+      }
+    ]
+  },
+  {
+    "idPlanoAcao": 91178,
+    "ano": 2026,
+    "nomeParlamentar": "Messias Donato",
+    "codigoEmenda": "202644330010-MESSIAS DONATO",
+    "nomeBeneficiario": "ESTADO DO ESPIRITO SANTO",
+    "cnpjBeneficiario": "27080530000143",
+    "valorTotal": 2985000,
+    "valorCusteio": 2985000,
+    "valorInvestimento": 0,
+    "objetoParlamentar": "487 - Feira De Negócios E Capacitação Para Microempreendedores Individuais - Ministério do Empreendedorismo, da Microempresa e da Empresa de Pequeno Porte",
+    "objetoExecutor": "Feira de Negócios e Capacitação de MEI, além de promoção da comercialização dos produtos das micro e pequenas empresas, agroindústrias, produtores familiares, artesãos e da economia solidária do Espírito Santo, através da locação de estandes com espaço personalizado e exclusivo em eventos apoiados por esta Executora.",
+    "executor": {
+      "cnpj": "01683866000107",
+      "nome": "AGENCIA DE DESENVOLVIMENTO DAS MICRO E PEQUENAS EMPRESAS E DO EMPREENDEDORISMO - ADERES",
+      "contaEspecifica": "Sim",
+      "banco": {
+        "codigo": "001",
+        "nome": "Banco do Brasil"
+      },
+      "agencia": {
+        "numero": 3665,
+        "dv": "X",
+        "nome": "SETOR PUBLICO ES"
+      },
+      "conta": {
+        "numero": null,
+        "dv": null
+      }
+    },
+    "classificacaoOrcamentaria": "Projeto/atividade: 23.691.0035.2062 – INOVA MERCADO - Natureza de Despesa: 3.3.90.39.00 - Outros Serviços de Terceiros - Pessoa Jurídica - Fonte: 1.706.311001 e/ou\n2.706.311001",
+    "prazoMeses": 48,
+    "situacaoPT": "APROVADO",
+    "finalidades": [
+      {
+        "tipoCodigo": 23,
+        "tipoDescricao": "Comércio e Serviços",
+        "areaCodigo": 691,
+        "areaDescricao": "Promoção Comercial"
+      }
+    ],
+    "metas": [
+      {
+        "descricao": "Contratação de serviço de locação de estandes com espaço personalizado e exclusivo para participação de empreendedores em feiras de negócios e comercialização/divulgação dos produtos.",
+        "quantidade": 4592,
+        "unidade": "M2",
+        "valorTotal": 2985000,
+        "prazoMeses": 48
+      }
+    ]
+  }
+]
