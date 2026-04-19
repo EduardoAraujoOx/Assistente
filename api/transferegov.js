@@ -44,10 +44,11 @@ async function getJsonSafe(url) {
   catch { return null; }
 }
 
-function urlTodosPlanos(cnpj) {
+function urlTodosPlanos(cnpj, ano) {
   const qs = new URLSearchParams({
     uf_beneficiario_plano_acao:   `eq.${UF_ALVO}`,
     cnpj_beneficiario_plano_acao: `eq.${cnpj}`,
+    ano_plano_acao:               `eq.${ano}`,
     select: 'id_plano_acao,situacao_plano_acao',
     limit:  '200',
     order:  'id_plano_acao.desc',
@@ -131,8 +132,12 @@ export default async function handler(req, res) {
   }
 
   try {
-    // 1. Todos os PAs do CNPJ em ES (com situação)
-    const rows  = await getJson(urlTodosPlanos(cnpj));
+    // 1. Planos do ano atual; se vazio, tenta ano anterior
+    const anoAtual = new Date().getFullYear();
+    let rows = await getJson(urlTodosPlanos(cnpj, anoAtual));
+    if (!Array.isArray(rows) || rows.length === 0) {
+      rows = await getJson(urlTodosPlanos(cnpj, anoAtual - 1));
+    }
     const todos = Array.isArray(rows) ? rows : [];
 
     if (todos.length === 0) {

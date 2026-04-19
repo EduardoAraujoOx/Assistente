@@ -355,21 +355,16 @@
       <div class="card-body">
         <div class="field">
           <label class="field-label">CNPJ / Nome do Beneficiário <span class="req">*</span></label>
-          <div style="display:flex;gap:8px;align-items:stretch;">
-            <select id="sel-benef" onchange="onBenefChange()" style="flex:1;">
-              <option value="">— selecione o ente federado —</option>
-              <option value="27080530000143">27080530000143 — ESTADO DO ESPÍRITO SANTO</option>
-              <option value="27165120000173">27165120000173 — PREFEITURA DE VITÓRIA</option>
-              <option value="27161118000191">27161118000191 — PREFEITURA DE VILA VELHA</option>
-              <option value="27153373000180">27153373000180 — PREFEITURA DE SERRA</option>
-              <option value="27167764000180">27167764000180 — PREFEITURA DE CARIACICA</option>
-              <option value="27169557000152">27169557000152 — PREFEITURA DE GUARAPARI</option>
-              <option value="27163919000163">27163919000163 — PREFEITURA DE LINHARES</option>
-            </select>
-            <button class="btn btn-primary" onclick="onBenefChange()" title="Buscar emendas" style="padding:9px 14px;white-space:nowrap;">
-              Buscar
-            </button>
-          </div>
+          <select id="sel-benef" onchange="onBenefChange()">
+            <option value="">— selecione o ente federado —</option>
+            <option value="27080530000143">27080530000143 — ESTADO DO ESPÍRITO SANTO</option>
+            <option value="27165120000173">27165120000173 — PREFEITURA DE VITÓRIA</option>
+            <option value="27161118000191">27161118000191 — PREFEITURA DE VILA VELHA</option>
+            <option value="27153373000180">27153373000180 — PREFEITURA DE SERRA</option>
+            <option value="27167764000180">27167764000180 — PREFEITURA DE CARIACICA</option>
+            <option value="27169557000152">27169557000152 — PREFEITURA DE GUARAPARI</option>
+            <option value="27163919000163">27163919000163 — PREFEITURA DE LINHARES</option>
+          </select>
         </div>
       </div>
     </div>
@@ -391,11 +386,6 @@
           Nenhum plano de ação encontrado para esse beneficiário.
         </div>
         <div id="em-tabela"   class="table-wrap"  style="display:none;">
-          <div style="display:flex;justify-content:flex-end;margin-bottom:6px;">
-            <button class="icon-btn" onclick="atualizarEmendas()" title="Buscar dados mais recentes">
-              ↻ Atualizar
-            </button>
-          </div>
           <table class="emenda-table">
             <thead><tr>
               <th style="width:30%">Emenda Parlamentar</th>
