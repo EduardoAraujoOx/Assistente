@@ -412,12 +412,6 @@
         <p class="hint" style="text-align:center;margin-top:8px;">
           O sistema buscará o histórico de planos aprovados e usará IA (Gemini) para pré-preencher todos os campos.
         </p>
-        <div class="check-row" style="margin-top:1rem;justify-content:center;gap:.5rem;">
-          <input type="checkbox" id="modo-teste" onchange="onModoTesteChange()">
-          <label for="modo-teste" style="font-size:.85rem;color:#666;cursor:pointer;">
-            Modo Teste — incluir planos cujo PT já foi enviado/aprovado
-          </label>
-        </div>
       </div>
     </div>
 
@@ -853,18 +847,12 @@ async function onBenefChange() {
 /* ══════════════════════════════════════════
    FETCH EMENDAS — proxy → direto → demo
 ══════════════════════════════════════════ */
-function onModoTesteChange() {
-  // Recarrega emendas com o novo modo se já houver CNPJ selecionado
-  if (S.cnpj) onBenefChange();
-}
-
 async function fetchEmendas(cnpj) {
   S.usandoDemo = false;
-  const modoTeste = $('modo-teste')?.checked ? '&modoTeste=1' : '';
 
   // 1) Tenta proxy servidor (sem CORS, disponível quando rodando via Next.js/Vercel)
   try {
-    const r = await fetch(`${TGOV_API_PROXY}?cnpj=${cnpj}${modoTeste}`, {
+    const r = await fetch(`${TGOV_API_PROXY}?cnpj=${cnpj}`, {
       signal: AbortSignal.timeout(20000)
     });
     if (r.ok) {
@@ -1450,14 +1438,17 @@ async function carregarEntes() {
     });
     if (prev) {
       sel.value = prev;
-      onBenefChange(); // restauração programática não dispara onchange
+      // Só dispara carregamento se a DOMContentLoaded ainda não o iniciou
+      const jaCarregando = $('em-loading')?.style.display !== 'none';
+      const jaExibido    = $('em-tabela')?.style.display  !== 'none';
+      if (!jaCarregando && !jaExibido) onBenefChange();
     }
   } catch (_) {
     // Se o endpoint falhar, o dropdown hardcoded do HTML permanece como fallback.
   }
 }
 
-// Garante que seleção restaurada pelo browser (session restore) também carregue as emendas
+// Disparado quando o browser restaura o valor do select antes do script async completar
 document.addEventListener('DOMContentLoaded', () => {
   if ($('sel-benef')?.value) onBenefChange();
 });

@@ -124,8 +124,7 @@ function montar(pa, ptInfo, situacaoPA) {
 /* ────────── handler ────────── */
 
 export default async function handler(req, res) {
-  const cnpj      = String(req.query.cnpj      || '').replace(/\D/g, '');
-  const modoTeste = String(req.query.modoTeste  || '') === '1';
+  const cnpj = String(req.query.cnpj || '').replace(/\D/g, '');
 
   if (!/^\d{14}$/.test(cnpj)) {
     return res.status(400).json({ error: 'Parâmetro cnpj inválido (esperado 14 dígitos).' });
@@ -141,7 +140,7 @@ export default async function handler(req, res) {
       return res.status(200).json([]);
     }
 
-    const idsPA      = todos.map(x => x.id_plano_acao).filter(x => x != null);
+    const idsPA        = todos.map(x => x.id_plano_acao).filter(x => x != null);
     const situacaoByPa = Object.fromEntries(todos.map(x => [x.id_plano_acao, x.situacao_plano_acao]));
 
     // 2. Status do PT para cada PA
@@ -149,15 +148,8 @@ export default async function handler(req, res) {
     const ptRows = Array.isArray(ptRaw) ? ptRaw : [];
     const ptByPa = Object.fromEntries(ptRows.map(r => [r.id_plano_acao, r]));
 
-    // 3. Detalhes do portal — busca apenas PAs com situação AGUARDANDO (reduz chamadas)
-    //    Em modo teste, busca todos para ter objetos completos.
-    const SITUACOES_DETALHE = new Set([
-      'AGUARDANDO_CONCLUSAO_PLANO_TRABALHO',
-      'EM_ANALISE_PLANO_TRABALHO',
-    ]);
-    const idsBuscar = modoTeste
-      ? idsPA
-      : idsPA.filter(id => SITUACOES_DETALHE.has(situacaoByPa[id]));
+    // 3. Detalhes do portal para todos os PAs
+    const idsBuscar = idsPA;
 
     const detalhesMap = {};
     await Promise.all(
