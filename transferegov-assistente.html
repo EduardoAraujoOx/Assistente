@@ -1201,16 +1201,21 @@ async function gerarPlano() {
   // ── Classificação ─────────────────────────────────────────────────────────
   // Regra STN natureza de despesa aplica a ambos (município e estado).
   // Municípios: natureza+fonte → placeholder LOA municipal
-  // Estado:     lookup SIOP > KB > Gemini; natureza+fonte como âncora no fallback
+  // Estado:     lookup SIOP > KB > natureza+placeholder (NÃO cai no Gemini quando
+  //   lookup existe sem classificação — evita alucinação de código municipal)
   const ndSugerida = naturezaDespesaDe(S.emenda);
   if (isMunicipio) {
     const classHistorico = historico[0]?.classificacaoOrcamentaria || '';
     setVal('f12', classHistorico || `${ndSugerida}\n[Código LOA municipal: verificar com a Secretaria de Planejamento]`);
   } else {
-    setVal('f12', S.emenda.classificacao
+    const classBase = S.emenda.classificacao
       || (lookup?.classificacao || null)
-      || historico[0]?.classificacaoOrcamentaria
-      || c.classificacao
+      || historico[0]?.classificacaoOrcamentaria;
+    // Quando lookup existe mas classificacao está vazia (ex: obj 698, 835),
+    // usar natureza derivada em vez de Gemini — que alucina código LOA municipal
+    const classGemini = lookup && !lookup.classificacao ? null : c.classificacao;
+    setVal('f12', classBase
+      || classGemini
       || `${ndSugerida}\n[Projeto/atividade SIOP: verificar no portal]`);
   }
 

@@ -58,11 +58,12 @@ export default function handler(req, res) {
   const scored = kb
     .map(plano => {
       const sim = similarity(q, plano.objetoExecutor || plano.objetoParlamentar || '');
-      // Boost para planos do mesmo beneficiário (município ou estado)
-      const sameCnpj = cnpj && (plano.cnpjBeneficiario || '').replace(/\D/g,'') === cnpj;
-      return { ...plano, _score: sim * (sameCnpj ? 1.5 : 1) };
+      const planoCnpj = (plano.cnpjBeneficiario || '').replace(/\D/g,'');
+      // Se CNPJ foi informado, retorna SOMENTE planos desse beneficiário
+      if (cnpj && planoCnpj !== cnpj) return null;
+      return { ...plano, _score: sim };
     })
-    .filter(p => p._score > 0)
+    .filter(p => p !== null && p._score > 0)
     .sort((a, b) => b._score - a._score)
     .slice(0, top)
     .map(({ _score, ...rest }) => rest);
