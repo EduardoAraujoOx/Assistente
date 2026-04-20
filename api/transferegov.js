@@ -95,6 +95,20 @@ function finalidadesDe(pa) {
   return out;
 }
 
+// Extrai a descrição completa do SIOP da listaAPP:
+// "Função / Subfunção / Descrição do objeto fornecida pelo Ministério"
+// Essa descrição é a referência primária para o campo 2.5 do PT.
+function detalhamentoSIOPDe(pa) {
+  const lista = Array.isArray(pa.listaAPP) ? pa.listaAPP : [];
+  const itens = lista.map(app => {
+    const tipo = app.cdAreaPoliticaPublicaTipo || app.areaPoliticaPublicaTipo || '';
+    const area = app.cdAreaPoliticaPublica     || app.areaPoliticaPublica     || '';
+    const desc = app.descricao || app.descricaoFormatada || '';
+    return [tipo, area, desc].filter(Boolean).join(' / ');
+  }).filter(Boolean);
+  return itens.length ? itens.join('\n') : null;
+}
+
 function montar(pa, ptInfo, situacaoPA) {
   const emenda       = pa.emendaParlamentar || {};
   const beneficiario = pa.beneficiario      || {};
@@ -120,6 +134,7 @@ function montar(pa, ptInfo, situacaoPA) {
     classificacaoOrcamentaria: '',
     emailCamara:        pa.emailCamara || '',
     finalidades:        finalidadesDe(pa),
+    detalhamentoSIOP:   detalhamentoSIOPDe(pa),
     areaPoliticaPublicaResumo: pa.objetoDetalhe || '',
   };
 }

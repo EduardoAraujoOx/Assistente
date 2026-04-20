@@ -1190,13 +1190,14 @@ async function gerarPlano() {
   // Municípios: sempre Não. Estado: lookup define; padrão = Sim.
   $('f28').checked = isMunicipio ? false : (lookup ? lookup.contaEspecifica === 'Sim' : true);
 
-  // 2.4: objeto do SIOP (diretamente da API, sem IA)
-  setVal('f24', S.emenda.objeto);
+  // 2.4: descrição completa do SIOP (Função/Subfunção/Descrição fornecida pelo Ministério)
+  // Mais informativa que só o código do objeto — é a referência oficial para o campo 2.5
+  setVal('f24', S.emenda.detalhamentoSIOP || S.emenda.objeto);
 
-  // 2.5: KB histórico (mesmo objeto/executor) > detalhamento padrão do ministério > Gemini
+  // 2.5: Gemini ancorado pela descrição SIOP > histórico (só se sem SIOP e Gemini falhou)
+  // Histórico do ano anterior pode trazer contexto desatualizado (eventos/datas passadas)
   const objetoExecHist = historico[0]?.objetoExecutor;
-  const detPadrao = objStd?.detalhamentos?.[0] || null;
-  setVal('f25', objetoExecHist || c.detalhamento_completo);
+  setVal('f25', c.detalhamento_completo || objetoExecHist || '');
 
   // ── Classificação ─────────────────────────────────────────────────────────
   // Regra STN natureza de despesa aplica a ambos (município e estado).
@@ -1288,15 +1289,22 @@ async function geminiGerarPlano(em, historico = [], lookup = null, objStd = null
   Prazo: ${lookup.prazoMeses} meses\n`
     : '';
 
-  // Para municípios, informa o template oficial do ministério (objetos-padronizados.json)
-  const stdDet = objStd?.detalhamentos?.[0] || null;
-  const stdMin = objStd?.ministerio || null;
+  // Descrição do SIOP (listaAPP do portal) — referência primária para campo 2.5
+  const detSIOP = em.detalhamentoSIOP || null;
+  const stdDet  = objStd?.detalhamentos?.[0] || null;
+  const stdMin  = objStd?.ministerio || null;
+
+  // Bloco de referência para 2.5: SIOP tem prioridade sobre modelo genérico
+  const refDet25 = detSIOP
+    ? `DESCRIÇÃO DO SIOP (fornecida pelo Ministério para esta emenda — use como referência obrigatória para o campo 2.5):\n"${detSIOP}"\n`
+    : (stdDet ? `MODELO OFICIAL DO MINISTÉRIO para este objeto: "${stdDet.slice(0,200)}"\n` : '');
+
   const munCtx = isMun
     ? `CONTEXTO: beneficiário MUNICIPAL (${S.nomeEnte}).
 Executor, banco, agência e classificação orçamentária serão determinados pelo sistema — NÃO os inclua no JSON.
 ${stdMin ? `Ministério responsável: ${stdMin}.` : ''}
-${stdDet ? `\nMODELO OFICIAL DO MINISTÉRIO para o campo "Objeto de Execução" (campo 2.5):\n"${stdDet}"\nAdapte este modelo ao contexto do beneficiário e objeto parlamentar.\n` : 'Gere um detalhamento descritivo de 3 a 5 linhas.\n'}`
-    : (stdDet ? `MODELO OFICIAL DO MINISTÉRIO para este objeto: "${stdDet.slice(0,200)}"\n` : '');
+${refDet25 || 'Gere um detalhamento descritivo de 3 a 5 linhas.\n'}`
+    : refDet25;
 
   const exStr = historico.length
     ? historico.map((ex, i) => `
@@ -1405,15 +1413,28 @@ const PROMPTS = {
   agencia:              em => `Sugira o número de agência mais usual para executor de "${em.objeto}" no ES. Responda SOMENTE o número.`,
   objeto:               em => `Reformule para o campo 2.3 do TransfereGov: "${em.objeto}". Compatível com a finalidade ministerial. Responda SOMENTE o texto.`,
   detalhamento_completo: em => {
+    const siop   = em.detalhamentoSIOP || null;
     const seed   = (S.historico || [])[0]?.objetoExecutor;
     const stdDet = S.objStd?.detalhamentos?.[0] || null;
     const stdMin = S.objStd?.ministerio || null;
-    if (seed) {
-      return `Adapte o texto abaixo (de plano similar já aprovado pelo ministério) ao novo plano, incorporando os elementos específicos do objeto parlamentar. Mantenha a estrutura e o nível de detalhamento. Responda SOMENTE o texto adaptado, sem comentários.\n\nTexto base aprovado:\n${seed}\n\nObjeto parlamentar do novo plano:\n${em.objeto}`;
+    // Prioridade 1: descrição do SIOP (fornecida pelo Ministério para esta emenda)
+    if (siop) {
+      return `Campo 2.5 Detalhamento do Objeto de Execução (TransfereGov / LC 210/2024).
+Descrição do SIOP fornecida pelo Ministério para esta emenda:
+"${siop}"
+Beneficiário: ${S.nomeEnte}
+Objeto: ${em.objeto}
+
+Com base na descrição do SIOP acima, escreva 3 a 5 linhas descrevendo o que será executado, as atividades principais, o público-alvo e a metodologia. Mantenha dados quantitativos presentes na descrição. Responda SOMENTE o texto.`;
     }
+    // Prioridade 2: texto do executor em plano aprovado similar (mesmo beneficiário)
+    if (seed) {
+      return `Adapte o texto abaixo (de plano similar já aprovado) ao novo plano, incorporando os elementos específicos do objeto parlamentar. Mantenha a estrutura. Responda SOMENTE o texto adaptado.\n\nTexto base:\n${seed}\n\nNovo objeto: ${em.objeto}`;
+    }
+    // Prioridade 3: modelo oficial do ministério (objetos-padronizados.json)
     if (stdDet) {
       return `Campo 2.5 do Plano de Trabalho (TransfereGov / LC 210/2024).${stdMin ? ` Ministério: ${stdMin}.` : ''}
-Modelo oficial do ministério para este objeto:\n"${stdDet}"\n\nBeneficiário: ${S.nomeEnte}\nObjeto parlamentar: ${em.objeto}\n\nAdapte o modelo acima ao contexto específico deste beneficiário e objeto. Responda SOMENTE o texto adaptado, em 3 a 5 linhas.`;
+Modelo oficial:\n"${stdDet}"\n\nBeneficiário: ${S.nomeEnte}\nObjeto: ${em.objeto}\n\nAdapte ao contexto específico. Responda SOMENTE o texto, em 3 a 5 linhas.`;
     }
     return `Campo 2.5 do Plano de Trabalho (TransfereGov / LC 210/2024). Objeto: "${em.objeto}". Beneficiário: ${S.nomeEnte}. Escreva 3 a 5 linhas descrevendo: o que será executado, atividades principais, público-alvo, metodologia. Responda SOMENTE o texto.`;
   },
