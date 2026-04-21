@@ -59,7 +59,7 @@ function urlTodosPlanos(cnpj, ano) {
 function urlPtStatus(ids) {
   const qs = new URLSearchParams({
     id_plano_acao: `in.(${ids.join(',')})`,
-    select: 'id_plano_acao,situacao_plano_trabalho',
+    select: 'id_plano_acao,id_plano_trabalho,situacao_plano_trabalho',
     limit:  '200',
   });
   return `${TGOV_BASE}/plano_trabalho_especial?${qs}`;
@@ -67,10 +67,6 @@ function urlPtStatus(ids) {
 
 function urlPortalPA(idPA) {
   return `${PORTAL_BASE}/public/plano-acao/${idPA}`;
-}
-
-function urlPortalPTList(paId) {
-  return `${PORTAL_BASE}/public/plano-trabalho?idPlanoAcao=${paId}`;
 }
 
 function urlPortalPTExecutores(ptId) {
@@ -179,6 +175,8 @@ export default async function handler(req, res) {
     const ptByPa = Object.fromEntries(ptRows.map(r => [r.id_plano_acao, r]));
 
     // 3. Detalhes do portal (PA) e objeto do executor PT — em paralelo por PA
+    // O id_plano_trabalho vem do PostgREST (confiável); o endpoint de lista do portal
+    // /public/plano-trabalho?idPlanoAcao={id} retorna PTs incorretos.
     const detalhesMap  = {};
     const execObjByPa  = {};
     await Promise.all(
@@ -188,9 +186,7 @@ export default async function handler(req, res) {
         if (d) detalhesMap[id] = d;
 
         // PT executor objeto (campo 2.5 já submetido, quando disponível)
-        const ptList = await getJsonSafe(urlPortalPTList(id));
-        const ptArr  = Array.isArray(ptList) ? ptList : (ptList ? [ptList] : []);
-        const ptId   = ptArr[0]?.id;
+        const ptId = ptByPa[id]?.id_plano_trabalho;
         if (ptId) {
           const execs   = await getJsonSafe(urlPortalPTExecutores(ptId));
           const execArr = Array.isArray(execs) ? execs : (execs ? [execs] : []);
