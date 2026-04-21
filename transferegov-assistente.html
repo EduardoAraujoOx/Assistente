@@ -862,11 +862,14 @@ function atualizarEmendas() {
 /* ══════════════════════════════════════════
    CACHE LOCAL (localStorage) — 6 horas
 ══════════════════════════════════════════ */
-const CACHE_TTL_MS = 6 * 60 * 60 * 1000; // 6 horas
+const CACHE_TTL_MS  = 6 * 60 * 60 * 1000; // 6 horas
+const CACHE_VERSION = 'v2'; // incrementar ao mudar schema da resposta da API
+
+function cacheKey(cnpj) { return `tgov_${CACHE_VERSION}_${cnpj}`; }
 
 function cacheGet(cnpj) {
   try {
-    const raw = localStorage.getItem('tgov_' + cnpj);
+    const raw = localStorage.getItem(cacheKey(cnpj));
     if (!raw) return null;
     const { ts, data } = JSON.parse(raw);
     return (Date.now() - ts < CACHE_TTL_MS) ? data : null;
@@ -874,12 +877,12 @@ function cacheGet(cnpj) {
 }
 
 function cacheSet(cnpj, data) {
-  try { localStorage.setItem('tgov_' + cnpj, JSON.stringify({ ts: Date.now(), data })); }
+  try { localStorage.setItem(cacheKey(cnpj), JSON.stringify({ ts: Date.now(), data })); }
   catch { /* quota excedida — silencia */ }
 }
 
 function cacheClear(cnpj) {
-  try { localStorage.removeItem('tgov_' + cnpj); } catch { }
+  try { localStorage.removeItem(cacheKey(cnpj)); } catch { }
 }
 
 /* ══════════════════════════════════════════
