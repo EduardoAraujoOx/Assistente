@@ -406,7 +406,7 @@
       </div>
       <div class="card-body">
         <button class="btn btn-primary btn-full" id="btn-gerar" disabled onclick="gerarPlano()">
-          Gerar Plano de Trabalho
+          ↺ Regenerar Plano de Trabalho
         </button>
         <p class="hint" style="text-align:center;margin-top:8px;">
           O sistema buscará o histórico de planos aprovados e usará IA (Gemini) para pré-preencher todos os campos.
@@ -1022,6 +1022,8 @@ function renderEmendas(emendas) {
       if (!podeGerar) {
         const sit = SITUACAO_INFO[em.situacaoPlanoAcao]?.label || em.situacaoPlanoAcao || 'outra situação';
         alert(`Este plano está com status "${sit}" e não pode ser gerado novamente.`);
+      } else {
+        gerarPlano();
       }
     };
     tbody.appendChild(tr);
