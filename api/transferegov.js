@@ -121,7 +121,7 @@ function detalhamentoSIOPDe(pa) {
   return itens.length ? itens.join('\n') : null;
 }
 
-function montar(pa, ptInfo, situacaoPA, objetoExecPT, listaDetalhamentoPT, appPostgrest, objetoExecPostgrest) {
+function montar(pa, ptInfo, situacaoPA, objetoExecPT, listaDetalhamentoPT, appPostgrest, objetoExecPostgrest, descricaoDetPT) {
   const emenda       = pa.emendaParlamentar || {};
   const beneficiario = pa.beneficiario      || {};
   return {
@@ -152,6 +152,7 @@ function montar(pa, ptInfo, situacaoPA, objetoExecPT, listaDetalhamentoPT, appPo
     objetoExecPostgrest:   objetoExecPostgrest   || null,
     listaDetalhamentoPT:   listaDetalhamentoPT   || null,
     appPostgrest:          appPostgrest          || null,
+    descricaoDetPT:        descricaoDetPT        || null,
   };
 }
 
@@ -205,6 +206,7 @@ export default async function handler(req, res) {
     const detalhesMap  = {};
     const execObjByPa  = {};
     const execDetByPa  = {}; // campo 2.4: detalhamentos do executor (funcao/subfuncao/descricao)
+    const execDescByPa = {}; // campo 2.5 seed: só det.descricao (descrição específica do SIOP)
     await Promise.all(
       idsPA.map(async id => {
         // PA details
@@ -233,6 +235,10 @@ export default async function handler(req, res) {
             return parts.filter(Boolean).join(' / ');
           }).filter(Boolean);
           if (detTexts.length) execDetByPa[id] = detTexts.join('\n');
+
+          // seed campo 2.5 — só a descrição específica do objeto SIOP (sem códigos)
+          const descTexts = dets.map(det => det.descricao).filter(Boolean);
+          if (descTexts.length) execDescByPa[id] = descTexts.join('\n');
         }
       })
     );
@@ -240,7 +246,7 @@ export default async function handler(req, res) {
     // 4. Monta resposta com todos os PAs
     const itens = idsPA.map(id => {
       const pa  = detalhesMap[id] || { id };
-      return montar(pa, ptByPa[id], situacaoByPa[id], execObjByPa[id] || null, execDetByPa[id] || null, appByPa[id] || null, execPgByPa[id] || null);
+      return montar(pa, ptByPa[id], situacaoByPa[id], execObjByPa[id] || null, execDetByPa[id] || null, appByPa[id] || null, execPgByPa[id] || null, execDescByPa[id] || null);
     });
 
     res.setHeader('Cache-Control', 's-maxage=14400, stale-while-revalidate=86400');

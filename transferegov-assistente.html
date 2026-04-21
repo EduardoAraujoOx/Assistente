@@ -869,7 +869,7 @@ function atualizarEmendas() {
    CACHE LOCAL (localStorage) — 6 horas
 ══════════════════════════════════════════ */
 const CACHE_TTL_MS  = 6 * 60 * 60 * 1000; // 6 horas
-const CACHE_VERSION = 'v4'; // incrementar ao mudar schema da resposta da API
+const CACHE_VERSION = 'v5'; // incrementar ao mudar schema da resposta da API
 
 function cacheKey(cnpj) { return `tgov_${CACHE_VERSION}_${cnpj}`; }
 
@@ -1172,8 +1172,8 @@ async function gerarPlano() {
   S.historico = historico;
   S.objStd    = objStd;
 
-  let c;
-  try   { c = await geminiGerarPlano(S.emenda, historico, lookup, objStd); }
+  let c, geminiOk = false;
+  try   { c = await geminiGerarPlano(S.emenda, historico, lookup, objStd); geminiOk = true; }
   catch { c = fallback(S.emenda, historico, lookup); }
 
   // Prazo: lookup > KB > padrão 36m
@@ -1219,12 +1219,13 @@ async function gerarPlano() {
   const objetoExecPT        = S.emenda.objetoExecPT        || null;
   const objetoExecBase      = objetoExecPostgrest || objetoExecPT || null;
   const objetoExecHist      = historico[0]?.objetoExecutor || null;
-  setVal('f25', objetoExecBase || c.detalhamento_completo || objetoExecHist || '');
+  // Prioridade campo 2.5: API > Gemini (quando ok) > KB histórico > fallback genérico
+  setVal('f25', objetoExecBase || (geminiOk ? c.detalhamento_completo : null) || objetoExecHist || c.detalhamento_completo || '');
   setBadge('badge25',
-    objetoExecBase          ? ['API', 'tag-api']  :
-    c.detalhamento_completo ? ['IA',  'tag-ai']   :
-    objetoExecHist          ? ['Hist','tag-hist']  :
-                              ['Hist','tag-hist']
+    objetoExecBase                      ? ['API', 'tag-api']  :
+    geminiOk && c.detalhamento_completo ? ['IA',  'tag-ai']   :
+    objetoExecHist                      ? ['Hist','tag-hist']  :
+                                          ['Hist','tag-hist']
   );
 
   // ── Classificação ─────────────────────────────────────────────────────────
@@ -1317,14 +1318,17 @@ async function geminiGerarPlano(em, historico = [], lookup = null, objStd = null
   Prazo: ${lookup.prazoMeses} meses\n`
     : '';
 
-  // Referência para campo 2.5:
-  // SIOP (appPostgrest) é sempre presente e âncora obrigatória.
-  // Texto do executor refina quando disponível; senão Gemini gera a partir do SIOP.
-  const execObjBase = em.objetoExecPostgrest || em.objetoExecPT || null;
-  const siopClass   = em.appPostgrest || null;
-  const detSIOP     = em.detalhamentoSIOP || null;
-  const stdDet      = objStd?.detalhamentos?.[0] || null;
-  const stdMin      = objStd?.ministerio || null;
+  // Referência para campo 2.5 — prioridade:
+  // 1. executor.objeto (texto já submetido) → refinar
+  // 2. det.descricao (descrição específica do objeto SIOP) → gerar com base nela
+  // 3. appPostgrest (classificação SIOP) → gerar a partir da área de política pública
+  // 4. detalhamentoSIOP / modelo padrão
+  const execObjBase    = em.objetoExecPostgrest || em.objetoExecPT || null;
+  const descricaoDetPT = em.descricaoDetPT || null;
+  const siopClass      = em.appPostgrest || null;
+  const detSIOP        = em.detalhamentoSIOP || null;
+  const stdDet         = objStd?.detalhamentos?.[0] || null;
+  const stdMin         = objStd?.ministerio || null;
 
   const siopCtx = siopClass
     ? `CLASSIFICAÇÃO SIOP (área de política pública, sempre presente):\n"${siopClass}"\n`
@@ -1332,11 +1336,13 @@ async function geminiGerarPlano(em, historico = [], lookup = null, objStd = null
 
   const refDet25 = execObjBase
     ? `${siopCtx}TEXTO DO EXECUTOR (base fiel para o campo 2.5):\n"${execObjBase}"\nRefine o texto do executor usando a classificação SIOP como contexto. Mantenha dados concretos e linguagem técnica clara.\n`
-    : siopClass
-      ? `${siopCtx}Com base na classificação SIOP acima e no objeto parlamentar, escreva 3 a 5 linhas descrevendo: o que será executado, atividades principais, público-alvo e metodologia. Use linguagem técnica clara e objetiva.\n`
-      : detSIOP
-        ? `DESCRIÇÃO DO SIOP (fornecida pelo Ministério):\n"${detSIOP}"\nEscreva 3 a 5 linhas: o que será executado, atividades, público-alvo, metodologia.\n`
-        : (stdDet ? `MODELO OFICIAL DO MINISTÉRIO para este objeto: "${stdDet.slice(0,200)}"\n` : '');
+    : descricaoDetPT
+      ? `${siopCtx}DESCRIÇÃO DO OBJETO SIOP (texto específico do detalhamento ministerial):\n"${descricaoDetPT}"\nCom base nessa descrição e no objeto parlamentar, escreva 3 a 5 linhas para o campo 2.5: o que será executado, atividades, público-alvo e metodologia. Use linguagem técnica clara.\n`
+      : siopClass
+        ? `${siopCtx}Com base na classificação SIOP acima e no objeto parlamentar, escreva 3 a 5 linhas descrevendo: o que será executado, atividades principais, público-alvo e metodologia. Use linguagem técnica clara e objetiva.\n`
+        : detSIOP
+          ? `DESCRIÇÃO DO SIOP (fornecida pelo Ministério):\n"${detSIOP}"\nEscreva 3 a 5 linhas: o que será executado, atividades, público-alvo, metodologia.\n`
+          : (stdDet ? `MODELO OFICIAL DO MINISTÉRIO para este objeto: "${stdDet.slice(0,200)}"\n` : '');
 
   const munCtx = isMun
     ? `CONTEXTO: beneficiário MUNICIPAL (${S.nomeEnte}).
@@ -1452,12 +1458,13 @@ const PROMPTS = {
   agencia:              em => `Sugira o número de agência mais usual para executor de "${em.objeto}" no ES. Responda SOMENTE o número.`,
   objeto:               em => `Reformule para o campo 2.3 do TransfereGov: "${em.objeto}". Compatível com a finalidade ministerial. Responda SOMENTE o texto.`,
   detalhamento_completo: em => {
-    const execPT    = em.objetoExecPostgrest || em.objetoExecPT || null;
-    const siopClass = em.appPostgrest || null;
-    const siop      = em.detalhamentoSIOP || null;
-    const seed      = (S.historico || [])[0]?.objetoExecutor;
-    const stdDet    = S.objStd?.detalhamentos?.[0] || null;
-    const stdMin    = S.objStd?.ministerio || null;
+    const execPT         = em.objetoExecPostgrest || em.objetoExecPT || null;
+    const descricaoDetPT = em.descricaoDetPT || null;
+    const siopClass      = em.appPostgrest || null;
+    const siop           = em.detalhamentoSIOP || null;
+    const seed           = (S.historico || [])[0]?.objetoExecutor;
+    const stdDet         = S.objStd?.detalhamentos?.[0] || null;
+    const stdMin         = S.objStd?.ministerio || null;
 
     const siopCtx = siopClass
       ? `Classificação SIOP (área de política pública):\n"${siopClass}"\n`
@@ -1473,6 +1480,17 @@ Texto atual do executor:
 "${execPT}"
 
 Refine o texto do executor em 3 a 5 linhas usando a classificação SIOP como contexto. Mantenha dados concretos (atividades, público-alvo, metodologia) e use linguagem técnica clara. Responda SOMENTE o texto refinado.`;
+    }
+    // Com descrição específica do detalhamento SIOP: gera com base nela
+    if (descricaoDetPT) {
+      return `Campo 2.5 Detalhamento do Objeto de Execução (TransfereGov / LC 210/2024).
+Beneficiário: ${S.nomeEnte}
+Objeto parlamentar: ${em.objeto}
+${siopCtx}
+Descrição do objeto SIOP (texto do detalhamento ministerial):
+"${descricaoDetPT}"
+
+Com base nessa descrição e no objeto parlamentar acima, escreva 3 a 5 linhas para o campo 2.5: o que será executado, as atividades principais, o público-alvo e a metodologia. Use linguagem técnica clara e objetiva. Responda SOMENTE o texto.`;
     }
     // Com SIOP: gera a partir da classificação (sempre disponível no PostgREST)
     if (siopClass) {
