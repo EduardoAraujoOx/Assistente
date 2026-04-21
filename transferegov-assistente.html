@@ -320,7 +320,7 @@
 </head>
 <body>
 
-<header class="header">
+<header class="header" onclick="voltarP1()" style="cursor:pointer;" title="Voltar para seleção">
   <div class="header-icon">📋</div>
   <div>
     <div class="header-title">TransfereGov <span>Assistente</span></div>
@@ -339,7 +339,7 @@
 
   <!-- PROGRESS -->
   <div class="steps">
-    <div class="step active" id="ps1"><div class="step-circle" id="sc1">1</div><span>Seleção</span></div>
+    <div class="step active" id="ps1" onclick="voltarP1()" style="cursor:pointer;" title="Voltar para seleção"><div class="step-circle" id="sc1">1</div><span>Seleção</span></div>
     <div class="step"        id="ps2"><div class="step-circle" id="sc2">2</div><span>Plano de Trabalho</span></div>
     <div class="step"        id="ps3"><div class="step-circle" id="sc3">3</div><span>Envio</span></div>
   </div>
@@ -405,8 +405,14 @@
         <div class="card-title">Gere o Plano Pré-preenchido</div>
       </div>
       <div class="card-body">
+        <div class="field" style="margin-bottom:14px;">
+          <label class="field-label" style="font-size:0.85rem;">Informações adicionais do parlamentar (opcional)</label>
+          <textarea id="contexto-adicional" rows="3"
+            placeholder="Ex: serão realizadas feiras de negócios em 4 municípios; público-alvo são mulheres em situação de vulnerabilidade; o projeto inclui capacitação de 200 artesãos…&#10;Se vazio, o sistema usa os dados da API e do histórico de planos aprovados."></textarea>
+          <p class="hint">Use este campo para incluir detalhes fornecidos pelo parlamentar ou secretaria sobre como o projeto será executado. Isso melhora a qualidade do campo 2.5 e das metas geradas pela IA.</p>
+        </div>
         <button class="btn btn-primary btn-full" id="btn-gerar" disabled onclick="gerarPlano()">
-          ↺ Regenerar Plano de Trabalho
+          ✦ Gerar Plano de Trabalho
         </button>
         <p class="hint" style="text-align:center;margin-top:8px;">
           O sistema buscará o histórico de planos aprovados e usará IA (Gemini) para pré-preencher todos os campos.
@@ -716,7 +722,8 @@ let S = {
   cnpj: null,
   nomeEnte: null,
   emenda: null,
-  usandoDemo: false
+  usandoDemo: false,
+  contextoAdicional: '',
 };
 
 /* ══════════════════════════════════════════
@@ -1116,6 +1123,17 @@ function codigoSIOPDe(objeto) {
 // Regra STN para Transferências Especiais EC 105/2019:
 // natureza de despesa derivada do tipo de gasto (custeio vs. investimento)
 // e da descrição do objeto.
+function formatMetas(m) {
+  if (typeof m === 'string') return m;
+  if (!m) return '';
+  return [
+    m.descricao      != null ? `- Descrição: ${m.descricao}`      : '',
+    m.unidade        != null ? `- Unidade: ${m.unidade}`          : '',
+    m.quantidade     != null ? `- Quantidade: ${m.quantidade}`    : '',
+    m.mesesPrevistos != null ? `- Meses Previstos: ${m.mesesPrevistos}` : '',
+  ].filter(Boolean).join('\n');
+}
+
 function naturezaDespesaDe(em) {
   const obj = (em.objeto || '').toLowerCase()
     .normalize('NFD').replace(/[\u0300-\u036f]/g, '');
@@ -1143,6 +1161,7 @@ function prazoMaximo() {
 ══════════════════════════════════════════ */
 async function gerarPlano() {
   if (!S.emenda) return;
+  S.contextoAdicional = ($('contexto-adicional')?.value || '').trim();
   showOverlay('Consultando histórico de planos aprovados...');
 
   // ── Detecção: município ou Estado ES ────────────────────────────────────
@@ -1236,7 +1255,7 @@ async function gerarPlano() {
   const ndSugerida = naturezaDespesaDe(S.emenda);
   if (isMunicipio) {
     const classHistorico = historico[0]?.classificacaoOrcamentaria || '';
-    setVal('f12', classHistorico || `${ndSugerida}\n[Código LOA municipal: verificar com a Secretaria de Planejamento]`);
+    setVal('f12', classHistorico || ndSugerida);
   } else {
     const classBase = S.emenda.classificacao
       || (lookup?.classificacao || null)
@@ -1244,16 +1263,14 @@ async function gerarPlano() {
     // Quando lookup existe mas classificacao está vazia (ex: obj 698, 835),
     // usar natureza derivada em vez de Gemini — que alucina código LOA municipal
     const classGemini = lookup && !lookup.classificacao ? null : c.classificacao;
-    setVal('f12', classBase
-      || classGemini
-      || `${ndSugerida}\n[Projeto/atividade: verificar na LOA do Estado ES (SIGEFES)]`);
+    setVal('f12', classBase || classGemini || ndSugerida);
   }
 
   setVal('f14', prazoFinal);
   setVal('f22', execStr);
   setVal('f23', S.emenda.objeto);
   setVal('f26', c.finalidades);
-  setVal('f27', c.metas);
+  setVal('f27', formatMetas(c.metas));
 
   // ── Banco / Agência ────────────────────────────────────────────────────────
   // Municípios: historico API > KB estático > vazio
@@ -1377,6 +1394,7 @@ Objeto (campo 2.3): ${em.objeto}
 Valor total: ${em.valor}
 Prazo: ${prazoFinal} meses
 Finalidades disponíveis (escolha UMA): ${finalidadesLista}
+${S.contextoAdicional ? `\nCONTEXTO ADICIONAL (informado pelo usuário — use para enriquecer campo 2.5 e metas):\n"${S.contextoAdicional}"\n` : ''}
 
 REGRAS:
 - Se "DADOS CONFIRMADOS" estiver preenchido, use esses valores exatamente.
@@ -1441,7 +1459,7 @@ function fallback(em, historico = [], lookup = null) {
 const REGEN_TOKENS = {
   detalhamento_completo: 1200,
   classificacao:          900,
-  metas:                  400,
+  metas:                  800,
 };
 
 const PROMPTS = {
@@ -1465,17 +1483,19 @@ const PROMPTS = {
     const seed           = (S.historico || [])[0]?.objetoExecutor;
     const stdDet         = S.objStd?.detalhamentos?.[0] || null;
     const stdMin         = S.objStd?.ministerio || null;
+    const ctx            = S.contextoAdicional?.trim() || '';
 
     const siopCtx = siopClass
       ? `Classificação SIOP (área de política pública):\n"${siopClass}"\n`
       : '';
+    const ctxLine = ctx ? `Contexto adicional: "${ctx}"\n` : '';
 
     // Com texto real do executor: refina incorporando contexto SIOP
     if (execPT) {
       return `Campo 2.5 Detalhamento do Objeto de Execução (TransfereGov / LC 210/2024).
 Beneficiário: ${S.nomeEnte}
 Objeto parlamentar: ${em.objeto}
-${siopCtx}
+${siopCtx}${ctxLine}
 Texto atual do executor:
 "${execPT}"
 
@@ -1486,7 +1506,7 @@ Refine o texto do executor em 3 a 5 linhas usando a classificação SIOP como co
       return `Campo 2.5 Detalhamento do Objeto de Execução (TransfereGov / LC 210/2024).
 Beneficiário: ${S.nomeEnte}
 Objeto parlamentar: ${em.objeto}
-${siopCtx}
+${siopCtx}${ctxLine}
 Descrição do objeto SIOP (texto do detalhamento ministerial):
 "${descricaoDetPT}"
 
@@ -1497,7 +1517,7 @@ Com base nessa descrição e no objeto parlamentar acima, escreva 3 a 5 linhas p
       return `Campo 2.5 Detalhamento do Objeto de Execução (TransfereGov / LC 210/2024).
 Beneficiário: ${S.nomeEnte}
 Objeto parlamentar: ${em.objeto}
-${siopCtx}
+${siopCtx}${ctxLine}
 Com base na classificação SIOP e no objeto acima, escreva 3 a 5 linhas descrevendo: o que será executado, as atividades principais, o público-alvo e a metodologia. Use linguagem técnica clara e objetiva. Responda SOMENTE o texto.`;
     }
     // Fallbacks sem SIOP
@@ -1516,7 +1536,21 @@ Com base na classificação SIOP e no objeto acima, escreva 3 a 5 linhas descrev
     const lista = (em.finalidades||[]).length ? em.finalidades.join(' | ') : '(livre, coerente com o objeto)';
     return `Campo 2.6 Finalidades do TransfereGov. Objeto: "${em.objeto}". Escolha UMA única finalidade desta lista: ${lista}. Formato: "Tipo — Área". Responda SOMENTE o texto.`;
   },
-  metas: em => `Campo 2.7 TransfereGov. Objeto: "${em.objeto}". Consolide em UMA meta. Formato:\n- Descrição: ...\n- Unidade: ...\n- Quantidade: ...\n- Meses Previstos: ...\nResponda SOMENTE o texto.`,
+  metas: em => {
+    const det25 = $('f25')?.value?.trim() || em.descricaoDetPT || em.objeto;
+    const ctx   = S.contextoAdicional?.trim();
+    return `Campo 2.7 Metas do Plano de Trabalho (TransfereGov / LC 210/2024).
+Beneficiário: ${S.nomeEnte}
+Objeto (campo 2.3): "${em.objeto}"
+Detalhamento do objeto (campo 2.5): "${det25}"
+${ctx ? `Contexto adicional: "${ctx}"\n` : ''}
+Consolide em UMA única meta coerente com o detalhamento acima. Formato obrigatório:
+- Descrição: [o que será entregue, compatível com o campo 2.5]
+- Unidade: [sigla da unidade de medida, ex: Un, Pessoa, Evento, Kit]
+- Quantidade: [número inteiro]
+- Meses Previstos: [número de meses]
+Responda SOMENTE o texto no formato acima.`;
+  },
 };
 
 async function regen(fieldId, tipo) {
