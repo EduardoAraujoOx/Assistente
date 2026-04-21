@@ -25,6 +25,7 @@ https://api.transferegov.gestao.gov.br/transferenciasespeciais
 ```
 - `plano_acao_especial` — lista PAs por CNPJ/UF/ano
   - Campos úteis: `id_plano_acao`, `situacao_plano_acao`, `cnpj_beneficiario_plano_acao`
+  - **`codigo_descricao_areas_politicas_publicas_plano_acao`** → campo 2.4 (classificação SIOP), disponível mesmo para planos AGUARDANDO (sem PT)
 - `plano_trabalho_especial` — PT vinculado ao PA
   - Campos úteis: `id_plano_acao`, **`id_plano_trabalho`**, `situacao_plano_trabalho`
   - `id_plano_trabalho` confirmado presente (retornou 56217 para PA 91510)
@@ -52,7 +53,7 @@ https://especiais.transferegov.sistema.gov.br/maisbrasil-transferencia-especial-
 |-------|---------|----------------|----------|
 | 1.2 Classificação Orçamentária | `f12` | `EXECUTOR_POR_OBJETO[codigoSIOP]` (estado) / KB histórico (município) | naturezaDespesaDe() + placeholder |
 | 2.3 Objeto de Execução | `f23` | `S.emenda.objeto` (API) | — |
-| 2.4 Lista de Detalhamentos | `f24` | `listaDetalhamentoPT` (executor.detalhamentos) | `detalhamentoSIOP` (listaAPP) → `objeto` |
+| 2.4 Lista de Detalhamentos | `f24` | `appPostgrest` (PostgREST, disponível p/ AGUARDANDO) → `listaDetalhamentoPT` (executor PT) | `detalhamentoSIOP` → `objeto` |
 | 2.5 Detalhamento do Objeto | `f25` | `objetoExecPT` (executor.objeto) | Gemini → KB histórico |
 | 2.6 Finalidades | `f26` | Gemini (lista de opções da emenda) | — |
 | 2.7 Metas | `f27` | Gemini | fallback genérico |
@@ -84,15 +85,26 @@ https://especiais.transferegov.sistema.gov.br/maisbrasil-transferencia-especial-
 | Situação PA | `listaDetalhamentoPT` | `objetoExecPT` |
 |-------------|----------------------|----------------|
 | Com PT submetido | ✓ disponível | ✓ disponível |
-| AGUARDANDO (sem PT) | null | null |
+| AGUARDANDO (sem PT) | null (ver nota abaixo) | null |
 
-Para planos AGUARDANDO, campo 2.4 mostra apenas o código/objeto parlamentar.
+**Nota sobre campo 2.4 em planos AGUARDANDO**: O portal TransfereGov mostra o dropdown de
+"Lista de Detalhamentos" (código/função SIOP) mesmo antes de o PT ser submetido, sugerindo
+que essa lista de opções vem de algum endpoint público. Testamos 20+ padrões de URL (incluindo
+`/public/plano-acao/{id}/app`, `/public/emenda/{codigoEmenda}/detalhamento`, `/public/objeto/{codigo}`)
+— todos retornaram 404. A lista provavelmente vem de uma API autenticada interna do frontend
+(`/api/...` com JWT do usuário logado), inacessível sem sessão ativa. **Investigação futura**:
+interceptar requests do browser durante preenchimento manual para capturar o endpoint real.
+
+**Como campo 2.4 difere de campo 2.5 (confusão comum)**:
+- Campo 2.4 = classificação SIOP: "14 - Direitos da Cidadania / 422 - Direitos..." → fonte: `executor.detalhamentos`
+- Campo 2.5 = texto descritivo escrito pelo executor: "Promover a prevenção..." → fonte: `executor.objeto`
+- **Ambos já estão implementados** em `api/transferegov.js` via `/public/plano-trabalho/{ptId}/executor`
 
 ## Cache localStorage
 
 - Chave: `tgov_{CACHE_VERSION}_{cnpj}` — **incrementar `CACHE_VERSION` ao mudar schema da API**
 - TTL: 6 horas
-- Versão atual: `v3`
+- Versão atual: `v4`
 
 ## Workflow Git
 

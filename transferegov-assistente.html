@@ -529,7 +529,7 @@
         <div class="field">
           <label class="field-label">
             2.4 Lista de Detalhamentos do Objeto de Execução <span class="req">*</span>
-            <span class="tag tag-api">API</span>
+            <span id="badge24" class="tag tag-api">API</span>
           </label>
           <div class="field-row">
             <input type="text" id="f24" placeholder="Código — Categoria / Código — Subcategoria">
@@ -541,7 +541,7 @@
         <div class="field">
           <label class="field-label">
             2.5 Detalhamento do Objeto de Execução <span class="req">*</span>
-            <span class="tag tag-hist">Hist</span>
+            <span id="badge25" class="tag tag-hist">Hist</span>
           </label>
           <div class="field-row">
             <textarea id="f25" rows="5" placeholder="Descrição detalhada: atividades, metodologia, público-alvo..."></textarea>
@@ -804,7 +804,13 @@ const DEMO = {
 const $  = id => document.getElementById(id);
 const show = id => $(id).style.display = 'block';
 const hide = id => $(id).style.display = 'none';
-const setVal = (id, v) => { const el = $(id); if(el) el.value = v || ''; };
+const setVal   = (id, v) => { const el = $(id); if(el) el.value = v || ''; };
+const setBadge = (id, [label, cls]) => {
+  const el = $(id);
+  if (!el) return;
+  el.textContent = label;
+  el.className = `tag ${cls}`;
+};
 
 function showOverlay(msg) { $('overlay').classList.add('on'); $('loading-msg').textContent = msg; }
 function hideOverlay()    { $('overlay').classList.remove('on'); }
@@ -863,7 +869,7 @@ function atualizarEmendas() {
    CACHE LOCAL (localStorage) — 6 horas
 ══════════════════════════════════════════ */
 const CACHE_TTL_MS  = 6 * 60 * 60 * 1000; // 6 horas
-const CACHE_VERSION = 'v3'; // incrementar ao mudar schema da resposta da API
+const CACHE_VERSION = 'v4'; // incrementar ao mudar schema da resposta da API
 
 function cacheKey(cnpj) { return `tgov_${CACHE_VERSION}_${cnpj}`; }
 
@@ -1193,16 +1199,31 @@ async function gerarPlano() {
   // Municípios: sempre Não. Estado: lookup define; padrão = Sim.
   $('f28').checked = isMunicipio ? false : (lookup ? lookup.contaEspecifica === 'Sim' : true);
 
-  // 2.4: detalhamentos do executor (funcao/subfuncao/descricao do PT submetido)
-  //      > listaAPP do PA (detalhamentoSIOP, quando disponível) > objeto
-  setVal('f24', S.emenda.listaDetalhamentoPT || S.emenda.detalhamentoSIOP || S.emenda.objeto);
+  // 2.4: PostgREST APP (disponível mesmo em AGUARDANDO)
+  //      > detalhamentos do executor (PT submetido) > listaAPP do portal > objeto
+  setVal('f24',
+    S.emenda.appPostgrest        ||
+    S.emenda.listaDetalhamentoPT ||
+    S.emenda.detalhamentoSIOP    ||
+    S.emenda.objeto
+  );
+  setBadge('badge24', ['API', 'tag-api']);
 
-  // 2.5: objeto executor PT já submetido (mais preciso) > Gemini > histórico
-  // objetoExecPT vem do endpoint /public/plano-trabalho/{ptId}/executor quando o PA
-  // já tem PT em tramitação — é exatamente o texto do campo 2.5 enviado pelo executor.
-  const objetoExecPT   = S.emenda.objetoExecPT   || null;
-  const objetoExecHist = historico[0]?.objetoExecutor || null;
-  setVal('f25', objetoExecPT || c.detalhamento_completo || objetoExecHist || '');
+  // 2.5: executor PostgREST (disponível p/ AGUARDANDO) > executor portal PT > Gemini > histórico
+  // objetoExecPostgrest: objeto_executor da tabela executor_especial (PostgREST, por id_plano_acao)
+  // objetoExecPT:        executor.objeto do portal /public/plano-trabalho/{ptId}/executor
+  // Ambos são o mesmo dado — PostgREST é preferido por ser batch e não depender de PT existir
+  const objetoExecPostgrest = S.emenda.objetoExecPostgrest || null;
+  const objetoExecPT        = S.emenda.objetoExecPT        || null;
+  const objetoExecBase      = objetoExecPostgrest || objetoExecPT || null;
+  const objetoExecHist      = historico[0]?.objetoExecutor || null;
+  setVal('f25', objetoExecBase || c.detalhamento_completo || objetoExecHist || '');
+  setBadge('badge25',
+    objetoExecBase          ? ['API', 'tag-api']  :
+    c.detalhamento_completo ? ['IA',  'tag-ai']   :
+    objetoExecHist          ? ['Hist','tag-hist']  :
+                              ['Hist','tag-hist']
+  );
 
   // ── Classificação ─────────────────────────────────────────────────────────
   // Regra STN natureza de despesa aplica a ambos (município e estado).
@@ -1295,16 +1316,16 @@ async function geminiGerarPlano(em, historico = [], lookup = null, objStd = null
     : '';
 
   // Referência primária para campo 2.5 (em ordem de prioridade):
-  // 1) texto já submetido pelo executor no PT (mais específico e correto)
+  // 1) texto real do executor (PostgREST ou portal — mesmo dado, caminhos diferentes)
   // 2) descrição SIOP da listaAPP do PA
   // 3) modelo oficial do ministério
-  const execObjPT = em.objetoExecPT || null;
-  const detSIOP   = em.detalhamentoSIOP || null;
-  const stdDet    = objStd?.detalhamentos?.[0] || null;
-  const stdMin    = objStd?.ministerio || null;
+  const execObjBase = em.objetoExecPostgrest || em.objetoExecPT || null;
+  const detSIOP     = em.detalhamentoSIOP || null;
+  const stdDet      = objStd?.detalhamentos?.[0] || null;
+  const stdMin      = objStd?.ministerio || null;
 
-  const refDet25 = execObjPT
-    ? `TEXTO DO EXECUTOR (campo 2.5 já submetido no PT — use como base fiel, refinando se necessário):\n"${execObjPT}"\n`
+  const refDet25 = execObjBase
+    ? `TEXTO DO EXECUTOR (campo 2.5 — use como base fiel, refine se necessário):\n"${execObjBase}"\n`
     : detSIOP
       ? `DESCRIÇÃO DO SIOP (fornecida pelo Ministério — referência obrigatória para o campo 2.5):\n"${detSIOP}"\n`
       : (stdDet ? `MODELO OFICIAL DO MINISTÉRIO para este objeto: "${stdDet.slice(0,200)}"\n` : '');
@@ -1423,12 +1444,12 @@ const PROMPTS = {
   agencia:              em => `Sugira o número de agência mais usual para executor de "${em.objeto}" no ES. Responda SOMENTE o número.`,
   objeto:               em => `Reformule para o campo 2.3 do TransfereGov: "${em.objeto}". Compatível com a finalidade ministerial. Responda SOMENTE o texto.`,
   detalhamento_completo: em => {
-    const execPT = em.objetoExecPT || null;
+    const execPT = em.objetoExecPostgrest || em.objetoExecPT || null;
     const siop   = em.detalhamentoSIOP || null;
     const seed   = (S.historico || [])[0]?.objetoExecutor;
     const stdDet = S.objStd?.detalhamentos?.[0] || null;
     const stdMin = S.objStd?.ministerio || null;
-    // Prioridade 1: texto enviado pelo executor no PT já submetido
+    // Prioridade 1: texto real do executor (PostgREST preferido; portal como fallback)
     if (execPT) {
       return `Campo 2.5 Detalhamento do Objeto de Execução (TransfereGov / LC 210/2024).
 O executor já submeteu o seguinte texto para este campo:
