@@ -112,7 +112,7 @@ function detalhamentoSIOPDe(pa) {
   return itens.length ? itens.join('\n') : null;
 }
 
-function montar(pa, ptInfo, situacaoPA, objetoExecPT) {
+function montar(pa, ptInfo, situacaoPA, objetoExecPT, listaDetalhamentoPT) {
   const emenda       = pa.emendaParlamentar || {};
   const beneficiario = pa.beneficiario      || {};
   return {
@@ -137,9 +137,10 @@ function montar(pa, ptInfo, situacaoPA, objetoExecPT) {
     classificacaoOrcamentaria: '',
     emailCamara:        pa.emailCamara || '',
     finalidades:        finalidadesDe(pa),
-    detalhamentoSIOP:   detalhamentoSIOPDe(pa),
+    detalhamentoSIOP:      detalhamentoSIOPDe(pa),
     areaPoliticaPublicaResumo: pa.objetoDetalhe || '',
-    objetoExecPT:       objetoExecPT || null,
+    objetoExecPT:          objetoExecPT       || null,
+    listaDetalhamentoPT:   listaDetalhamentoPT || null,
   };
 }
 
@@ -174,24 +175,40 @@ export default async function handler(req, res) {
     const ptRows = Array.isArray(ptRaw) ? ptRaw : [];
     const ptByPa = Object.fromEntries(ptRows.map(r => [r.id_plano_acao, r]));
 
-    // 3. Detalhes do portal (PA) e objeto do executor PT — em paralelo por PA
+    // 3. Detalhes do portal (PA) e dados do executor PT — em paralelo por PA
     // O id_plano_trabalho vem do PostgREST (confiável); o endpoint de lista do portal
     // /public/plano-trabalho?idPlanoAcao={id} retorna PTs incorretos.
     const detalhesMap  = {};
     const execObjByPa  = {};
+    const execDetByPa  = {}; // campo 2.4: detalhamentos do executor (funcao/subfuncao/descricao)
     await Promise.all(
       idsPA.map(async id => {
         // PA details
         const d = await getJson(urlPortalPA(id)).catch(() => null);
         if (d) detalhesMap[id] = d;
 
-        // PT executor objeto (campo 2.5 já submetido, quando disponível)
+        // PT executor: objeto (campo 2.5) e detalhamentos (campo 2.4)
         const ptId = ptByPa[id]?.id_plano_trabalho;
         if (ptId) {
           const execs   = await getJsonSafe(urlPortalPTExecutores(ptId));
           const execArr = Array.isArray(execs) ? execs : (execs ? [execs] : []);
-          const objs    = execArr.map(e => e.objeto).filter(Boolean);
+
+          // campo 2.5 — texto descritivo do executor
+          const objs = execArr.map(e => e.objeto).filter(Boolean);
           if (objs.length) execObjByPa[id] = objs.join('\n\n');
+
+          // campo 2.4 — lista de detalhamentos (funcao/subfuncao/descricao SIOP)
+          const dets = execArr.flatMap(e => Array.isArray(e.detalhamentos) ? e.detalhamentos : []);
+          const detTexts = dets.map(det => {
+            const funcao    = det.subFuncao?.funcao;
+            const subFuncao = det.subFuncao;
+            const parts = [];
+            if (funcao)      parts.push(`${funcao.codigo} - ${funcao.descricao}`);
+            if (subFuncao)   parts.push(`${subFuncao.codigo} - ${subFuncao.descricao}`);
+            if (det.descricao) parts.push(det.descricao);
+            return parts.filter(Boolean).join(' / ');
+          }).filter(Boolean);
+          if (detTexts.length) execDetByPa[id] = detTexts.join('\n');
         }
       })
     );
@@ -199,7 +216,7 @@ export default async function handler(req, res) {
     // 4. Monta resposta com todos os PAs
     const itens = idsPA.map(id => {
       const pa  = detalhesMap[id] || { id };
-      return montar(pa, ptByPa[id], situacaoByPa[id], execObjByPa[id] || null);
+      return montar(pa, ptByPa[id], situacaoByPa[id], execObjByPa[id] || null, execDetByPa[id] || null);
     });
 
     res.setHeader('Cache-Control', 's-maxage=14400, stale-while-revalidate=86400');

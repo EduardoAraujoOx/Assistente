@@ -863,7 +863,7 @@ function atualizarEmendas() {
    CACHE LOCAL (localStorage) — 6 horas
 ══════════════════════════════════════════ */
 const CACHE_TTL_MS  = 6 * 60 * 60 * 1000; // 6 horas
-const CACHE_VERSION = 'v2'; // incrementar ao mudar schema da resposta da API
+const CACHE_VERSION = 'v3'; // incrementar ao mudar schema da resposta da API
 
 function cacheKey(cnpj) { return `tgov_${CACHE_VERSION}_${cnpj}`; }
 
@@ -1193,8 +1193,9 @@ async function gerarPlano() {
   // Municípios: sempre Não. Estado: lookup define; padrão = Sim.
   $('f28').checked = isMunicipio ? false : (lookup ? lookup.contaEspecifica === 'Sim' : true);
 
-  // 2.4: descrição completa do SIOP (Função/Subfunção/Descrição fornecida pelo Ministério)
-  setVal('f24', S.emenda.detalhamentoSIOP || S.emenda.objeto);
+  // 2.4: detalhamentos do executor (funcao/subfuncao/descricao do PT submetido)
+  //      > listaAPP do PA (detalhamentoSIOP, quando disponível) > objeto
+  setVal('f24', S.emenda.listaDetalhamentoPT || S.emenda.detalhamentoSIOP || S.emenda.objeto);
 
   // 2.5: objeto executor PT já submetido (mais preciso) > Gemini > histórico
   // objetoExecPT vem do endpoint /public/plano-trabalho/{ptId}/executor quando o PA
