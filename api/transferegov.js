@@ -69,6 +69,14 @@ function urlPortalPA(idPA) {
   return `${PORTAL_BASE}/public/plano-acao/${idPA}`;
 }
 
+function urlPortalPTList(paId) {
+  return `${PORTAL_BASE}/public/plano-trabalho?idPlanoAcao=${paId}`;
+}
+
+function urlPortalPTExecutores(ptId) {
+  return `${PORTAL_BASE}/public/plano-trabalho/${ptId}/executor`;
+}
+
 function formatBRL(n) {
   if (n == null || Number.isNaN(Number(n))) return null;
   return Number(n).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
@@ -97,7 +105,6 @@ function finalidadesDe(pa) {
 
 // Extrai a descrição completa do SIOP da listaAPP:
 // "Função / Subfunção / Descrição do objeto fornecida pelo Ministério"
-// Essa descrição é a referência primária para o campo 2.5 do PT.
 function detalhamentoSIOPDe(pa) {
   const lista = Array.isArray(pa.listaAPP) ? pa.listaAPP : [];
   const itens = lista.map(app => {
@@ -109,7 +116,7 @@ function detalhamentoSIOPDe(pa) {
   return itens.length ? itens.join('\n') : null;
 }
 
-function montar(pa, ptInfo, situacaoPA) {
+function montar(pa, ptInfo, situacaoPA, objetoExecPT) {
   const emenda       = pa.emendaParlamentar || {};
   const beneficiario = pa.beneficiario      || {};
   return {
@@ -136,6 +143,7 @@ function montar(pa, ptInfo, situacaoPA) {
     finalidades:        finalidadesDe(pa),
     detalhamentoSIOP:   detalhamentoSIOPDe(pa),
     areaPoliticaPublicaResumo: pa.objetoDetalhe || '',
+    objetoExecPT:       objetoExecPT || null,
   };
 }
 
@@ -170,21 +178,32 @@ export default async function handler(req, res) {
     const ptRows = Array.isArray(ptRaw) ? ptRaw : [];
     const ptByPa = Object.fromEntries(ptRows.map(r => [r.id_plano_acao, r]));
 
-    // 3. Detalhes do portal para todos os PAs
-    const idsBuscar = idsPA;
-
-    const detalhesMap = {};
+    // 3. Detalhes do portal (PA) e objeto do executor PT — em paralelo por PA
+    const detalhesMap  = {};
+    const execObjByPa  = {};
     await Promise.all(
-      idsBuscar.map(async id => {
+      idsPA.map(async id => {
+        // PA details
         const d = await getJson(urlPortalPA(id)).catch(() => null);
         if (d) detalhesMap[id] = d;
+
+        // PT executor objeto (campo 2.5 já submetido, quando disponível)
+        const ptList = await getJsonSafe(urlPortalPTList(id));
+        const ptArr  = Array.isArray(ptList) ? ptList : (ptList ? [ptList] : []);
+        const ptId   = ptArr[0]?.id;
+        if (ptId) {
+          const execs   = await getJsonSafe(urlPortalPTExecutores(ptId));
+          const execArr = Array.isArray(execs) ? execs : (execs ? [execs] : []);
+          const objs    = execArr.map(e => e.objeto).filter(Boolean);
+          if (objs.length) execObjByPa[id] = objs.join('\n\n');
+        }
       })
     );
 
     // 4. Monta resposta com todos os PAs
     const itens = idsPA.map(id => {
       const pa  = detalhesMap[id] || { id };
-      return montar(pa, ptByPa[id], situacaoByPa[id]);
+      return montar(pa, ptByPa[id], situacaoByPa[id], execObjByPa[id] || null);
     });
 
     res.setHeader('Cache-Control', 's-maxage=14400, stale-while-revalidate=86400');
