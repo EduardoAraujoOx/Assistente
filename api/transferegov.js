@@ -49,7 +49,7 @@ function urlTodosPlanos(cnpj, ano) {
     uf_beneficiario_plano_acao:   `eq.${UF_ALVO}`,
     cnpj_beneficiario_plano_acao: `eq.${cnpj}`,
     ano_plano_acao:               `eq.${ano}`,
-    select: 'id_plano_acao,situacao_plano_acao',
+    select: 'id_plano_acao,situacao_plano_acao,codigo_descricao_areas_politicas_publicas_plano_acao',
     limit:  '200',
     order:  'id_plano_acao.desc',
   });
@@ -112,7 +112,7 @@ function detalhamentoSIOPDe(pa) {
   return itens.length ? itens.join('\n') : null;
 }
 
-function montar(pa, ptInfo, situacaoPA, objetoExecPT, listaDetalhamentoPT) {
+function montar(pa, ptInfo, situacaoPA, objetoExecPT, listaDetalhamentoPT, appPostgrest) {
   const emenda       = pa.emendaParlamentar || {};
   const beneficiario = pa.beneficiario      || {};
   return {
@@ -141,6 +141,7 @@ function montar(pa, ptInfo, situacaoPA, objetoExecPT, listaDetalhamentoPT) {
     areaPoliticaPublicaResumo: pa.objetoDetalhe || '',
     objetoExecPT:          objetoExecPT       || null,
     listaDetalhamentoPT:   listaDetalhamentoPT || null,
+    appPostgrest:          appPostgrest        || null,
   };
 }
 
@@ -169,6 +170,7 @@ export default async function handler(req, res) {
 
     const idsPA        = todos.map(x => x.id_plano_acao).filter(x => x != null);
     const situacaoByPa = Object.fromEntries(todos.map(x => [x.id_plano_acao, x.situacao_plano_acao]));
+    const appByPa      = Object.fromEntries(todos.map(x => [x.id_plano_acao, x.codigo_descricao_areas_politicas_publicas_plano_acao ?? null]));
 
     // 2. Status do PT para cada PA
     const ptRaw  = await getJsonSafe(urlPtStatus(idsPA));
@@ -216,7 +218,7 @@ export default async function handler(req, res) {
     // 4. Monta resposta com todos os PAs
     const itens = idsPA.map(id => {
       const pa  = detalhesMap[id] || { id };
-      return montar(pa, ptByPa[id], situacaoByPa[id], execObjByPa[id] || null, execDetByPa[id] || null);
+      return montar(pa, ptByPa[id], situacaoByPa[id], execObjByPa[id] || null, execDetByPa[id] || null, appByPa[id] || null);
     });
 
     res.setHeader('Cache-Control', 's-maxage=14400, stale-while-revalidate=86400');

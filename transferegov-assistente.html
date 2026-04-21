@@ -529,7 +529,7 @@
         <div class="field">
           <label class="field-label">
             2.4 Lista de Detalhamentos do Objeto de Execução <span class="req">*</span>
-            <span class="tag tag-api">API</span>
+            <span id="badge24" class="tag tag-api">API</span>
           </label>
           <div class="field-row">
             <input type="text" id="f24" placeholder="Código — Categoria / Código — Subcategoria">
@@ -541,7 +541,7 @@
         <div class="field">
           <label class="field-label">
             2.5 Detalhamento do Objeto de Execução <span class="req">*</span>
-            <span class="tag tag-hist">Hist</span>
+            <span id="badge25" class="tag tag-hist">Hist</span>
           </label>
           <div class="field-row">
             <textarea id="f25" rows="5" placeholder="Descrição detalhada: atividades, metodologia, público-alvo..."></textarea>
@@ -804,7 +804,13 @@ const DEMO = {
 const $  = id => document.getElementById(id);
 const show = id => $(id).style.display = 'block';
 const hide = id => $(id).style.display = 'none';
-const setVal = (id, v) => { const el = $(id); if(el) el.value = v || ''; };
+const setVal   = (id, v) => { const el = $(id); if(el) el.value = v || ''; };
+const setBadge = (id, [label, cls]) => {
+  const el = $(id);
+  if (!el) return;
+  el.textContent = label;
+  el.className = `tag ${cls}`;
+};
 
 function showOverlay(msg) { $('overlay').classList.add('on'); $('loading-msg').textContent = msg; }
 function hideOverlay()    { $('overlay').classList.remove('on'); }
@@ -863,7 +869,7 @@ function atualizarEmendas() {
    CACHE LOCAL (localStorage) — 6 horas
 ══════════════════════════════════════════ */
 const CACHE_TTL_MS  = 6 * 60 * 60 * 1000; // 6 horas
-const CACHE_VERSION = 'v3'; // incrementar ao mudar schema da resposta da API
+const CACHE_VERSION = 'v4'; // incrementar ao mudar schema da resposta da API
 
 function cacheKey(cnpj) { return `tgov_${CACHE_VERSION}_${cnpj}`; }
 
@@ -1193,9 +1199,15 @@ async function gerarPlano() {
   // Municípios: sempre Não. Estado: lookup define; padrão = Sim.
   $('f28').checked = isMunicipio ? false : (lookup ? lookup.contaEspecifica === 'Sim' : true);
 
-  // 2.4: detalhamentos do executor (funcao/subfuncao/descricao do PT submetido)
-  //      > listaAPP do PA (detalhamentoSIOP, quando disponível) > objeto
-  setVal('f24', S.emenda.listaDetalhamentoPT || S.emenda.detalhamentoSIOP || S.emenda.objeto);
+  // 2.4: PostgREST APP (disponível mesmo em AGUARDANDO)
+  //      > detalhamentos do executor (PT submetido) > listaAPP do portal > objeto
+  setVal('f24',
+    S.emenda.appPostgrest        ||
+    S.emenda.listaDetalhamentoPT ||
+    S.emenda.detalhamentoSIOP    ||
+    S.emenda.objeto
+  );
+  setBadge('badge24', ['API', 'tag-api']);
 
   // 2.5: objeto executor PT já submetido (mais preciso) > Gemini > histórico
   // objetoExecPT vem do endpoint /public/plano-trabalho/{ptId}/executor quando o PA
@@ -1203,6 +1215,12 @@ async function gerarPlano() {
   const objetoExecPT   = S.emenda.objetoExecPT   || null;
   const objetoExecHist = historico[0]?.objetoExecutor || null;
   setVal('f25', objetoExecPT || c.detalhamento_completo || objetoExecHist || '');
+  setBadge('badge25',
+    objetoExecPT            ? ['API', 'tag-api']  :
+    c.detalhamento_completo ? ['IA',  'tag-ai']   :
+    objetoExecHist          ? ['Hist','tag-hist']  :
+                              ['Hist','tag-hist']
+  );
 
   // ── Classificação ─────────────────────────────────────────────────────────
   // Regra STN natureza de despesa aplica a ambos (município e estado).
