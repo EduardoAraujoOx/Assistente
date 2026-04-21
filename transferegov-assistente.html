@@ -1315,20 +1315,26 @@ async function geminiGerarPlano(em, historico = [], lookup = null, objStd = null
   Prazo: ${lookup.prazoMeses} meses\n`
     : '';
 
-  // Referência primária para campo 2.5 (em ordem de prioridade):
-  // 1) texto real do executor (PostgREST ou portal — mesmo dado, caminhos diferentes)
-  // 2) descrição SIOP da listaAPP do PA
-  // 3) modelo oficial do ministério
+  // Referência para campo 2.5:
+  // SIOP (appPostgrest) é sempre presente e âncora obrigatória.
+  // Texto do executor refina quando disponível; senão Gemini gera a partir do SIOP.
   const execObjBase = em.objetoExecPostgrest || em.objetoExecPT || null;
+  const siopClass   = em.appPostgrest || null;
   const detSIOP     = em.detalhamentoSIOP || null;
   const stdDet      = objStd?.detalhamentos?.[0] || null;
   const stdMin      = objStd?.ministerio || null;
 
+  const siopCtx = siopClass
+    ? `CLASSIFICAÇÃO SIOP (área de política pública, sempre presente):\n"${siopClass}"\n`
+    : '';
+
   const refDet25 = execObjBase
-    ? `TEXTO DO EXECUTOR (campo 2.5 — use como base fiel, refine se necessário):\n"${execObjBase}"\n`
-    : detSIOP
-      ? `DESCRIÇÃO DO SIOP (fornecida pelo Ministério — referência obrigatória para o campo 2.5):\n"${detSIOP}"\n`
-      : (stdDet ? `MODELO OFICIAL DO MINISTÉRIO para este objeto: "${stdDet.slice(0,200)}"\n` : '');
+    ? `${siopCtx}TEXTO DO EXECUTOR (base fiel para o campo 2.5):\n"${execObjBase}"\nRefine o texto do executor usando a classificação SIOP como contexto. Mantenha dados concretos e linguagem técnica clara.\n`
+    : siopClass
+      ? `${siopCtx}Com base na classificação SIOP acima e no objeto parlamentar, escreva 3 a 5 linhas descrevendo: o que será executado, atividades principais, público-alvo e metodologia. Use linguagem técnica clara e objetiva.\n`
+      : detSIOP
+        ? `DESCRIÇÃO DO SIOP (fornecida pelo Ministério):\n"${detSIOP}"\nEscreva 3 a 5 linhas: o que será executado, atividades, público-alvo, metodologia.\n`
+        : (stdDet ? `MODELO OFICIAL DO MINISTÉRIO para este objeto: "${stdDet.slice(0,200)}"\n` : '');
 
   const munCtx = isMun
     ? `CONTEXTO: beneficiário MUNICIPAL (${S.nomeEnte}).
@@ -1444,41 +1450,47 @@ const PROMPTS = {
   agencia:              em => `Sugira o número de agência mais usual para executor de "${em.objeto}" no ES. Responda SOMENTE o número.`,
   objeto:               em => `Reformule para o campo 2.3 do TransfereGov: "${em.objeto}". Compatível com a finalidade ministerial. Responda SOMENTE o texto.`,
   detalhamento_completo: em => {
-    const execPT = em.objetoExecPostgrest || em.objetoExecPT || null;
-    const siop   = em.detalhamentoSIOP || null;
-    const seed   = (S.historico || [])[0]?.objetoExecutor;
-    const stdDet = S.objStd?.detalhamentos?.[0] || null;
-    const stdMin = S.objStd?.ministerio || null;
-    // Prioridade 1: texto real do executor (PostgREST preferido; portal como fallback)
+    const execPT    = em.objetoExecPostgrest || em.objetoExecPT || null;
+    const siopClass = em.appPostgrest || null;
+    const siop      = em.detalhamentoSIOP || null;
+    const seed      = (S.historico || [])[0]?.objetoExecutor;
+    const stdDet    = S.objStd?.detalhamentos?.[0] || null;
+    const stdMin    = S.objStd?.ministerio || null;
+
+    const siopCtx = siopClass
+      ? `Classificação SIOP (área de política pública):\n"${siopClass}"\n`
+      : '';
+
+    // Com texto real do executor: refina incorporando contexto SIOP
     if (execPT) {
       return `Campo 2.5 Detalhamento do Objeto de Execução (TransfereGov / LC 210/2024).
-O executor já submeteu o seguinte texto para este campo:
+Beneficiário: ${S.nomeEnte}
+Objeto parlamentar: ${em.objeto}
+${siopCtx}
+Texto atual do executor:
 "${execPT}"
-Beneficiário: ${S.nomeEnte}
-Objeto: ${em.objeto}
 
-Refine o texto acima mantendo precisão técnica e adequação ao campo. Corrija eventuais erros, reduza redundâncias e mantenha todos os dados concretos (atividades, público-alvo, metodologia). Responda SOMENTE o texto refinado.`;
+Refine o texto do executor em 3 a 5 linhas usando a classificação SIOP como contexto. Mantenha dados concretos (atividades, público-alvo, metodologia) e use linguagem técnica clara. Responda SOMENTE o texto refinado.`;
     }
-    // Prioridade 2: descrição do SIOP (fornecida pelo Ministério para esta emenda)
-    if (siop) {
+    // Com SIOP: gera a partir da classificação (sempre disponível no PostgREST)
+    if (siopClass) {
       return `Campo 2.5 Detalhamento do Objeto de Execução (TransfereGov / LC 210/2024).
-Descrição do SIOP fornecida pelo Ministério para esta emenda:
-"${siop}"
 Beneficiário: ${S.nomeEnte}
-Objeto: ${em.objeto}
-
-Com base na descrição do SIOP acima, escreva 3 a 5 linhas descrevendo o que será executado, as atividades principais, o público-alvo e a metodologia. Mantenha dados quantitativos presentes na descrição. Responda SOMENTE o texto.`;
+Objeto parlamentar: ${em.objeto}
+${siopCtx}
+Com base na classificação SIOP e no objeto acima, escreva 3 a 5 linhas descrevendo: o que será executado, as atividades principais, o público-alvo e a metodologia. Use linguagem técnica clara e objetiva. Responda SOMENTE o texto.`;
     }
-    // Prioridade 3: texto do executor em plano aprovado similar (mesmo beneficiário)
+    // Fallbacks sem SIOP
+    if (siop) {
+      return `Campo 2.5 (TransfereGov / LC 210/2024). Descrição SIOP: "${siop}". Beneficiário: ${S.nomeEnte}. Objeto: ${em.objeto}. Escreva 3 a 5 linhas: o que será executado, atividades, público-alvo, metodologia. Responda SOMENTE o texto.`;
+    }
     if (seed) {
-      return `Adapte o texto abaixo (de plano similar já aprovado) ao novo plano, incorporando os elementos específicos do objeto parlamentar. Mantenha a estrutura. Responda SOMENTE o texto adaptado.\n\nTexto base:\n${seed}\n\nNovo objeto: ${em.objeto}`;
+      return `Adapte ao novo plano o texto base abaixo. Mantenha a estrutura. Responda SOMENTE o texto adaptado.\n\nTexto base:\n${seed}\n\nNovo objeto: ${em.objeto}`;
     }
-    // Prioridade 4: modelo oficial do ministério (objetos-padronizados.json)
     if (stdDet) {
-      return `Campo 2.5 do Plano de Trabalho (TransfereGov / LC 210/2024).${stdMin ? ` Ministério: ${stdMin}.` : ''}
-Modelo oficial:\n"${stdDet}"\n\nBeneficiário: ${S.nomeEnte}\nObjeto: ${em.objeto}\n\nAdapte ao contexto específico. Responda SOMENTE o texto, em 3 a 5 linhas.`;
+      return `Campo 2.5 (TransfereGov / LC 210/2024).${stdMin ? ` Ministério: ${stdMin}.` : ''} Modelo oficial:\n"${stdDet}"\n\nBeneficiário: ${S.nomeEnte}\nObjeto: ${em.objeto}\n\nAdapte ao contexto específico, 3 a 5 linhas. Responda SOMENTE o texto.`;
     }
-    return `Campo 2.5 do Plano de Trabalho (TransfereGov / LC 210/2024). Objeto: "${em.objeto}". Beneficiário: ${S.nomeEnte}. Escreva 3 a 5 linhas descrevendo: o que será executado, atividades principais, público-alvo, metodologia. Responda SOMENTE o texto.`;
+    return `Campo 2.5 (TransfereGov / LC 210/2024). Objeto: "${em.objeto}". Beneficiário: ${S.nomeEnte}. Escreva 3 a 5 linhas: o que será executado, atividades principais, público-alvo, metodologia. Responda SOMENTE o texto.`;
   },
   finalidades:          em => {
     const lista = (em.finalidades||[]).length ? em.finalidades.join(' | ') : '(livre, coerente com o objeto)';
