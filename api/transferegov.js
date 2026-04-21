@@ -73,6 +73,15 @@ function urlPortalPTExecutores(ptId) {
   return `${PORTAL_BASE}/public/plano-trabalho/${ptId}/executor`;
 }
 
+function urlExecutorPostgrest(ids) {
+  const qs = new URLSearchParams({
+    id_plano_acao: `in.(${ids.join(',')})`,
+    select: 'id_plano_acao,objeto_executor',
+    limit:  '200',
+  });
+  return `${TGOV_BASE}/executor_especial?${qs}`;
+}
+
 function formatBRL(n) {
   if (n == null || Number.isNaN(Number(n))) return null;
   return Number(n).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
@@ -112,7 +121,7 @@ function detalhamentoSIOPDe(pa) {
   return itens.length ? itens.join('\n') : null;
 }
 
-function montar(pa, ptInfo, situacaoPA, objetoExecPT, listaDetalhamentoPT, appPostgrest) {
+function montar(pa, ptInfo, situacaoPA, objetoExecPT, listaDetalhamentoPT, appPostgrest, objetoExecPostgrest) {
   const emenda       = pa.emendaParlamentar || {};
   const beneficiario = pa.beneficiario      || {};
   return {
@@ -139,9 +148,10 @@ function montar(pa, ptInfo, situacaoPA, objetoExecPT, listaDetalhamentoPT, appPo
     finalidades:        finalidadesDe(pa),
     detalhamentoSIOP:      detalhamentoSIOPDe(pa),
     areaPoliticaPublicaResumo: pa.objetoDetalhe || '',
-    objetoExecPT:          objetoExecPT       || null,
-    listaDetalhamentoPT:   listaDetalhamentoPT || null,
-    appPostgrest:          appPostgrest        || null,
+    objetoExecPT:          objetoExecPT          || null,
+    objetoExecPostgrest:   objetoExecPostgrest   || null,
+    listaDetalhamentoPT:   listaDetalhamentoPT   || null,
+    appPostgrest:          appPostgrest          || null,
   };
 }
 
@@ -172,10 +182,22 @@ export default async function handler(req, res) {
     const situacaoByPa = Object.fromEntries(todos.map(x => [x.id_plano_acao, x.situacao_plano_acao]));
     const appByPa      = Object.fromEntries(todos.map(x => [x.id_plano_acao, x.codigo_descricao_areas_politicas_publicas_plano_acao ?? null]));
 
-    // 2. Status do PT para cada PA
-    const ptRaw  = await getJsonSafe(urlPtStatus(idsPA));
-    const ptRows = Array.isArray(ptRaw) ? ptRaw : [];
-    const ptByPa = Object.fromEntries(ptRows.map(r => [r.id_plano_acao, r]));
+    // 2. Status do PT + executor PostgREST — em paralelo (ambos por id_plano_acao, sem portal)
+    const [ptRaw, execPgRaw] = await Promise.all([
+      getJsonSafe(urlPtStatus(idsPA)),
+      getJsonSafe(urlExecutorPostgrest(idsPA)),
+    ]);
+    const ptRows  = Array.isArray(ptRaw)    ? ptRaw    : [];
+    const execPgRows = Array.isArray(execPgRaw) ? execPgRaw : [];
+    const ptByPa  = Object.fromEntries(ptRows.map(r => [r.id_plano_acao, r]));
+    // objeto_executor pode ter múltiplos executores por PA; concatena se houver mais de um
+    const execPgByPa = {};
+    for (const r of execPgRows) {
+      if (!r.objeto_executor) continue;
+      execPgByPa[r.id_plano_acao] = execPgByPa[r.id_plano_acao]
+        ? `${execPgByPa[r.id_plano_acao]}\n\n${r.objeto_executor}`
+        : r.objeto_executor;
+    }
 
     // 3. Detalhes do portal (PA) e dados do executor PT — em paralelo por PA
     // O id_plano_trabalho vem do PostgREST (confiável); o endpoint de lista do portal
@@ -218,7 +240,7 @@ export default async function handler(req, res) {
     // 4. Monta resposta com todos os PAs
     const itens = idsPA.map(id => {
       const pa  = detalhesMap[id] || { id };
-      return montar(pa, ptByPa[id], situacaoByPa[id], execObjByPa[id] || null, execDetByPa[id] || null, appByPa[id] || null);
+      return montar(pa, ptByPa[id], situacaoByPa[id], execObjByPa[id] || null, execDetByPa[id] || null, appByPa[id] || null, execPgByPa[id] || null);
     });
 
     res.setHeader('Cache-Control', 's-maxage=14400, stale-while-revalidate=86400');
