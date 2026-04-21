@@ -1172,8 +1172,8 @@ async function gerarPlano() {
   S.historico = historico;
   S.objStd    = objStd;
 
-  let c;
-  try   { c = await geminiGerarPlano(S.emenda, historico, lookup, objStd); }
+  let c, geminiOk = false;
+  try   { c = await geminiGerarPlano(S.emenda, historico, lookup, objStd); geminiOk = true; }
   catch { c = fallback(S.emenda, historico, lookup); }
 
   // Prazo: lookup > KB > padrão 36m
@@ -1219,12 +1219,13 @@ async function gerarPlano() {
   const objetoExecPT        = S.emenda.objetoExecPT        || null;
   const objetoExecBase      = objetoExecPostgrest || objetoExecPT || null;
   const objetoExecHist      = historico[0]?.objetoExecutor || null;
-  setVal('f25', objetoExecBase || c.detalhamento_completo || objetoExecHist || '');
+  // Prioridade campo 2.5: API > Gemini (quando ok) > KB histórico > fallback genérico
+  setVal('f25', objetoExecBase || (geminiOk ? c.detalhamento_completo : null) || objetoExecHist || c.detalhamento_completo || '');
   setBadge('badge25',
-    objetoExecBase          ? ['API', 'tag-api']  :
-    c.detalhamento_completo ? ['IA',  'tag-ai']   :
-    objetoExecHist          ? ['Hist','tag-hist']  :
-                              ['Hist','tag-hist']
+    objetoExecBase                      ? ['API', 'tag-api']  :
+    geminiOk && c.detalhamento_completo ? ['IA',  'tag-ai']   :
+    objetoExecHist                      ? ['Hist','tag-hist']  :
+                                          ['Hist','tag-hist']
   );
 
   // ── Classificação ─────────────────────────────────────────────────────────
