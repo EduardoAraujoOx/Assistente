@@ -1029,8 +1029,6 @@ function renderEmendas(emendas) {
       if (!podeGerar) {
         const sit = SITUACAO_INFO[em.situacaoPlanoAcao]?.label || em.situacaoPlanoAcao || 'outra situação';
         alert(`Este plano está com status "${sit}" e não pode ser gerado novamente.`);
-      } else {
-        gerarPlano();
       }
     };
     tbody.appendChild(tr);
@@ -1238,12 +1236,14 @@ async function gerarPlano() {
   const objetoExecPT        = S.emenda.objetoExecPT        || null;
   const objetoExecBase      = objetoExecPostgrest || objetoExecPT || null;
   const objetoExecHist      = historico[0]?.objetoExecutor || null;
-  // Prioridade campo 2.5: API > Gemini (quando ok) > KB histórico > fallback genérico
-  setVal('f25', objetoExecBase || (geminiOk ? c.detalhamento_completo : null) || objetoExecHist || c.detalhamento_completo || '');
+  const descricaoDetPT = S.emenda.descricaoDetPT || null;
+  // Prioridade campo 2.5: API > Gemini (quando ok) > KB histórico > descrição SIOP direta > fallback genérico
+  setVal('f25', objetoExecBase || (geminiOk ? c.detalhamento_completo : null) || objetoExecHist || descricaoDetPT || c.detalhamento_completo || '');
   setBadge('badge25',
     objetoExecBase                      ? ['API', 'tag-api']  :
     geminiOk && c.detalhamento_completo ? ['IA',  'tag-ai']   :
     objetoExecHist                      ? ['Hist','tag-hist']  :
+    descricaoDetPT                      ? ['API', 'tag-api']  :
                                           ['Hist','tag-hist']
   );
 
