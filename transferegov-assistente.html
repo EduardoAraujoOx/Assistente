@@ -1237,13 +1237,18 @@ async function gerarPlano() {
   const objetoExecBase      = objetoExecPostgrest || objetoExecPT || null;
   const objetoExecHist      = historico[0]?.objetoExecutor || null;
   const descricaoDetPT = S.emenda.descricaoDetPT || null;
-  // Prioridade campo 2.5: API > Gemini (quando ok) > KB histórico > descrição SIOP direta > fallback genérico
-  setVal('f25', objetoExecBase || (geminiOk ? c.detalhamento_completo : null) || objetoExecHist || descricaoDetPT || c.detalhamento_completo || '');
+  // Prioridade campo 2.5:
+  //   1. API (objetoExecBase)   — texto do executor já submetido
+  //   2. IA  (Gemini, quando ok) — gerado c/ descricaoDetPT ou appPostgrest como seed
+  //   3. API (descricaoDetPT)   — descrição ministerial SIOP (direto da API, sem refinar)
+  //   4. Hist (objetoExecHist)  — plano aprovado mais similar no KB histórico
+  //   5. fallback genérico
+  setVal('f25', objetoExecBase || (geminiOk ? c.detalhamento_completo : null) || descricaoDetPT || objetoExecHist || c.detalhamento_completo || '');
   setBadge('badge25',
     objetoExecBase                      ? ['API', 'tag-api']  :
     geminiOk && c.detalhamento_completo ? ['IA',  'tag-ai']   :
-    objetoExecHist                      ? ['Hist','tag-hist']  :
     descricaoDetPT                      ? ['API', 'tag-api']  :
+    objetoExecHist                      ? ['Hist','tag-hist']  :
                                           ['Hist','tag-hist']
   );
 
