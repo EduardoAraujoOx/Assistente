@@ -6,7 +6,7 @@ e geração de campos por IA (Gemini 2.0 Flash).
 
 ## Como usar
 
-Abra o arquivo `transferegov-assistente.html` diretamente no navegador.
+Abra o arquivo `TransfereGov Assistente.html` diretamente no navegador (ou `transferegov-assistente.html`, que mantém compatibilidade).
 Nenhuma instalação necessária.
 
 ## Funcionalidades
