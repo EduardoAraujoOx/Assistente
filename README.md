@@ -76,11 +76,14 @@ Chave configurada diretamente no HTML (para prototipagem).
 
 Quando o usuário **não preenche** o campo “Informações adicionais do parlamentar”, o campo **2.5 Detalhamento do Objeto** passa a priorizar estritamente os dados de objeto SIOP:
 
-1. `descricaoDetPT` (descrição do detalhamento ministerial, quando disponível)
-2. `objStd.detalhamentos[0].descricao` (objeto padronizado SIOP)
-3. `appPostgrest` (classificação SIOP como contexto)
+1. **Gemini (2.5)** gerado com base **exclusiva** no SIOP (sem histórico e sem contexto externo)
+2. `descricaoDetPT` (descrição do detalhamento ministerial, quando disponível)
+3. `objStd.detalhamentos[0].descricao` (objeto padronizado SIOP)
+4. `detalhamentoSIOP` / `appPostgrest` (classificação SIOP como contexto mínimo)
 
 Com isso, o Gemini gera o texto com base no objeto SIOP, reduzindo respostas genéricas só com o objeto parlamentar.
+
+> Quando o usuário **preenche** “Informações adicionais do parlamentar”, o sistema mantém o comportamento tradicional e pode aproveitar texto já existente do executor para refinamento.
 
 Exemplo esperado de base SIOP para 2.5:
 
