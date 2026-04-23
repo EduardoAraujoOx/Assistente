@@ -92,6 +92,7 @@ Exemplo esperado de base SIOP para 2.5:
 Para deploy estático no Vercel, basta empurrar o repositório. O Vercel
 serve arquivos HTML estáticos automaticamente. Não é necessário nenhum
 framework ou build step.
+Este repositório inclui também um `index.html` de fallback que redireciona automaticamente para `transferegov-assistente.html`, garantindo que acessos diretos ao domínio (ex.: `sefaz-es.vercel.app`) funcionem mesmo sem rota customizada.
 
 Se quiser resolver CORS e proteger as chaves, adicione um diretório `/api/`
 com funções serverless simples que proxy as chamadas externas.
