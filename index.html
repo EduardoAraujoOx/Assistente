@@ -1,15 +1,1779 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="pt-BR">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>TransfereGov Assistente — Redirecionando</title>
-    <meta http-equiv="refresh" content="0; url=/transferegov-assistente.html" />
-    <script>
-      window.location.replace('/transferegov-assistente.html' + window.location.search + window.location.hash);
-    </script>
-  </head>
-  <body>
-    <p>Redirecionando para o assistente…</p>
-  </body>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TransfereGov Assistente | SEFAZ-ES</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --navy:        #1a2c42;
+      --navy-hover:  #243d58;
+      --gold:        #e8a020;
+      --gold-hover:  #c4841a;
+      --blue-light:  #e6f1fb;
+      --green-light: #eaf3de;
+      --green-text:  #3b6d11;
+      --amber-light: #faeeda;
+      --amber-text:  #854f0b;
+      --red-light:   #fcebeb;
+      --red-text:    #a32d2d;
+      --border:      rgba(0,0,0,0.11);
+      --border-md:   rgba(0,0,0,0.18);
+      --surface:     #ffffff;
+      --surface-2:   #f7f6f4;
+      --bg:          #f0efed;
+      --text:        #1c1c1a;
+      --text-2:      #5c5b57;
+      --text-3:      #8a8880;
+      --radius:      8px;
+      --radius-lg:   12px;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      background: #eeedeb;
+      color: var(--text);
+      font-size: 15px;
+      line-height: 1.5;
+    }
+
+    /* HEADER */
+    .header {
+      background: var(--navy);
+      color: white;
+      padding: 0.9rem 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      position: sticky; top: 0; z-index: 50;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.25);
+    }
+    .header-icon {
+      width: 40px; height: 40px;
+      background: var(--gold);
+      border-radius: var(--radius);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 19px; flex-shrink: 0;
+    }
+    .header-title { font-size: 16px; font-weight: 600; }
+    .header-title span { color: var(--gold); }
+    .header-sub { font-size: 11px; color: rgba(255,255,255,0.55); margin-top: 1px; }
+
+    /* LAYOUT */
+    .container { max-width: 800px; margin: 0 auto; padding: 1.5rem 1rem 5rem; }
+
+    /* PROGRESS */
+    .steps {
+      display: flex; gap: 0;
+      background: var(--surface);
+      border: 0.5px solid var(--border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      margin-bottom: 1.25rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    }
+    .step {
+      flex: 1;
+      padding: 11px 6px;
+      text-align: center;
+      font-size: 12px;
+      color: var(--text-3);
+      border-right: 0.5px solid var(--border);
+      display: flex; align-items: center; justify-content: center; gap: 6px;
+      transition: all 0.2s;
+    }
+    .step:last-child { border-right: none; }
+    .step.active { color: var(--navy); font-weight: 500; background: var(--blue-light); }
+    .step.done   { color: var(--green-text); background: var(--green-light); }
+    .step-circle {
+      width: 20px; height: 20px; border-radius: 50%;
+      background: var(--border); color: var(--text-2);
+      font-size: 11px; font-weight: 600;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; transition: all 0.2s;
+    }
+    .step.active .step-circle { background: var(--navy); color: white; }
+    .step.done   .step-circle { background: #639922; color: white; }
+
+    /* CARD */
+    .card {
+      background: var(--surface);
+      border: 0.5px solid var(--border);
+      border-radius: var(--radius-lg);
+      margin-bottom: 1rem;
+      overflow: hidden;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    }
+    .card-header {
+      background: var(--surface-2);
+      padding: 0.7rem 1.25rem;
+      display: flex; align-items: center; gap: 10px;
+      border-bottom: 0.5px solid var(--border);
+    }
+    .card-title { font-size: 14px; font-weight: 500; }
+    .card-body  { padding: 1.25rem; }
+
+    /* SECTION HEADING dentro do form */
+    .section-heading {
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: white;
+      background: #378add;
+      padding: 6px 1.25rem;
+      margin: 1.25rem -1.25rem 1.25rem;
+    }
+    .section-heading:first-child { margin-top: 0; }
+
+    /* FIELD */
+    .field { margin-bottom: 1.1rem; }
+    .field:last-child { margin-bottom: 0; }
+    .field-label {
+      display: block;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-2);
+      margin-bottom: 5px;
+      letter-spacing: 0.01em;
+    }
+    .req { color: #d85a30; }
+    .tag {
+      display: inline-block;
+      font-size: 10px; font-style: italic;
+      padding: 1px 5px;
+      border-radius: 3px;
+      vertical-align: middle;
+      margin-left: 3px;
+    }
+    .tag-api  { background: var(--blue-light);   color: #185fa5; }
+    .tag-hist { background: var(--green-light);  color: var(--green-text); }
+    .tag-ai   { background: var(--amber-light);  color: var(--amber-text); }
+
+    /* INPUTS */
+    select, input[type=text], input[type=email], textarea {
+      width: 100%;
+      padding: 9px 12px;
+      font-size: 14px;
+      font-family: inherit;
+      border: 0.5px solid var(--border-md);
+      border-radius: var(--radius);
+      background: var(--surface);
+      color: var(--text);
+      outline: none;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    select:focus, input:focus, textarea:focus {
+      border-color: var(--navy);
+      box-shadow: 0 0 0 3px rgba(26,44,66,0.09);
+    }
+    select { cursor: pointer; }
+    textarea { resize: vertical; line-height: 1.55; }
+
+    .field-row { display: flex; gap: 8px; align-items: flex-start; }
+    .field-row > * { flex: 1; min-width: 0; }
+    .field-row > .btn-group { flex: none; display: flex; flex-direction: column; gap: 5px; }
+
+    /* CHECKBOXES */
+    .check-row {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 13px; color: var(--text-2);
+      padding: 6px 0;
+    }
+    .check-row input[type=checkbox] {
+      width: 16px; height: 16px;
+      cursor: pointer; accent-color: var(--navy);
+    }
+
+    /* BUTTONS */
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+      padding: 9px 20px;
+      font-size: 14px; font-family: inherit; font-weight: 500;
+      border-radius: var(--radius);
+      cursor: pointer; border: none;
+      transition: all 0.15s; white-space: nowrap;
+    }
+    .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+    .btn-primary { background: var(--navy); color: white; }
+    .btn-primary:hover:not(:disabled) { background: var(--navy-hover); }
+    .btn-ghost {
+      background: var(--surface-2); color: var(--text);
+      border: 0.5px solid var(--border-md);
+    }
+    .btn-ghost:hover:not(:disabled) { background: #eae9e7; }
+    .btn-gold { background: var(--gold); color: white; }
+    .btn-gold:hover:not(:disabled) { background: var(--gold-hover); }
+    .btn-full { width: 100%; }
+
+    .icon-btn {
+      padding: 6px 10px;
+      font-size: 12px;
+      border: 0.5px solid var(--border-md);
+      border-radius: var(--radius);
+      background: var(--surface);
+      color: var(--text-2);
+      cursor: pointer;
+      font-family: inherit;
+      transition: all 0.15s;
+      white-space: nowrap;
+    }
+    .icon-btn:hover { background: var(--surface-2); color: var(--text); }
+    .icon-btn.ai  { border-color: var(--gold); color: var(--amber-text); background: var(--amber-light); }
+    .icon-btn.ai:hover { background: #f2d99e; }
+    .icon-btn.copy:hover { background: var(--blue-light); color: #042c53; border-color: #85b7eb; }
+    .icon-btn:disabled { opacity: 0.38; cursor: not-allowed; }
+
+    /* EMENDA TABLE */
+    .table-wrap { overflow-x: auto; margin: 0 -1.25rem; }
+    .emenda-table { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 480px; }
+    .emenda-table th {
+      background: var(--navy); color: white;
+      padding: 8px 14px;
+      text-align: left; font-weight: 500; font-size: 12px;
+    }
+    .emenda-table td { padding: 10px 14px; border-bottom: 0.5px solid var(--border); vertical-align: top; }
+    .emenda-table tbody tr { cursor: pointer; transition: background 0.1s; }
+    .emenda-table tbody tr:hover td { background: var(--blue-light); }
+    .emenda-table tbody tr.sel td { background: #b5d4f4; color: #042c53; }
+    .emenda-table tbody tr:last-child td { border-bottom: none; }
+    .valor-badge {
+      display: inline-block;
+      background: var(--green-light); color: var(--green-text);
+      padding: 2px 8px; border-radius: 4px;
+      font-size: 12px; font-weight: 500; white-space: nowrap;
+    }
+    .emenda-table tbody tr.sel .valor-badge { background: #c0dd97; color: #173404; }
+
+    /* ALERTS */
+    .alert {
+      padding: 10px 14px;
+      border-radius: var(--radius);
+      font-size: 13px; line-height: 1.45;
+      margin-bottom: 1rem;
+    }
+    .alert-info { background: var(--blue-light);   color: #042c53;      border: 0.5px solid #85b7eb; }
+    .alert-warn { background: var(--amber-light);  color: #412402;      border: 0.5px solid #ef9f27; }
+    .alert-ok   { background: var(--green-light);  color: #173404;      border: 0.5px solid #97c459; }
+    .alert-err  { background: var(--red-light);    color: var(--red-text); border: 0.5px solid #f09595; }
+
+    /* PLACEHOLDER */
+    .placeholder { color: var(--text-3); font-size: 13px; padding: 1.5rem; text-align: center; }
+
+    /* HINT */
+    .hint { font-size: 11px; color: var(--text-3); margin-top: 4px; }
+
+    /* FOOTER NAV */
+    .footer-nav { display: flex; gap: 8px; margin-top: 1.25rem; }
+    .footer-nav .btn { flex: 1; }
+
+    /* OVERLAY */
+    .overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(8,18,32,0.48);
+      z-index: 200; align-items: center; justify-content: center;
+    }
+    .overlay.on { display: flex; }
+    .loading-box {
+      background: var(--surface);
+      border-radius: var(--radius-lg);
+      padding: 2rem 2.5rem;
+      text-align: center; min-width: 240px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+    }
+    .spinner {
+      width: 34px; height: 34px;
+      border: 3px solid var(--border);
+      border-top-color: var(--navy);
+      border-radius: 50%;
+      animation: spin 0.75s linear infinite;
+      margin: 0 auto 1rem;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .loading-msg { font-size: 13px; color: var(--text-2); }
+
+    /* LEGEND */
+    .legend { display: flex; flex-wrap: wrap; gap: 10px; font-size: 12px; color: var(--text-2); margin-bottom: 1.25rem; }
+    .legend-item { display: flex; align-items: center; gap: 4px; }
+
+    /* CORS WARNING banner */
+    .cors-banner {
+      background: #fff8e6;
+      border: 0.5px solid #f0b429;
+      border-radius: var(--radius);
+      padding: 8px 14px;
+      font-size: 12px;
+      color: #5a3e00;
+      display: none;
+      margin-bottom: 0.75rem;
+    }
+    .cors-banner.show { display: block; }
+
+    @media print {
+      .header, .steps, .footer-nav, .icon-btn, .btn { display: none !important; }
+      .card { box-shadow: none; border: 1px solid #ccc; break-inside: avoid; }
+      body { background: white; }
+    }
+  </style>
+</head>
+<body>
+
+<header class="header" onclick="voltarP1()" style="cursor:pointer;" title="Voltar para seleção">
+  <div class="header-icon">📋</div>
+  <div>
+    <div class="header-title">TransfereGov <span>Assistente</span></div>
+    <div class="header-sub">Plano de Trabalho Pré-preenchido · Transferências Especiais · SEFAZ-ES | Tesouro Estadual</div>
+  </div>
+</header>
+
+<div class="overlay" id="overlay">
+  <div class="loading-box">
+    <div class="spinner"></div>
+    <div class="loading-msg" id="loading-msg">Processando...</div>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- PROGRESS -->
+  <div class="steps">
+    <div class="step active" id="ps1" onclick="voltarP1()" style="cursor:pointer;" title="Voltar para seleção"><div class="step-circle" id="sc1">1</div><span>Seleção</span></div>
+    <div class="step"        id="ps2"><div class="step-circle" id="sc2">2</div><span>Plano de Trabalho</span></div>
+    <div class="step"        id="ps3"><div class="step-circle" id="sc3">3</div><span>Envio</span></div>
+  </div>
+
+  <!-- ═══════════ PÁGINA 1: SELEÇÃO ═══════════ -->
+  <div id="page1">
+
+    <div class="card">
+      <div class="card-header">
+        <div class="step-circle" style="background:var(--navy);color:white;flex-shrink:0;">1</div>
+        <div class="card-title">Escolha o Beneficiário</div>
+      </div>
+      <div class="card-body">
+        <div class="field">
+          <label class="field-label">CNPJ / Nome do Beneficiário <span class="req">*</span></label>
+          <select id="sel-benef" onchange="onBenefChange()">
+            <option value="">— selecione o ente federado —</option>
+            <option value="27080530000143">27080530000143 — ESTADO DO ESPÍRITO SANTO</option>
+            <option value="27165120000173">27165120000173 — PREFEITURA DE VITÓRIA</option>
+            <option value="27161118000191">27161118000191 — PREFEITURA DE VILA VELHA</option>
+            <option value="27153373000180">27153373000180 — PREFEITURA DE SERRA</option>
+            <option value="27167764000180">27167764000180 — PREFEITURA DE CARIACICA</option>
+            <option value="27169557000152">27169557000152 — PREFEITURA DE GUARAPARI</option>
+            <option value="27163919000163">27163919000163 — PREFEITURA DE LINHARES</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="step-circle" style="background:var(--navy);color:white;flex-shrink:0;">2</div>
+        <div class="card-title">Escolha a Emenda Parlamentar</div>
+      </div>
+      <div class="card-body" style="padding-bottom:0;">
+        <div class="cors-banner" id="cors-banner">
+          ⚠ A API TransfereGov não é acessível diretamente pelo navegador (bloqueio CORS). Para dados reais,
+          o sistema precisa de um proxy servidor. Usando dados de demonstração.
+          <strong>Em produção (Vercel), roteie por <code>/api/transferegov</code>.</strong>
+        </div>
+        <div id="em-vazio"    class="placeholder">Selecione um beneficiário para carregar as emendas.</div>
+        <div id="em-loading"  class="placeholder" style="display:none;">Consultando API TransfereGov...</div>
+        <div id="em-vazia" class="placeholder" style="display:none;">
+          Nenhum plano de ação encontrado para esse beneficiário.
+        </div>
+        <div id="em-tabela"   class="table-wrap"  style="display:none;">
+          <table class="emenda-table">
+            <thead><tr>
+              <th style="width:30%">Emenda Parlamentar</th>
+              <th>Objeto de Execução</th>
+              <th style="width:17%">Valor Total</th>
+            </tr></thead>
+            <tbody id="em-tbody"></tbody>
+          </table>
+        </div>
+        <div style="height:1.25rem;"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="step-circle" style="background:var(--navy);color:white;flex-shrink:0;">3</div>
+        <div class="card-title">Gere o Plano Pré-preenchido</div>
+      </div>
+      <div class="card-body">
+        <div class="field" style="margin-bottom:14px;">
+          <label class="field-label" style="font-size:0.85rem;">Informações adicionais do parlamentar (opcional)</label>
+          <textarea id="contexto-adicional" rows="3"
+            placeholder="Ex: serão realizadas feiras de negócios em 4 municípios; público-alvo são mulheres em situação de vulnerabilidade; o projeto inclui capacitação de 200 artesãos…&#10;Se vazio, o sistema usa os dados da API e do histórico de planos aprovados."></textarea>
+          <p class="hint">Use este campo para incluir detalhes fornecidos pelo parlamentar ou secretaria sobre como o projeto será executado. Isso melhora a qualidade do campo 2.5 e das metas geradas pela IA.</p>
+        </div>
+        <button class="btn btn-primary btn-full" id="btn-gerar" disabled onclick="gerarPlano()">
+          ✦ Gerar Plano de Trabalho
+        </button>
+        <p class="hint" style="text-align:center;margin-top:8px;">
+          O sistema buscará o histórico de planos aprovados e usará IA (Gemini) para pré-preencher todos os campos.
+        </p>
+      </div>
+    </div>
+
+  </div><!-- /page1 -->
+
+  <!-- ═══════════ PÁGINA 2: PLANO (rolagem contínua) ═══════════ -->
+  <div id="page2" style="display:none;">
+
+    <div id="alerta-fonte" class="alert alert-info" style="display:none;"></div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="step-circle" style="background:#639922;color:white;flex-shrink:0;">✓</div>
+        <div class="card-title">Plano de Trabalho Pré-preenchido</div>
+      </div>
+      <div class="card-body">
+
+        <div class="legend">
+          <div class="legend-item"><span class="tag tag-api">API</span> Campo da emenda</div>
+          <div class="legend-item"><span class="tag tag-hist">Hist</span> Baseado em histórico</div>
+          <div class="legend-item"><span class="tag tag-ai">IA</span> Gerado por IA</div>
+        </div>
+
+        <!-- ─── BLOCO 1: PLANO DE TRABALHO ─── -->
+        <div class="section-heading">1. Plano de Trabalho</div>
+
+        <div class="field">
+          <label class="field-label">
+            1.1 Os recursos do Plano de Ação foram indicados no orçamento próprio do Beneficiário? <span class="req">*</span>
+          </label>
+          <div class="check-row">
+            <input type="checkbox" id="f11" checked>
+            <span>Marcar como <strong>SIM</strong></span>
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="field-label">
+            1.2 Classificação Orçamentária de Despesa <span class="req">*</span>
+            <span class="tag tag-hist">Hist</span>
+          </label>
+          <div class="field-row">
+            <textarea id="f12" rows="3" placeholder="Projeto/atividade, natureza de despesa, fonte de recursos..."></textarea>
+            <div class="btn-group">
+              <button class="icon-btn ai"   onclick="regen('f12','classificacao')">✦ IA</button>
+              <button class="icon-btn copy" onclick="copiar('f12')">⧉</button>
+            </div>
+          </div>
+          <p class="hint">Baseado em informação do exercício anterior. Verifique a compatibilidade com o orçamento vigente.</p>
+        </div>
+
+        <div class="field">
+          <label class="field-label">
+            1.3 Declaro que os recursos do plano de ação não serão utilizados para despesa de pessoal e serviço da dívida <span class="req">*</span>
+          </label>
+          <div class="check-row">
+            <input type="checkbox" id="f13" checked>
+            <span>Marcar como <strong>SIM</strong></span>
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="field-label">
+            1.4 Prazo de Execução em meses <span class="req">*</span>
+            <span class="tag tag-hist">Hist</span>
+          </label>
+          <div class="field-row">
+            <input type="text" id="f14" placeholder="Ex: 36">
+            <button class="icon-btn copy" onclick="copiar('f14')">⧉</button>
+          </div>
+          <p class="hint">Valor sugerido com base em planos aprovados anteriormente para este beneficiário.</p>
+        </div>
+
+        <!-- ─── BLOCO 2: DETALHAMENTO DO EXECUTOR ─── -->
+        <div class="section-heading">2. Detalhamento do Executor</div>
+
+        <div class="field">
+          <label class="field-label">
+            2.1 Declaro que os recursos do plano de ação não serão utilizados para despesa de pessoal e serviço da dívida <span class="req">*</span>
+          </label>
+          <div class="check-row">
+            <input type="checkbox" id="f21" checked>
+            <span>Marcar como <strong>SIM</strong></span>
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="field-label">
+            2.2 Executor <span class="req">*</span>
+            <span class="tag tag-hist">Hist</span>
+          </label>
+          <div class="field-row">
+            <input type="text" id="f22" placeholder="CNPJ e nome do executor">
+            <div class="btn-group">
+              <button class="icon-btn ai"   onclick="regen('f22','executor')">✦ IA</button>
+              <button class="icon-btn copy" onclick="copiar('f22')">⧉</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="field-label">
+            2.3 Objeto de Execução <span class="req">*</span>
+            <span class="tag tag-api">API</span>
+          </label>
+          <div class="field-row">
+            <textarea id="f23" rows="2" placeholder="Descrição do objeto da emenda..."></textarea>
+            <div class="btn-group">
+              <button class="icon-btn ai"   onclick="regen('f23','objeto')">✦ IA</button>
+              <button class="icon-btn copy" onclick="copiar('f23')">⧉</button>
+            </div>
+          </div>
+          <p class="hint">Campo pré-preenchido pelo parlamentar via SIOP. Ajustes devem ser compatíveis com o objeto original.</p>
+        </div>
+
+        <div class="field">
+          <label class="field-label">
+            2.4 Lista de Detalhamentos do Objeto de Execução <span class="req">*</span>
+            <span id="badge24" class="tag tag-api">API</span>
+          </label>
+          <div class="field-row">
+            <input type="text" id="f24" placeholder="Código — Categoria / Código — Subcategoria">
+            <button class="icon-btn copy" onclick="copiar('f24')">⧉</button>
+          </div>
+          <p class="hint">Preenchido com o código e descrição do objeto padronizado SIOP. Ajuste se necessário.</p>
+        </div>
+
+        <div class="field">
+          <label class="field-label">
+            2.5 Detalhamento do Objeto de Execução <span class="req">*</span>
+            <span id="badge25" class="tag tag-hist">Hist</span>
+          </label>
+          <div class="field-row">
+            <textarea id="f25" rows="5" placeholder="Descrição detalhada: atividades, metodologia, público-alvo..."></textarea>
+            <div class="btn-group">
+              <button class="icon-btn ai"   onclick="regen('f25','detalhamento_completo')">✦ IA</button>
+              <button class="icon-btn copy" onclick="copiar('f25')">⧉</button>
+            </div>
+          </div>
+          <p class="hint">Baseado no texto do executor em planos aprovados similares. Use ✦ IA para adaptar ao objeto específico.</p>
+        </div>
+
+        <div class="field">
+          <label class="field-label">
+            2.6 Finalidades <span class="req">*</span>
+            <span class="tag tag-ai">IA</span>
+          </label>
+          <div class="field-row">
+            <input type="text" id="f26" placeholder="Código — Categoria / Código — Subcategoria">
+            <div class="btn-group">
+              <button class="icon-btn ai"   onclick="regen('f26','finalidades')">✦ IA</button>
+              <button class="icon-btn copy" onclick="copiar('f26')">⧉</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="field-label">
+            2.7 Metas do Executor — Meta 1 <span class="req">*</span>
+            <span class="tag tag-ai">IA</span>
+          </label>
+          <div class="field-row">
+            <textarea id="f27" rows="5" placeholder="- Descrição: ...&#10;- Unidade: ...&#10;- Quantidade: ...&#10;- Meses Previstos: ..."></textarea>
+            <div class="btn-group">
+              <button class="icon-btn ai"   onclick="regen('f27','metas')">✦ IA</button>
+              <button class="icon-btn copy" onclick="copiar('f27')">⧉</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="field-label">
+            2.8 Os recursos serão gerenciados por conta específica do executor? <span class="req">*</span>
+          </label>
+          <div class="check-row">
+            <input type="checkbox" id="f28" checked>
+            <span>Marcar como <strong>SIM</strong></span>
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="field-label">
+            2.9 Banco do Executor <span class="req">*</span>
+            <span class="tag tag-hist">Hist</span>
+          </label>
+          <div class="field-row">
+            <input type="text" id="f29banco" placeholder="Ex: 001 — Banco do Brasil">
+            <div class="btn-group">
+              <button class="icon-btn ai"   onclick="regen('f29banco','banco')">✦ IA</button>
+              <button class="icon-btn copy" onclick="copiar('f29banco')">⧉</button>
+            </div>
+          </div>
+          <p class="hint">Banco usado pelo executor em planos aprovados anteriores.</p>
+        </div>
+
+        <div class="field">
+          <label class="field-label">
+            2.10 Agência do Executor <span class="req">*</span>
+            <span class="tag tag-hist">Hist</span>
+          </label>
+          <div class="field-row">
+            <input type="text" id="f210ag" placeholder="Ex: 3281-X">
+            <div class="btn-group">
+              <button class="icon-btn ai"   onclick="regen('f210ag','agencia')">✦ IA</button>
+              <button class="icon-btn copy" onclick="copiar('f210ag')">⧉</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="field-label">
+            2.11 Lista de Conselhos locais ou instâncias de controle social
+            <span class="tag tag-hist">Hist</span>
+          </label>
+          <div class="field-row">
+            <input type="text" id="f211" placeholder="e-mail ou nome do conselho">
+            <button class="icon-btn copy" onclick="copiar('f211')">⧉</button>
+          </div>
+        </div>
+
+        <!-- FOOTER NAV -->
+        <div class="footer-nav">
+          <button class="btn btn-ghost" onclick="voltarP1()">← Voltar</button>
+          <button class="btn btn-gold"  onclick="irP3()">Concluir e Enviar ✉</button>
+        </div>
+
+      </div>
+    </div>
+
+  </div><!-- /page2 -->
+
+  <!-- ═══════════ PÁGINA 3: ENVIO ═══════════ -->
+  <div id="page3" style="display:none;">
+
+    <div class="card">
+      <div class="card-header">
+        <div class="step-circle" style="background:#639922;color:white;flex-shrink:0;">✓</div>
+        <div class="card-title">Enviar resumo por e-mail</div>
+      </div>
+      <div class="card-body">
+        <div class="alert alert-ok" style="margin-bottom:1.25rem;">
+          Plano gerado com sucesso. Informe seus dados para receber o resumo e registrar o uso do sistema.
+        </div>
+        <div class="field">
+          <label class="field-label">Seu nome completo</label>
+          <input type="text" id="e-nome" placeholder="Nome completo">
+        </div>
+        <div class="field">
+          <label class="field-label">Seu e-mail <span class="req">*</span></label>
+          <input type="email" id="e-dest" placeholder="nome@sefaz.es.gov.br">
+        </div>
+        <div class="field">
+          <label class="field-label">Órgão / Organização</label>
+          <input type="text" id="e-org" placeholder="Ex: SEFAZ-ES / Prefeitura de Vitória">
+        </div>
+        <div id="e-status"></div>
+        <div class="footer-nav" style="margin-top:1rem; flex-wrap:wrap;">
+          <button class="btn btn-ghost" onclick="irP2()">← Voltar ao Plano</button>
+          <button class="btn btn-ghost" onclick="abrirTransfereGov()">Abrir TransfereGov ↗</button>
+          <button class="btn btn-gold"  onclick="enviarEmail()">Enviar Resumo ✉</button>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /page3 -->
+
+</div><!-- /container -->
+
+<script>
+/* ══════════════════════════════════════════
+   CONFIGURAÇÃO
+══════════════════════════════════════════ */
+// Chave Gemini removida do front — chamadas vão pelo proxy /api/gemini
+const GEMINI_PROXY = '/api/gemini';
+
+/*
+  API TRANSFEREGOV — dados abertos (PostgREST, sem autenticação)
+  Base: https://api.transferegov.gestao.gov.br/transferenciasespeciais
+
+  IMPORTANTE SOBRE CORS:
+  Chamadas diretas do navegador para essa API são bloqueadas por CORS.
+  Em produção no Vercel/Next.js, use uma API Route como proxy:
+
+    // pages/api/transferegov.js
+    export default async function handler(req, res) {
+      const { cnpj } = req.query;
+      const url = `https://api.transferegov.gestao.gov.br/transferenciasespeciais/proposta` +
+                  `?cnpjProponente=eq.${cnpj}&situacaoTransferencia=eq.AGUARDANDO_PLANO_DE_TRABALHO`;
+      const resp = await fetch(url, { headers: { Accept: 'application/json' } });
+      const data = await resp.json();
+      res.json(data);
+    }
+
+  Quando rodando em localhost ou Vercel, o sistema detecta automaticamente
+  e usa /api/transferegov (proxy) se disponível, senão dados de demonstração.
+*/
+const TGOV_API_PROXY = '/api/transferegov'; // rota Next.js/Vercel (sem CORS)
+const TGOV_DIRECT    = 'https://api.transferegov.gestao.gov.br/transferenciasespeciais';
+
+/* ══════════════════════════════════════════
+   ESTADO
+══════════════════════════════════════════ */
+let S = {
+  cnpj: null,
+  nomeEnte: null,
+  emenda: null,
+  usandoDemo: false,
+  contextoAdicional: '',
+};
+
+/* ══════════════════════════════════════════
+   DADOS DE DEMONSTRAÇÃO
+   Representa emendas 2025 aguardando plano de trabalho
+══════════════════════════════════════════ */
+const DEMO = {
+  '27080530000143': [
+    {
+      parlamentar: '202627740006 — PAULO FOLLETTO',
+      objeto: '487 — Feira de Negócios e Capacitação para Microempreendedores Individuais — Ministério do Empreendedorismo, da Microempresa e da Empresa de Pequeno Porte',
+      valor: 'R$ 1.990.000,00', valorBruto: 1990000,
+      executor: '01.686.866/0001-07 | ADERES — Agência de Desenvolvimento em Rede do ES',
+      prazo: '36',
+      classificacao: 'Projeto/atividade: 23.691.0035.2062 — INOVA MERCADO\nNatureza de Despesa: 3.3.90.39.00 — Outros Serviços de Terceiros — Pessoa Jurídica\nFonte: 1.706.311001 e/ou 2.706.311001',
+      conselhos: 'presidencia@ales.es.gov.br', finalidades: [],
+      situacaoPlanoAcao: 'AGUARDANDO_CONCLUSAO_PLANO_TRABALHO',
+    },
+    {
+      parlamentar: '202627740007 — CARMINHO CARETA',
+      objeto: '488 — Fortalecimento da Agricultura Familiar e Agroindústria — Ministério do Desenvolvimento Agrário e Agricultura Familiar',
+      valor: 'R$ 850.000,00', valorBruto: 850000,
+      executor: '27.080.530/0001-43 | SEAG-ES — Secretaria de Agricultura, Abastecimento, Aquicultura e Pesca',
+      prazo: '24',
+      classificacao: 'Projeto/atividade: 20.606.2014.211E — Apoio à Agricultura Familiar\nNatureza de Despesa: 3.3.90.39.00 — Outros Serviços de Terceiros — PJ\nFonte: 1.706.311001',
+      conselhos: 'presidencia@ales.es.gov.br', finalidades: [],
+      situacaoPlanoAcao: 'EM_ANALISE_PLANO_TRABALHO',
+      situacaoPT: 'Enviado para Análise',
+    },
+    {
+      parlamentar: '202627740008 — LUCAS POLLON',
+      objeto: '112 — Aquisição de Equipamentos de Saúde para Fortalecimento da Rede de Atenção — Ministério da Saúde',
+      valor: 'R$ 2.200.000,00', valorBruto: 2200000,
+      executor: '27.080.530/0001-43 | SESA-ES — Secretaria de Estado da Saúde',
+      prazo: '12',
+      classificacao: 'Projeto/atividade: 10.302.2015.8585 — Atenção à Saúde da População\nNatureza de Despesa: 4.4.90.52.00 — Equipamentos e Material Permanente\nFonte: 1.706.311001',
+      conselhos: 'presidencia@ales.es.gov.br', finalidades: [],
+      situacaoPlanoAcao: 'EM_EXECUCAO',
+    }
+  ],
+  '27165120000173': [
+    {
+      parlamentar: '202627820001 — MÁRIO BERGUE',
+      objeto: '301 — Pavimentação, Drenagem e Infraestrutura Urbana — Ministério das Cidades',
+      valor: 'R$ 3.100.000,00',
+      executor: '27.165.120/0001-73 | PMV — Prefeitura Municipal de Vitória',
+      prazo: '24',
+      classificacao: 'Projeto/atividade: 15.451.2014.1M20 — Infraestrutura Urbana\nNatureza de Despesa: 4.4.90.51.00 — Obras e Instalações\nFonte: 1.706.311001',
+      conselhos: 'camara@camara.vitoria.es.gov.br',
+      situacaoPlanoAcao: 'AGUARDANDO_CONCLUSAO_PLANO_TRABALHO',
+    }
+  ],
+  '27161118000191': [
+    {
+      parlamentar: '202627830001 — ANA PAULA SIQUEIRA',
+      objeto: '205 — Construção e Ampliação de Unidades de Educação Infantil — Ministério da Educação',
+      valor: 'R$ 1.500.000,00',
+      executor: '27.161.118/0001-91 | PMVV — Prefeitura de Vila Velha',
+      prazo: '18',
+      classificacao: 'Projeto/atividade: 12.365.2015.10GD — Apoio à Educação Infantil\nNatureza de Despesa: 4.4.90.51.00 — Obras e Instalações\nFonte: 1.706.311001',
+      conselhos: 'cme@vilavelha.es.gov.br',
+      situacaoPlanoAcao: 'AGUARDANDO_CONCLUSAO_PLANO_TRABALHO',
+    }
+  ],
+  '27153373000180': [],
+  '27167764000180': [
+    {
+      parlamentar: '202627850001 — JORGE SILVA',
+      objeto: '406 — Modernização da Iluminação Pública com Tecnologia LED — Ministério de Minas e Energia',
+      valor: 'R$ 900.000,00',
+      executor: '27.167.764/0001-80 | PMC — Prefeitura de Cariacica',
+      prazo: '12',
+      classificacao: 'Projeto/atividade: 04.122.2014.20YG — Eficiência Energética\nNatureza de Despesa: 3.3.90.39.00 — Outros Serviços de Terceiros — PJ\nFonte: 1.706.311001',
+      conselhos: '',
+      situacaoPlanoAcao: 'AGUARDANDO_CONCLUSAO_PLANO_TRABALHO',
+    }
+  ],
+  '27169557000152': [],
+  '27163919000163': []
+};
+
+/* ══════════════════════════════════════════
+   UI HELPERS
+══════════════════════════════════════════ */
+const $  = id => document.getElementById(id);
+const show = id => $(id).style.display = 'block';
+const hide = id => $(id).style.display = 'none';
+const setVal   = (id, v) => { const el = $(id); if(el) el.value = v || ''; };
+const setBadge = (id, [label, cls]) => {
+  const el = $(id);
+  if (!el) return;
+  el.textContent = label;
+  el.className = `tag ${cls}`;
+};
+
+function showOverlay(msg) { $('overlay').classList.add('on'); $('loading-msg').textContent = msg; }
+function hideOverlay()    { $('overlay').classList.remove('on'); }
+
+function setProgress(step) {
+  [1,2,3].forEach(i => {
+    const ps = $(`ps${i}`), sc = $(`sc${i}`);
+    ps.classList.remove('active','done');
+    if (i < step)       { ps.classList.add('done');   sc.textContent = '✓'; }
+    else if (i === step){ ps.classList.add('active');  sc.textContent = String(i); }
+    else                {                              sc.textContent = String(i); }
+  });
+}
+
+/* ══════════════════════════════════════════
+   STEP 1: BENEFICIÁRIO
+══════════════════════════════════════════ */
+async function onBenefChange() {
+  try {
+    const sel = $('sel-benef');
+    if (!sel) { console.error('sel-benef não encontrado'); return; }
+    const cnpj = sel.value;
+    S.cnpj = cnpj || null;
+    S.nomeEnte = cnpj ? sel.options[sel.selectedIndex]?.text : null;
+    S.emenda = null;
+    $('btn-gerar').disabled = true;
+    $('cors-banner')?.classList.remove('show');
+
+    ['em-vazio','em-loading','em-vazia','em-tabela'].forEach(id => {
+      const el = $(id); if (el) el.style.display = 'none';
+    });
+
+    if (!cnpj) { show('em-vazio'); return; }
+
+    show('em-loading');
+    const emendas = await fetchEmendas(cnpj);
+    hide('em-loading');
+
+    if (!emendas.length) { show('em-vazia'); return; }
+    renderEmendas(emendas);
+  } catch(err) {
+    console.error('onBenefChange erro:', err);
+    try { hide('em-loading'); } catch(_) {}
+    const v = $('em-vazia');
+    if (v) { v.innerHTML = `<span style="color:#a32d2d;">Erro ao carregar: ${err.message}</span>`; show('em-vazia'); }
+  }
+}
+
+function atualizarEmendas() {
+  if (!S.cnpj) return;
+  cacheClear(S.cnpj);
+  onBenefChange();
+}
+
+/* ══════════════════════════════════════════
+   CACHE LOCAL (localStorage) — 6 horas
+══════════════════════════════════════════ */
+const CACHE_TTL_MS  = 6 * 60 * 60 * 1000; // 6 horas
+const CACHE_VERSION = 'v5'; // incrementar ao mudar schema da resposta da API
+
+function cacheKey(cnpj) { return `tgov_${CACHE_VERSION}_${cnpj}`; }
+
+function cacheGet(cnpj) {
+  try {
+    const raw = localStorage.getItem(cacheKey(cnpj));
+    if (!raw) return null;
+    const { ts, data } = JSON.parse(raw);
+    return (Date.now() - ts < CACHE_TTL_MS) ? data : null;
+  } catch { return null; }
+}
+
+function cacheSet(cnpj, data) {
+  try { localStorage.setItem(cacheKey(cnpj), JSON.stringify({ ts: Date.now(), data })); }
+  catch { /* quota excedida — silencia */ }
+}
+
+function cacheClear(cnpj) {
+  try { localStorage.removeItem(cacheKey(cnpj)); } catch { }
+}
+
+/* ══════════════════════════════════════════
+   FETCH EMENDAS — cache → proxy → direto → demo
+══════════════════════════════════════════ */
+async function fetchEmendasReal(cnpj) {
+  // 1) Proxy servidor (sem CORS)
+  try {
+    const r = await fetch(`${TGOV_API_PROXY}?cnpj=${cnpj}`, {
+      signal: AbortSignal.timeout(20000)
+    });
+    if (r.ok) {
+      const data = await r.json();
+      const list = Array.isArray(data) ? data : (data.content || data.data || []);
+      if (list.length) return normalizarEmendas(list);
+    }
+  } catch(_) { /* proxy não disponível */ }
+
+  // 2) Chamada direta (CORS bloqueado na maioria dos ambientes)
+  const urls = [
+    `${TGOV_DIRECT}/proposta?cnpjProponente=eq.${cnpj}&situacaoTransferencia=eq.AGUARDANDO_PLANO_DE_TRABALHO&limit=50`,
+    `${TGOV_DIRECT}/proposta?cnpjProponente=eq.${cnpj}&limit=30`,
+  ];
+  for (const url of urls) {
+    try {
+      const r = await fetch(url, {
+        headers: { 'Accept': 'application/json' },
+        signal: AbortSignal.timeout(20000)
+      });
+      if (r.ok) {
+        const data = await r.json();
+        const list = Array.isArray(data) ? data : (data.content || []);
+        if (list.length) return normalizarEmendas(list);
+      }
+    } catch(_) { /* CORS bloqueado */ }
+  }
+  return null; // sem dados reais
+}
+
+async function fetchEmendas(cnpj) {
+  S.usandoDemo = false;
+
+  // Verifica cache local (< 6h)
+  const cached = cacheGet(cnpj);
+  if (cached) {
+    // Exibe imediatamente; atualiza em background sem bloquear a UI
+    fetchEmendasReal(cnpj).then(fresh => {
+      if (fresh && fresh.length) { cacheSet(cnpj, fresh); renderEmendas(fresh); }
+    }).catch(() => {});
+    return cached;
+  }
+
+  // Cache miss ou expirado — busca ao vivo
+  const dados = await fetchEmendasReal(cnpj);
+  if (dados && dados.length) {
+    cacheSet(cnpj, dados);
+    return dados;
+  }
+
+  // Fallback: demonstração
+  S.usandoDemo = true;
+  $('cors-banner').classList.add('show');
+  return DEMO[cnpj] || [];
+}
+
+function normalizarEmendas(list) {
+  const fmt = v => {
+    if (!v) return 'N/D';
+    if (typeof v === 'number') return v.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+    return String(v).startsWith('R$') ? v : `R$ ${v}`;
+  };
+  return list.map(i => ({
+    idPlanoAcao:       i.idPlanoAcao || null,
+    parlamentar:       i.parlamentar || i.nomeParlamentar || i.nomeEmenda || i.codigoEmenda || 'N/D',
+    objeto:            i.objeto || i.descricaoObjeto || i.objetoEmenda || 'N/D',
+    valor:             fmt(i.valorTotal || i.valorRepasse || i.valor),
+    valorBruto:        typeof i.valorBruto === 'number' ? i.valorBruto : (i.valorTotal || i.valorRepasse || i.valor || 0),
+    executor:          i.executor || i.nomeExecutor || '',
+    prazo:             String(i.prazoExecucao || i.prazo || ''),
+    classificacao:     i.classificacaoOrcamentaria || '',
+    conselhos:         i.emailCamara || i.emailConselho || '',
+    finalidades:       Array.isArray(i.finalidades) ? i.finalidades : [],
+    cnpjExecutor:      i.cnpjExecutor || '',
+    situacaoPT:        i.situacaoPT || null,
+    situacaoPlanoAcao: i.situacaoPlanoAcao || null,
+  }));
+}
+
+/* Mapeamento de situações para label e cor */
+const SITUACAO_INFO = {
+  'AGUARDANDO_CONCLUSAO_PLANO_TRABALHO': { label: 'Aguardando PT',   cor: '#b45309', bg: '#fef3c7' },
+  'EM_ANALISE_PLANO_TRABALHO':           { label: 'Em Análise',      cor: '#1d4ed8', bg: '#dbeafe' },
+  'AGUARDANDO_EXECUCAO':                 { label: 'Aguardando Exec.', cor: '#6d28d9', bg: '#ede9fe' },
+  'EM_EXECUCAO':                         { label: 'Em Execução',     cor: '#065f46', bg: '#d1fae5' },
+  'CONCLUIDO':                           { label: 'Concluído',       cor: '#166534', bg: '#bbf7d0' },
+  'CANCELADO':                           { label: 'Cancelado',       cor: '#991b1b', bg: '#fee2e2' },
+  'SUSPENSO':                            { label: 'Suspenso',        cor: '#78350f', bg: '#fde68a' },
+};
+
+function situacaoBadge(situacao, situacaoPT) {
+  const info = situacao ? SITUACAO_INFO[situacao] : null;
+  const paTag = info
+    ? `<span style="display:inline-block;padding:1px 7px;border-radius:9px;font-size:.7rem;font-weight:600;color:${info.cor};background:${info.bg};white-space:nowrap;">${info.label}</span>`
+    : (situacao ? `<span style="display:inline-block;padding:1px 7px;border-radius:9px;font-size:.7rem;background:#f3f4f6;color:#374151;">${situacao}</span>` : '');
+  const ptTag = situacaoPT
+    ? `<span style="display:inline-block;padding:1px 7px;border-radius:9px;font-size:.7rem;color:#92400e;background:#fef3c7;margin-left:3px;">PT: ${situacaoPT}</span>`
+    : '';
+  return paTag + ptTag;
+}
+
+const AGUARDANDO = 'AGUARDANDO_CONCLUSAO_PLANO_TRABALHO';
+
+function renderEmendas(emendas) {
+  const tbody = $('em-tbody');
+  tbody.innerHTML = '';
+  emendas.forEach(em => {
+    const tr = document.createElement('tr');
+    const podeGerar = !em.situacaoPlanoAcao || em.situacaoPlanoAcao === AGUARDANDO;
+    if (!podeGerar) tr.style.opacity = '0.7';
+
+    const badge = situacaoBadge(em.situacaoPlanoAcao, em.situacaoPT);
+    tr.innerHTML = `
+      <td>${em.parlamentar}</td>
+      <td>${em.objeto}${badge ? '<br>' + badge : ''}</td>
+      <td><span class="valor-badge">${em.valor}</span></td>`;
+    tr.onclick = () => {
+      document.querySelectorAll('.emenda-table tbody tr').forEach(r => r.classList.remove('sel'));
+      tr.classList.add('sel');
+      S.emenda = em;
+      $('btn-gerar').disabled = !podeGerar;
+      if (!podeGerar) {
+        const sit = SITUACAO_INFO[em.situacaoPlanoAcao]?.label || em.situacaoPlanoAcao || 'outra situação';
+        alert(`Este plano está com status "${sit}" e não pode ser gerado novamente.`);
+      }
+    };
+    tbody.appendChild(tr);
+  });
+  show('em-tabela');
+}
+
+const CNPJ_ESTADO_ES = '27080530000143';
+
+// Cache dos objetos padronizados (carregado sob demanda)
+let _objetosPadronizados = null;
+async function getObjetoStd(codigoSIOP) {
+  if (!codigoSIOP) return null;
+  if (!_objetosPadronizados) {
+    try {
+      const r = await fetch('/data/objetos-padronizados.json');
+      if (r.ok) _objetosPadronizados = await r.json();
+    } catch(_) { _objetosPadronizados = []; }
+  }
+  const cod = Number(codigoSIOP);
+  return (_objetosPadronizados || []).find(o => o.codigo === cod) || null;
+}
+
+/* ══════════════════════════════════════════
+   LOOKUP: SIOP OBJETO → EXECUTOR ES
+   Aplicável APENAS ao ente Estado do ES.
+   Derivado dos 15 planos aprovados/submetidos do Estado ES em 2026.
+   Prioridade máxima — sobrepõe KB e Gemini.
+══════════════════════════════════════════ */
+const EXECUTOR_POR_OBJETO = {
+  '487': {
+    cnpj: '01683866000107', nome: 'AGENCIA DE DESENVOLVIMENTO DAS MICRO E PEQUENAS EMPRESAS E DO EMPREENDEDORISMO - ADERES',
+    banco: '001 — Banco do Brasil', agencia: '3665-X', contaEspecifica: 'Sim', prazoMeses: 36,
+    classificacao: 'Projeto/atividade: 23.691.0035.2062 – INOVA MERCADO - Natureza de Despesa: 3.3.90.39.00 - Outros Serviços de Terceiros - Pessoa Jurídica - Fonte: 1.706.311001 e/ou 2.706.311001',
+  },
+  '182': {
+    cnpj: '27080555000147', nome: 'SECRETARIA DE ESTADO DA AGRICULTURA, ABASTECIMENTO, AQUICULTURA E PESCA - SEAG',
+    banco: '001 — Banco do Brasil', agencia: '3665-X', contaEspecifica: 'Sim', prazoMeses: 36,
+    classificacao: 'Programa de Trabalho: 31.101.20.608.0038.1037 - Apoio às cadeias produtivas de origem animal, vegetal e a agroecologia.',
+  },
+  '260': {
+    cnpj: '27080555000147', nome: 'SECRETARIA DE ESTADO DA AGRICULTURA, ABASTECIMENTO, AQUICULTURA E PESCA - SEAG',
+    banco: '001 — Banco do Brasil', agencia: '3665-X', contaEspecifica: 'Sim', prazoMeses: 36,
+    classificacao: 'Programa de Trabalho: 31.101.20.608.0038.2244 - Apoio a capacitação técnica no meio rural, pesqueiro e agricola.',
+  },
+  '501': {
+    cnpj: '08750791000189', nome: 'SECRETARIA DE ESTADO DO TURISMO',
+    banco: '001 — Banco do Brasil', agencia: '3665-X', contaEspecifica: 'Sim', prazoMeses: 36,
+    classificacao: 'Programa de Trabalho: .695.0113.2258 – Promoção da Atividade Turística - Natureza da Despesa: 3.3.50.41 – Contribuições.',
+  },
+  '218': {
+    cnpj: '03252312000180', nome: 'SECRETARIA DE ESTADO DE TRABALHO, ASSISTENCIA E DESENVOLVIMENTO SOCIAL - SETADES',
+    banco: '001 — Banco do Brasil', agencia: '3665-X', contaEspecifica: 'Sim', prazoMeses: 36,
+    classificacao: '449052 - EQUIPAMENTOS E MATERIAL PERMANENTE',
+  },
+  '437': {
+    cnpj: '25217366000148', nome: 'SECRETARIA DE ESTADO DE DIREITOS HUMANOS',
+    banco: '001 — Banco do Brasil', agencia: '3665-X', contaEspecifica: 'Sim', prazoMeses: 36,
+    classificacao: 'Gestão/Unidade Orçamentária - UO: 0001/48101 - Unidade Gestora - UG: 480.101 - Programa de Trabalho: 10.48.101.14.422.0040.2',
+  },
+  '698': {
+    cnpj: '50235855000170', nome: 'SECRETARIA ESTADUAL DAS MULHERES',
+    banco: '104 — Caixa Econômica Federal', agencia: '167-8', contaEspecifica: 'Não', prazoMeses: 36,
+    classificacao: '',
+  },
+  '835': {
+    cnpj: '19481436000178', nome: 'AGENCIA ESTADUAL DE RECURSOS HIDRICOS - AGERH',
+    banco: '104 — Caixa Econômica Federal', agencia: '167-8', contaEspecifica: 'Não', prazoMeses: 36,
+    classificacao: '',
+  },
+};
+
+/* ══════════════════════════════════════════
+   LOOKUP EXECUTOR (gerado de kb-2025 + kb-2026)
+   Chave: CNPJ sem formatação → {banco, bancoNome, agencia, classificacao}
+   Uso: banco/agência para municípios quando /api/historico não retornar.
+══════════════════════════════════════════ */
+const EXECUTOR_KB = {"27165729000174":{"banco":"104","bancoNome":"Caixa Econômica Federal","agencia":"172","classificacao":"170001.2060600291.048 - AQUISIÇÃO DE MÁQUINAS, VEÍCULOS E EQUIPAMANTOS PARA PATRULHA MECANIZADA RURAL\n44905200000 - EQUIPAMENTO E MATERIAL PERMANENTE"},"14870896000174":{"banco":"104","bancoNome":"Caixa Econômica Federal","agencia":"173","classificacao":"08.244.0026.2.12 CONSTRUÇÃO/AQUISIÇÃO  READEQUACAO E REFORMA DAS UNIDADES - Natureza da Despesa: 4.4.90.52.42 – Mobiliário em Geral; 4.4.90.52.10 - APARELHOS E EQUIPAMENTOS PARA ESPORTES E DIVERSÕES; 4.4.90.52.18 - MÁQUINAS, UTENSÍLIOS E EQUIPAMENTOS"},"27165554000103":{"banco":"104","bancoNome":"Caixa Econômica Federal","agencia":"173","classificacao":"27.811.0060.1.204 - Vila Velha Esportes; 3.3.90.30.14 MATERIAL EDUCATIVO E ESPORTIVO; 3.3.90.30.23 MATERIAL DE UNIFORMES, TECIDOS E AVIAMENTOS; 3.3.90.39.05 SERVICOS TECNICOS PROFISSIONAIS; 3.3.50.00,00 - TRASNF. INST. PRIV S/ FINS LUCRATIVOS"},"01612674000100":{"banco":"001","bancoNome":"Banco do Brasil","agencia":"4986","classificacao":"Os recursos serão alocados na função 15 – Urbanismo, subfunção 451 – Infraestrutura Urbana, em conformidade com o objeto proposto de construção de muro de fechamento de cemitério em área urbana."},"27142686000101":{"banco":"104","bancoNome":"Caixa Econômica Federal","agencia":"4604","classificacao":"15 - Urbanismo\n451 - Infraestrutura Urbana\n0009 - Estruturação e manutenção dos serviços públicos\n3.010 - Pavimentação e construção de ruas, avenidas, vias, acessos público, estradas e pontes"},"27150556000110":{"banco":"104","bancoNome":"Caixa Econômica Federal","agencia":"2040","classificacao":"120 - SECRETARIA MUNICIPAL DE OBRAS E SERVIÇOS URBANOS\nUnidade 001 - SECRETARIA MUNICIPAL DE OBRAS E SERVIÇOS URBANOS\n120001.2575200252.038 - Manutenção dos Serviços de Iluminação Pública\n44905100000 - OBRAS E INSTALAÇÕES"},"14884701000145":{"banco":"001","bancoNome":"Banco do Brasil","agencia":"2112","classificacao":"30.10.302.4.4.90.51\n\nObras e Instalações na Assistência Hospitalar e Ambulatorial"},"27165190000153":{"banco":"001","bancoNome":"Banco do Brasil","agencia":"924"},"27167410000188":{"banco":"104","bancoNome":"Caixa Econômica Federal","agencia":"555","classificacao":"Órgão: 10 – Secretaria Municipal de Agricultura, Aquicultura, Pecuária e Abastecimento\nUnidade Orçamentária: 01 –  Secretaria Municipal de Agricultura, Aquicultura, Pecuária e Abastecimento\nFunção: 04 – Administração\nSubfunção: 122 – Administração Ge"},"27165208000117":{"banco":"104","bancoNome":"Caixa Econômica Federal","agencia":"690","classificacao":"Ficha: 0000250\nÓrgão: 070 - SECRETARIA MUNICIPAL DE OBRAS, SERVICOS E INFRAESTRUTURA - SEMOSI\nUnidade Orçamentária: 001 - SECRETARIA MUNICIPAL DE OBRAS, SERVICOS E INFRAESTRUTURA - SEMOSI\nFunção: 15 - URBANISMO\nSubfunção: 451 - INFRA-ESTRUTURA URBANA"},"01614334000118":{"banco":"104","bancoNome":"Caixa Econômica Federal","agencia":"716","classificacao":"110009.0448200791.027 - CONSTRUÇÃO, REFORMA E REGULARIZAÇÃO DE UNIDADES HABITACIONAIS DE INTERESSE SOCIAL\n44905100000 - OBRAS E INSTALAÇÕES\n"},"27150549000119":{"banco":"104","bancoNome":"Caixa Econômica Federal","agencia":"590","classificacao":"Classificação Funcional: 15.452.0009.2.0080\nNatureza de Despesa: 4.4.90.51.00\nVínculo: 1.706.0013.3110"},"27165687000171":{"banco":"104","bancoNome":"Caixa Econômica Federal","agencia":"3609","classificacao":"093001.2781200172.218 - MANUTENCAO DA SECRETARIA DE ESPORTE E LAZER"},"27167402000131":{"banco":"104","bancoNome":"Caixa Econômica Federal","agencia":"1734","classificacao":"Atividade: 110001.2060600081.047\nDescrição: Aquisição de equipamentos agrícolas"},"01683866000107":{"banco":"001","bancoNome":"Banco do Brasil","agencia":"3665","classificacao":"Projeto/atividade: 23.691.0035.2062 – INOVA MERCADO - Natureza de Despesa: 3.3.90.39.00 - Outros Serviços de Terceiros - Pessoa Jurídica - Fonte: 1.706.311001 e/ou\n2.706.311001"},"31723570000133":{"banco":"104","bancoNome":"Caixa Econômica Federal","agencia":"4654","classificacao":"160 - SECRETARIA MUNICIPAL DE ESPORTES E JUVENTUDE\n001 - SECRETARIA MUNICIPAL DE ESPORTES E JUVENTUDE\n813 - LAZER\n160001.2781300932.069 - EVENTOS E COMPETIÇÕES ESPORTIVAS MUNICIPAIS\n\nLEI 1603/2025 - LEI ORÇAMENTÁRIA MUNICIPAL"},"01612155000141":{"banco":"001","bancoNome":"Banco do Brasil","agencia":"4501","classificacao":"008 - SECRETAARIA MUNICIPAL DE OBRAS;  \n001- SECRETARIA MUNICIPAL DE OBRAS; \n15-URBANISMO; \n451 - INFRAESTRUTURA URBANA; \n0032 - GESTÃO DE OBRAS MUNICIPAIS; \n2069 - ABERTURA, PAVIMENTAÇÃO E DRENAGEM DE VIAS URBANAS\n449051 - ELEMENTO DE DESPESA\n305-FI"},"27165182000107":{"banco":"104","bancoNome":"Caixa Econômica Federal","agencia":"690","classificacao":"Ação 1.044 GND 4 MD 90. Objeto: Pavimentação e drenagem de vias urbanas."},"27165547000101":{"banco":"104","bancoNome":"Caixa Econômica Federal","agencia":"1255","classificacao":"0120012060800062.029 - FOMENTO AO CULTIVO DE PALMITO PUPUNHA\n0120012060800072.033 - CRESCIMENTO E MANTURENÇÃO DO VIVEIRO MUNICIPAL"},"27165620000137":{"banco":"104","bancoNome":"Caixa Econômica Federal","agencia":"171","classificacao":"Órgão: 05.00.00 - SECRET. MUNIC. DE OBRAS E SERVIÇOS URBANOS\nUnidade: 05.01.00 - SECRET. MUNIC. DE OBRAS\nClassificação Funcional: 27.813.0005.1.0029 -  CONSTRUÇÃO, REF E AMPL DE MUROS, VIAS, ESTRADAS.\nNatureza da Despesa: 4.4.90.51.99"},"27165711000172":{"banco":"104","bancoNome":"Caixa Econômica Federal","agencia":"1836","classificacao":"ÓRGÃO: 06 – SECRETARIA MUNICIPAL DE FINANÇAS\nUNIDADE: 01 - SECRETARIA MUNICIPAL DE FINANÇAS\nFUNÇÃO: 15 – URBANISMO\nSUBFUNÇÃO: 451 – INFRAESTRUTURA URBANA\nPROGRAMA: 0008 – ADMINISTRAÇÃO\nPROJETO/ATIVIDADE: 2.008 – MANUTENÇÃO DAS ATIVIDADES DA SEC MUN F"},"27167436000126":{"banco":"104","bancoNome":"Caixa Econômica Federal","agencia":"3366","classificacao":"020020.0824400372.112 - Construção de casas"},"27174101000135":{"banco":"104","bancoNome":"Caixa Econômica Federal","agencia":"169","classificacao":"012001.1854100442.012.33903900000.170600000000.\nFicha- 236 TRANSFERÊNCIA ESPECIAL DA UNIÃO."},"27174135000120":{"banco":"001","bancoNome":"Banco do Brasil","agencia":"370","classificacao":"Órgão: Prefeitura Municipal de Guaçuí ;  Unidade 1101 - SECRETARIA MUNICIPAL DE CULTURA, TURISMO E ESPORTES - 110011012781200251.055.001 - construção, reforma, ampliação e manutenção de praça de lazer. 44905100000 - OBRAS E INSTALAÇÕES Fonte - 170100"},"27744184000150":{"banco":"104","bancoNome":"Caixa Econômica Federal","agencia":"3656","classificacao":"070 - SECRETARIA MUNICIPAL DE OBRAS E SERVIÇOS URBANOS\n07 - SECRETARIA MUNICIPAL DE OBRAS E SERVIÇOS URBANOS\n07007.1545100151.013 - CONSTRUÇÃO, DRENAGEM E PAVIMENTAÇÃO DE VIAS\n44905100000 - OBRAS E INSTALAÇÕES \nFICHA - 0000032\nFONTE -  272000000000"},"36403954000192":{"banco":"104","bancoNome":"Caixa Econômica Federal","agencia":"1115","classificacao":"000100 000002 23 695 0002 2.107"},"27744143000164":{"banco":"001","bancoNome":"Banco do Brasil","agencia":"1922","classificacao":"3062"},"27167428000180":{"banco":"104","bancoNome":"Caixa Econômica Federal","agencia":"556","classificacao":"ÓRGÃO:            070 - Secretaria Municipal de Assistência Social\nUNIDADE:        004 - Fundo Municipal de Habitação\nFUNÇÃO:             16 - Habitação\nSUBFUNÇÃO:  482 - Habitação Urbana\nPROGRAMA:   074 - Fundo Municipal de Habitação\nATIVIDADE:     "},"27165570000198":{"banco":"001","bancoNome":"Banco do Brasil","agencia":"1786","classificacao":"018 - SECRETARIA MUNICIPAL DE AGRICULTURA E MEIO AMBIENTE\nProjeto/atividade: 018001.2060600251.042 - AQUISIÇÃO DE VEÍCULOS, MÁQUINAS, MÓVEIS, EQUIPAMENTOS E MATERIAL PERMANENTE\nElemento de Despesas: 44905200000 - EQUIPAMENTO E MATERIAL PERMANENTE\nFic"},"27165653000187":{"banco":"001","bancoNome":"Banco do Brasil","agencia":"281","classificacao":"Órgão: 070 - SECRETARIA MUNICIPAL DE DESENVOLVIMENTO URBANO, OBRAS PÚBLICAS E TRANSPORTES\nUnidade:  070001 – SECRETARIA MUNICIPAL DE DESENVOLVIMENTO URBANO, OBRAS PÚBLICAS E TRANSPORTES \nFunção: 15 – URBANISMO\nSubfunção: 451 – INFRA ESTRUTURA URBANA\n"},"31723497000108":{"banco":"104","bancoNome":"Caixa Econômica Federal","agencia":"1306","classificacao":"Reforma e Ampliação do Centro Cultural e Turístico:\n013001.2369500422.092 MANUTENÇÃO DAS ATIVIDADES DO TURISMO E ARTESANATO\n33903900000 – OUTROS SERVIÇOS DE TERCEIROS - PESSOA JURÍDICA\n\nImplantação de Pavimentação Turística:\n008001.1545100213.043 – A"},"27165646000185":{"banco":"104","bancoNome":"Caixa Econômica Federal","agencia":"1836","classificacao":"000180001.1545200061.016 - Pavimentação, Drenagem, Galerias, melhorias de Ruas e Avenidas\n\n44905100000 Obras e Instalações"},"27174119000137":{"banco":"104","bancoNome":"Caixa Econômica Federal","agencia":"1908","classificacao":"Órgão 013 - SECRETARIA MUNICIPAL DE OBRAS E SERVIÇOS URBANOS\nUnidade 001 - SECRETARIA MUNICIPAL DE OBRAS E SERVIÇOS URBANOS\n\n0130011545200191025 - ABERTURA, PAVIMENTAÇAO E DRENAGEM DE RUAS E AVENIDAS DA SEDE E DISTRITOS\n\n44905100000 - OBRAS E INSTALA"},"27165604000144":{"banco":"104","bancoNome":"Caixa Econômica Federal","agencia":"1734","classificacao":"Orgão:110 Secretaria Municipal de Obras e Atividades Urbanas Unidade Orçamentária:110001 Secretaria Municipal de Obras e Atividades Urbanas Elemento de Despesa: 44905100000 Fonte de Recurso:170600000000"},"01609408000128":{"banco":"001","bancoNome":"Banco do Brasil","agencia":"3207","classificacao":"AÇÃO ORÇAMENTÁRIA (FUNCIONAL PROGRAMÁTICA DA LOA 2025)\n000016000001.06.153.00412.152\nMANUTENÇÃO E AMPLIAÇÃO DA GUARDA MUNICIPAL, AGENTES DE TRÂNSITO E GUARDAS VIDAS - EQUIPAMENTO E MATERIAL PERMANENTE"},"01612865000171":{"banco":"001","bancoNome":"Banco do Brasil","agencia":"3364","classificacao":"Órgão: Secretaria Municipal de Turismo, Cultura, Esporte e Lazer\nPrograma: Apoio e Desenvolvimento da Cultura e Turismo\nFunção: 13\nSubfunção: 695\nAção: 2.016 – Apoio ao Turismo\nElementos de Despesas: 339039"},"27142694000158":{"banco":"104","bancoNome":"Caixa Econômica Federal","agencia":"1978","classificacao":"Órgão: Secretaria Municipal de Esportes e da Juventude\nDotação: 02.15. 27.812.0046.1.161 Construção, Ampliação e Reforma dos Equipamentos Esportivos e de Recreação;\nNatureza de Despesa: 4.4.90.51.99\nFonte: 1500.0000.9999"},"27165737000110":{"banco":"104","bancoNome":"Caixa Econômica Federal","agencia":"718","classificacao":"100 - Secretaria Municipal  de Assitência Social, Direitos Humanos \n001 - Fundo Municipal de Assitencia Social \n08 - Assitencia Social \n2.201 - Execução de Emenda Parlamentares para a Assitencia Social\n100001.0824400292.201 - Execução de Emendas Parl"},"04217786000154":{"banco":"001","bancoNome":"Banco do Brasil","agencia":"112","classificacao":"SECRETARIA MUNICIPAL DE EDUCAÇÃO.\n005006.1236100063.005 - Construção, Ampliação, reforma da rede física do Ensino Fundamental.\n44905100000-Obras e instalações.\n000838 - Ficha\n189900003110-Fonte"},"27174051000196":{"banco":"104","bancoNome":"Caixa Econômica Federal","agencia":"716","classificacao":"100002.2060600211.093 - Aquisição de veículos, tratores, máquinas e implementos agropecuários.\n\n44905200000 - Equipamento e Material Permanente."},"27167477000112":{"banco":"104","bancoNome":"Caixa Econômica Federal","agencia":"717","classificacao":"Órgão: 0140 – Secretaria Municipal de Agricultura e Abastecimento \nUnidade orçamentaria: 0014010 – Secretaria Municipal de Agricultura e Abastecimento \nFunção: 20 – Agricultura \nSubfunção: 606 extensão rural \nPrograma: 0041 – Fortalecimento dos Setor"},"50235855000170":{"banco":"001","bancoNome":"Banco do Brasil","agencia":"3665","classificacao":"Programa de Trabalho: 14.422. 0069. 2345 - Natureza de Despesa:    3.3.90.39.00 - Outros Serviços de Terceiros - Pessoa Jurídica"},"31796097000114":{"banco":"104","bancoNome":"Caixa Econômica Federal","agencia":"170","classificacao":"Órgão:\t117-SECRETARIA MUNICIPAL DE OBRAS E SERVIÇOS URBANOS\nUnidade:\t117-SECRETARIA MUNICIPAL DE OBRAS E SERVIÇOS URBANOS\nFunção:\t17-Saneamento\nSubfunção:\t512-Saneamento Básico\nPrograma:\t0029-Adminstração dos Programa de Saneamento Básico\n1.171.171.7"},"31796584000187":{"banco":"004","bancoNome":"Banco do Nordeste","agencia":"198"},"27142702000166":{"banco":"104","bancoNome":"Caixa Econômica Federal","agencia":"1112","classificacao":"11-Secretaria Municipal de Desenvolvimento Social\n08.122.0011.2.0022 – Estruturação do Órgão Gestor da Assistência Social\n4.4.90.52.00 Equip E Material Permanente"},"27165562000141":{"banco":"001","bancoNome":"Banco do Brasil","agencia":"761","classificacao":"Órgão : 11 - SECRETARIA MUNICIPAL DE AGRICULTURA E DESENVOLVIMENTO ECONÔMICO\nUnidade Orçamentária : 01 - SECRETARIA MUNICIPAL DE AGRICULTURA E DESENVOLVIMENTO ECONÔMICO\nProjeto/Atividade : 1101.0412200301.017 - REFORMA, AMPLIAÇÃO E REESTRUTURAÇÃO DO "},"27174077000134":{"banco":"004","bancoNome":"Banco do Nordeste","agencia":"220","classificacao":"04.127.0003.1.0027 RECADASTRAMENTO IMOBILIÁRIO E REGULARIZAÇÃO FUNDIÁ\n3.3.90.39.05 Serviços Técniocs Profissionais \n"},"36350312000172":{"banco":"104","bancoNome":"Caixa Econômica Federal","agencia":"721","classificacao":"010010.1545100072.083-MANUTENÇÃO E MODERNIZAÇÃO DE CALÇAMENTO, PRAÇAS, PARQUES, JARDINS E ÁREAS DE LAZER/44905100000-OBRAS E INSTALAÇÕES-FICHA: 0000492-FONTE: 170000000001-AUTORIZADA/ATUALIZADA: R$77.500,00-SALDO A EMPENHAR: R$ 2.110,74-SALDO REAL: R"},"27167311000104":{"banco":"104","bancoNome":"Caixa Econômica Federal","agencia":"4608","classificacao":"130001.2012200032.120 - Manutenção das Atividades da Secretaria Municipal de Agricultura \n449052000000 - Equipamento e material permanente\nFicha orçamentária: 0000295\nFonte de Recursos: 270600000000"},"27082403000183":{"banco":"104","bancoNome":"Caixa Econômica Federal","agencia":"592","classificacao":"ÓRGÃO: 006- SECRETARIA MUNICIPAL DE ASSISTÊNCIA SOCIAL\nUNIDADE: 003-FUNDO MUNICIPAL DE ASSISTÊNCIA SOCIAL\nPROJETO/ATIVIDADE: \n006003.0812200092.047-MANUTENÇÃO DA GESTÃO DO SUAS\n44905200000-EQUIPAMENTO E MATERIAL PERMANENTE\n\nÓRGÃO: 006- SECRETARIA MUN"},"27744150000166":{"banco":"104","bancoNome":"Caixa Econômica Federal","agencia":"4333","classificacao":"120001.2781200372.216 - Manutenção dos Espaços Físicos Esportivos\n44905100000 - Obras e Instalações"},"14774687000127":{"banco":"104","bancoNome":"Caixa Econômica Federal","agencia":"721","classificacao":"Órgão - 000003 - FUNDO MUNICIPAL DE ASSISTÊNCIA SOCIAL\nUnidade Orçamentária - 000002 - FUNDO MUNICIPAL DE ASSISTÊNCIA SOCIAL\nFunção - 08 - Assistência Social\nSubFunção - 244 - Assistência Comunitária\nPrograma - 3209 - ASSISTENCIA SOCIAL GERAL\nAtivida"},"27174168000170":{"banco":"104","bancoNome":"Caixa Econômica Federal","agencia":"1384","classificacao":"Órgão 014 - SECRETARIA MUNICIPAL DE OBRAS E URBANISMO\nUnidade 024 - SECRETARIA MUNICIPAL DE OBRAS E URBANISMO\n33903900000 - OUTROS SERVICOS DE TERCEIROS-PESSOA JURIDICA\nFicha 0000492"},"27165521000155":{"banco":"104","bancoNome":"Caixa Econômica Federal","agencia":"1539","classificacao":"A despesa com a emenda proposta, correrá por conta da seguinte dotação orçamentária:\nÓrgão: 008000 – Secretaria Municipal de Obras e Serviços Urbanos\nUnidade Orçamentária: 008000 – Secretaria Municipal de Obras e Serviços Públicos\nFunção: 04 – Admini"},"27174085000180":{"banco":"104","bancoNome":"Caixa Econômica Federal","agencia":"3366","classificacao":"Órgão : 022 - SECRETARIA MUNICIPAL DE FINANÇAS\nUnidade Orçamentária : 022 - SECRETARIA MUNICIPAL DE FINANÇAS\nFunção : 04 - Administração\nSubFunção : 129 - Administração de Receitas\nPrograma : 0030 - MANUTENÇÃO E REVITALIZAÇÃO DAS ATIVIDADES ADMINISTR"},"27174143000176":{"banco":"104","bancoNome":"Caixa Econômica Federal","agencia":"721","classificacao":"Órgão - 000002  PREFEITURA MUNICIPAL DE SÃO GABRIEL DA PALHA\nUnidade Orçamentária - 000073  SECRETARIA MUNICIPAL DE ESPORTE E LAZER\nFunção - 27  Desporto e Lazer\nSubFunção - 812  Desporto Comunitário\nPrograma - 2732  DESPORTO AMADOR\nPROJETO 1.221 - C"},"36350346000167":{"banco":"104","bancoNome":"Caixa Econômica Federal","agencia":"556"},"36388445000138":{"banco":"104","bancoNome":"Caixa Econômica Federal","agencia":"3619","classificacao":"ÓRGÃO: 016 - secretaria de serviços urbanos\nUNIDADE 001: secretaria de serviços urbanos\nPROJETO/ATIVIDADE: 2.064 - manutenção, coleta, transporte e destinação final de resíduos sólidos\nELEMENTO DA DESPESA: 44905200000: equipamento e material permanen"},"27165638000139":{"banco":"104","bancoNome":"Caixa Econômica Federal","agencia":"591","classificacao":"O RECURSO A SER RECEBIDO SERÁ ALOCADO NO ORÇAMENTO MUNICIPAL, CONFORME DESCRIÇÃO ABAIXO:\nUnidade Orçamentária: 011001 - Secretaria Municipal de Agricultura\nÓrgão: 011 - Secretaria Municipal de Agricultura\nFunção: 20 - Agricultura\nSubfunção: 608 - Pro"},"27165745000167":{"banco":"104","bancoNome":"Caixa Econômica Federal","agencia":"719","classificacao":"Ficha PPA 286, Ficha 777, Unidade Orçamentária 13001 Secretaria Municipal de Agricultura, Órgão 130 Secretaria Municipal de Agricultura, Função 20 Agricultura, Sub Função Administração Geral, Programa Melhoria na qualidade de vida do Produtor Rural, "},"27174150000178":{"banco":"001","bancoNome":"Banco do Brasil","agencia":"2387","classificacao":"000015 000001 20 122 0031 2.037 - Manutenção das Atividades da Secretaria de Agricultura"},"01619232000195":{"banco":"001","bancoNome":"Banco do Brasil","agencia":"3770","classificacao":"O município de Vila Valério, localizado no Estado do Espírito Santo, apresenta-se como um importante polo em potencial para o desenvolvimento do turismo regional e intermunicipal, além de possuir características propícias ao fomento do comércio local"},"10414835000141":{"banco":"104","bancoNome":"Caixa Econômica Federal","agencia":"555","classificacao":"Órgão: 08 - Fundo Municipal de Saúde\nUnidade orçamentária: 01 - Fundo Municipal de Saúde\nFunção: 10 - Saúde\nSub função: 302 - Assistência Hospitalar e Ambulatorial\nPrograma: 0098 - Manutenção das Atividades do Hospital Geral de Linhares\nProjeto/Ativi"},"15003401000172":{"banco":"104","bancoNome":"Caixa Econômica Federal","agencia":"4654","classificacao":"ÓRGÃO – 070 – SECRETARIA MUNICIPAL DE ASSISTÊNCIA E DESENVOLVIMENTO SOCIAL\nUNIDADE ORÇAMENTÁRIA: 100 - SECRETARIA MUNICIPAL DE ASSISTÊNCIA E DESENVOLVIMENTO SOCIAL\nFUNÇÃO:08 – AÇÃO SOCIAL\nSUBFUNÇÃO: 244 – ASISTÊNCIA COMUNITÁRIA\nPROGRAMA: 0010 – PROTE"},"31796659000120":{"banco":"001","bancoNome":"Banco do Brasil","agencia":"2387","classificacao":"Descrição: 019100 - Secretaria Municipal de Cultura, Esporte, Lazer e Turismo\n\n019100019101.1312200592.068 - Comemorações e festividades municipais \n\n33903000000 - Material de Consumo - Ficha 0000289 - Fonte 150000000000 - Autorizada/Atualizada 30.10"},"27167444000172":{"banco":"104","bancoNome":"Caixa Econômica Federal","agencia":"1826"},"06656711000103":{"banco":"104","bancoNome":"Caixa Econômica Federal","agencia":"167","classificacao":"•\tUnidade Gestora: 320101\n•\tPrograma de Trabalho: 10.32.101.19.573. 0017. 2361 - POPULARIZAÇÃO DA INOVAÇÃO\n•\tElemento de Despesa: 4.4.90.52\n"},"39385927000122":{"banco":"104","bancoNome":"Caixa Econômica Federal","agencia":"1434","classificacao":"Órgão: 040 - SECRETARIA MUNICIPAL DE ADMINISTRAÇÃO\nUnidade: 001 - SECRETARIA MUNICIPAL DE ADMINISTRAÇÃO\nFunção: 04 - ADMINISTRAÇÃO\nSubfunção: 125 – NORMATIZAÇÃO E FISCALIZAÇÃO\nPrograma: 0011 – APOIO GOVERNAMENTAL\nAtividade: 2.182 – PROMOÇÃO, GERENCIA"},"27104363000123":{"banco":"001","bancoNome":"Banco do Brasil","agencia":"4502"},"14808407000154":{"banco":"104","bancoNome":"Caixa Econômica Federal","agencia":"4604","classificacao":"Secretaria de Saúde\n10 - Saúde\n301 - Atenção básica\n302 - Assistência Hospitalar Ambulatorial"},"14004319000108":{"banco":"104","bancoNome":"Caixa Econômica Federal","agencia":"1836","classificacao":"ORGÃO: 12 – FUNDO MUNICIPAL DE SAÚDE\nUNIDADE: 04 – BLOCO DE MÉDIA E ALTA COMPLEXIDADE\nFUNÇÃO: 10 – SAÚDE\nSUBFUNÇÃO: 302 – ASSISTÊNCIA HOSPITALAR E AMBULATORIAL\nPROGRAMA: 003 – SAÚDE E SANEAMENTO\nPROJETO/ATIVIDADE: 2.083 – MANUTENÇÃO DAS ATIVIDADES DE"},"27744176000104":{"banco":"104","bancoNome":"Caixa Econômica Federal","agencia":"1540"},"27165695000118":{"banco":"104","bancoNome":"Caixa Econômica Federal","agencia":"2056","classificacao":"Secretaria Municipal de Fazenda e Planejamento\nClassificação Funcional:000003001.0412500053.004\nNatureza da Despesa: 33903900000 - Outros Serviços de Terceiros  - Pessoa Jurídica \nFonte de Recurso: 150000000000 - Recursos Não Vinculados de Impostos e"},"19481436000178":{"banco":"001","bancoNome":"Banco do Brasil","agencia":"3665","classificacao":"Projeto/atividade: 23.691.0035.2062 – INOVA MERCADO - Natureza de Despesa: 3.3.90.39.00 - Outros Serviços de Terceiros - Pessoa Jurídica - Fonte: 1.706.311001 e/ou\n2.706.311001"}};
+
+function lookupKB(cnpj) {
+  const key = (cnpj || '').replace(/\D/g, '');
+  return EXECUTOR_KB[key] || null;
+}
+
+function codigoSIOPDe(objeto) {
+  const m = String(objeto || '').match(/^(\d+)/);
+  return m ? m[1] : null;
+}
+
+// Regra STN para Transferências Especiais EC 105/2019:
+// natureza de despesa derivada do tipo de gasto (custeio vs. investimento)
+// e da descrição do objeto.
+function formatMetas(m) {
+  if (typeof m === 'string') return m;
+  if (!m) return '';
+  return [
+    m.descricao      != null ? `- Descrição: ${m.descricao}`      : '',
+    m.unidade        != null ? `- Unidade: ${m.unidade}`          : '',
+    m.quantidade     != null ? `- Quantidade: ${m.quantidade}`    : '',
+    m.mesesPrevistos != null ? `- Meses Previstos: ${m.mesesPrevistos}` : '',
+  ].filter(Boolean).join('\n');
+}
+
+function naturezaDespesaDe(em) {
+  const obj = (em.objeto || '').toLowerCase()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  const temInv = (em.valorInvestimentoRaw || 0) > 0;
+  const fonte  = 'Fonte: 1.706.311001';
+  if (temInv) {
+    const ehObra = /obra|construc|paviment|infraestrutur|reforma|amplia|instalac|saneament|drenagem|calcamento|asfalto|estrad/.test(obj);
+    if (ehObra) return `Natureza de Despesa: 4.4.90.51.00 — Obras e Instalações — ${fonte}`;
+    return `Natureza de Despesa: 4.4.90.52.00 — Equipamentos e Material Permanente — ${fonte}`;
+  }
+  return `Natureza de Despesa: 3.3.90.39.00 — Outros Serviços de Terceiros - Pessoa Jurídica — ${fonte}`;
+}
+
+/* ══════════════════════════════════════════
+   PRAZO PADRÃO
+   Dado empírico: planos ES independente do valor usam 36m.
+   Exceções (698→10m, 835→12m) estão no EXECUTOR_POR_OBJETO.
+══════════════════════════════════════════ */
+function prazoMaximo() {
+  return 36;
+}
+
+/* ══════════════════════════════════════════
+   STEP 2: GERAR PLANO
+══════════════════════════════════════════ */
+async function gerarPlano() {
+  if (!S.emenda) return;
+  S.contextoAdicional = ($('contexto-adicional')?.value || '').trim();
+  showOverlay('Consultando histórico de planos aprovados...');
+
+  // ── Detecção: município ou Estado ES ────────────────────────────────────
+  const isMunicipio = S.cnpj !== CNPJ_ESTADO_ES;
+
+  // Lookup por código SIOP (somente para o Estado ES)
+  const codigoSIOP = codigoSIOPDe(S.emenda.objeto);
+  const lookup     = (!isMunicipio && codigoSIOP) ? EXECUTOR_POR_OBJETO[codigoSIOP] : null;
+
+  // Busca KB + objeto padronizado em paralelo (falha silenciosa)
+  let historico = [], objStd = null;
+  try {
+    const [resKB, stdObj] = await Promise.all([
+      fetch(`/api/historico?q=${encodeURIComponent(S.emenda.objeto)}&cnpj=${S.cnpj}&ano=2025&top=3`).catch(() => null),
+      getObjetoStd(codigoSIOP),
+    ]);
+    if (resKB?.ok) {
+      const d = await resKB.json();
+      historico = d.resultados || [];
+    }
+    objStd = stdObj;
+  } catch(_) {}
+
+  $('loading-msg').textContent = 'Gerando campos com Gemini AI...';
+
+  // Guarda no estado para uso em regen() individual
+  S.historico = historico;
+  S.objStd    = objStd;
+
+  let c, geminiOk = false;
+  try   { c = await geminiGerarPlano(S.emenda, historico, lookup, objStd); geminiOk = true; }
+  catch { c = fallback(S.emenda, historico, lookup); }
+
+  // Prazo: lookup > KB > padrão 36m
+  const prazoFinal = String(
+    lookup?.prazoMeses
+    ?? historico[0]?.prazoMeses
+    ?? prazoMaximo()
+  );
+
+  // ── Executor ─────────────────────────────────────────────────────────────
+  const execHist = historico[0]?.executor;
+  let execStr;
+  if (isMunicipio) {
+    // Municípios: executor = o próprio município (beneficiário) — regra empírica 29/30 planos
+    execStr = `${S.cnpj} — ${S.nomeEnte}`;
+  } else if (lookup) {
+    execStr = `${lookup.cnpj} — ${lookup.nome}`;
+  } else if (execHist) {
+    execStr = `${execHist.cnpj} — ${execHist.nome}`;
+  } else {
+    execStr = S.emenda.executor || c.executor;
+  }
+
+  // ── Conta específica (f28) ────────────────────────────────────────────────
+  // Municípios: sempre Não. Estado: lookup define; padrão = Sim.
+  $('f28').checked = isMunicipio ? false : (lookup ? lookup.contaEspecifica === 'Sim' : true);
+
+  // 2.4: PostgREST APP (disponível mesmo em AGUARDANDO)
+  //      > detalhamentos do executor (PT submetido) > listaAPP do portal > objeto
+  setVal('f24',
+    S.emenda.appPostgrest        ||
+    S.emenda.listaDetalhamentoPT ||
+    S.emenda.detalhamentoSIOP    ||
+    S.emenda.objeto
+  );
+  setBadge('badge24', ['API', 'tag-api']);
+
+  // 2.5: executor PostgREST (disponível p/ AGUARDANDO) > executor portal PT > Gemini > histórico
+  // objetoExecPostgrest: objeto_executor da tabela executor_especial (PostgREST, por id_plano_acao)
+  // objetoExecPT:        executor.objeto do portal /public/plano-trabalho/{ptId}/executor
+  // Ambos são o mesmo dado — PostgREST é preferido por ser batch e não depender de PT existir
+  const objetoExecPostgrest = S.emenda.objetoExecPostgrest || null;
+  const objetoExecPT        = S.emenda.objetoExecPT        || null;
+  const objetoExecBase      = objetoExecPostgrest || objetoExecPT || null;
+  const objetoExecHist      = historico[0]?.objetoExecutor || null;
+  const descricaoDetPT = S.emenda.descricaoDetPT || null;
+  // Prioridade campo 2.5:
+  //   1. API (objetoExecBase)   — texto do executor já submetido
+  //   2. IA  (Gemini, quando ok) — gerado c/ descricaoDetPT ou appPostgrest como seed
+  //   3. API (descricaoDetPT)   — descrição ministerial SIOP (direto da API, sem refinar)
+  //   4. Hist (objetoExecHist)  — plano aprovado mais similar no KB histórico
+  //   5. fallback genérico
+  setVal('f25', objetoExecBase || (geminiOk ? c.detalhamento_completo : null) || descricaoDetPT || objetoExecHist || c.detalhamento_completo || '');
+  setBadge('badge25',
+    objetoExecBase                      ? ['API', 'tag-api']  :
+    geminiOk && c.detalhamento_completo ? ['IA',  'tag-ai']   :
+    descricaoDetPT                      ? ['API', 'tag-api']  :
+    objetoExecHist                      ? ['Hist','tag-hist']  :
+                                          ['Hist','tag-hist']
+  );
+
+  // ── Classificação ─────────────────────────────────────────────────────────
+  // Regra STN natureza de despesa aplica a ambos (município e estado).
+  // Municípios: natureza+fonte → placeholder LOA municipal
+  // Estado:     lookup SIOP > KB > natureza+placeholder (NÃO cai no Gemini quando
+  //   lookup existe sem classificação — evita alucinação de código municipal)
+  const ndSugerida = naturezaDespesaDe(S.emenda);
+  if (isMunicipio) {
+    const classHistorico = historico[0]?.classificacaoOrcamentaria || '';
+    setVal('f12', classHistorico || ndSugerida);
+  } else {
+    const classBase = S.emenda.classificacao
+      || (lookup?.classificacao || null)
+      || historico[0]?.classificacaoOrcamentaria;
+    // Quando lookup existe mas classificacao está vazia (ex: obj 698, 835),
+    // usar natureza derivada em vez de Gemini — que alucina código LOA municipal
+    const classGemini = lookup && !lookup.classificacao ? null : c.classificacao;
+    setVal('f12', classBase || classGemini || ndSugerida);
+  }
+
+  setVal('f14', prazoFinal);
+  setVal('f22', execStr);
+  setVal('f23', S.emenda.objeto);
+  setVal('f26', c.finalidades);
+  setVal('f27', formatMetas(c.metas));
+
+  // ── Banco / Agência ────────────────────────────────────────────────────────
+  // Municípios: historico API > KB estático > vazio
+  // Estado:     EXECUTOR_POR_OBJETO > historico API > Gemini
+  const bancoKB  = execHist?.banco?.codigo ? `${execHist.banco.codigo} — ${execHist.banco.nome}` : null;
+  const agKB     = execHist?.agencia?.numero
+    ? `${execHist.agencia.numero}${execHist.agencia.dv ? '-' + execHist.agencia.dv : ''}`
+    : null;
+
+  const cnpjExecNorm  = (isMunicipio ? S.cnpj : (execHist?.cnpj || '')).replace(/\D/g, '');
+  const kbEntry       = lookupKB(cnpjExecNorm);
+  // Banco para municípios: "sempre CEF" acerta 76% (melhor que KB histórico = 57%)
+  // Agência: KB lookup é útil — quando banco está certo, agência acerta 90%
+  const agKBStatic = kbEntry?.agencia || null;
+  const BANCO_CEF_DEFAULT = '104 — Caixa Econômica Federal';
+
+  if (isMunicipio) {
+    setVal('f29banco', bancoKB || BANCO_CEF_DEFAULT);
+    setVal('f210ag',   agKB   || agKBStatic || '');
+  } else {
+    setVal('f29banco', lookup?.banco   || bancoKB || c.banco   || '');
+    setVal('f210ag',   lookup?.agencia || agKB    || c.agencia || '');
+  }
+
+  setVal('f211', S.emenda.conselhos || 'presidencia@ales.es.gov.br');
+
+  const fonteLookup = lookup ? `lookup SIOP obj.${codigoSIOP}` : null;
+  const fonteMun    = isMunicipio ? 'regra município (executor = beneficiário)' : null;
+  const fonteKB     = historico.length ? `KB histórico (${historico.length} plano(s))` : (kbEntry ? 'KB estático (banco/agência)' : null);
+  const fonteIA     = 'Gemini AI';
+  const fonteAPI    = S.usandoDemo ? 'dados de demonstração' : 'API TransfereGov';
+  const fontes = [fonteAPI, fonteLookup, fonteMun, fonteKB, fonteIA].filter(Boolean).join(' + ');
+  $('alerta-fonte').textContent =
+    `Campos pré-preenchidos com: ${fontes}. Revise todos antes de inserir no TransfereGov.`;
+  show('alerta-fonte');
+
+  hideOverlay();
+  hide('page1');
+  show('page2');
+  setProgress(2);
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+/* ══════════════════════════════════════════
+   GEMINI — geração em lote com contexto KB
+══════════════════════════════════════════ */
+async function geminiGerarPlano(em, historico = [], lookup = null, objStd = null) {
+  const isMun = S.cnpj !== CNPJ_ESTADO_ES;
+  const finalidadesLista = (em.finalidades || []).length
+    ? em.finalidades.join(' | ')
+    : '(nenhuma finalidade registrada na API — gere uma coerente com o objeto)';
+
+  const prazoFinal = String(lookup?.prazoMeses ?? historico[0]?.prazoMeses ?? prazoMaximo());
+
+  // Bloco de contexto fixo (quando lookup disponível — apenas Estado ES)
+  const lookupCtx = lookup
+    ? `DADOS CONFIRMADOS POR HISTÓRICO (use exatamente estes valores):
+  Executor: ${lookup.cnpj} — ${lookup.nome}
+  Banco: ${lookup.banco}
+  Agência: ${lookup.agencia}
+  Classificação orçamentária: ${lookup.classificacao || '(a determinar)'}
+  Prazo: ${lookup.prazoMeses} meses\n`
+    : '';
+
+  // Referência para campo 2.5 — prioridade:
+  // 1. executor.objeto (texto já submetido) → refinar
+  // 2. det.descricao (descrição específica do objeto SIOP) → gerar com base nela
+  // 3. objStd.detalhamentos[0].descricao (objeto padronizado SIOP) → gerar com base nela
+  // 4. appPostgrest (classificação SIOP) → gerar a partir da área de política pública
+  // 5. detalhamentoSIOP / modelo padrão
+  const execObjBase    = em.objetoExecPostgrest || em.objetoExecPT || null;
+  const descricaoDetPT = em.descricaoDetPT || null;
+  const siopClass      = em.appPostgrest || null;
+  const detSIOP        = em.detalhamentoSIOP || null;
+  const stdDet         = objStd?.detalhamentos?.[0] || null;
+  const stdMin         = objStd?.ministerio || null;
+
+  const siopCtx = siopClass
+    ? `CLASSIFICAÇÃO SIOP (área de política pública, sempre presente):\n"${siopClass}"\n`
+    : '';
+  const stdDetTxt = (typeof stdDet === "string" ? stdDet : stdDet?.descricao) || null;
+
+  const refDet25 = execObjBase
+    ? `${siopCtx}TEXTO DO EXECUTOR (base fiel para o campo 2.5):\n"${execObjBase}"\nRefine o texto do executor usando a classificação SIOP como contexto. Mantenha dados concretos e linguagem técnica clara.\n`
+    : descricaoDetPT
+      ? `${siopCtx}DESCRIÇÃO DO OBJETO SIOP (texto específico do detalhamento ministerial):\n"${descricaoDetPT}"\nCom base nessa descrição e no objeto parlamentar, escreva 3 a 5 linhas para o campo 2.5: o que será executado, atividades, público-alvo e metodologia. Use linguagem técnica clara.\n`
+      : stdDetTxt
+        ? `${siopCtx}DESCRIÇÃO PADRONIZADA DO OBJETO SIOP (origem SIOP):\n"${stdDetTxt}"\nUse esta descrição como BASE PRINCIPAL para gerar o campo 2.5 em 3 a 5 linhas, mantendo aderência ao objeto parlamentar e detalhando atividades, público-alvo e metodologia.\n`
+        : siopClass
+          ? `${siopCtx}Com base na classificação SIOP acima e no objeto parlamentar, escreva 3 a 5 linhas descrevendo: o que será executado, atividades principais, público-alvo e metodologia. Use linguagem técnica clara e objetiva.\n`
+          : detSIOP
+            ? `DESCRIÇÃO DO SIOP (fornecida pelo Ministério):\n"${detSIOP}"\nEscreva 3 a 5 linhas: o que será executado, atividades, público-alvo, metodologia.\n`
+            : (stdDetTxt ? `MODELO OFICIAL DO MINISTÉRIO para este objeto: "${stdDetTxt.slice(0,200)}"\n` : '');
+
+  const munCtx = isMun
+    ? `CONTEXTO: beneficiário MUNICIPAL (${S.nomeEnte}).
+Executor, banco, agência e classificação orçamentária serão determinados pelo sistema — NÃO os inclua no JSON.
+${stdMin ? `Ministério responsável: ${stdMin}.` : ''}
+${refDet25 || 'Gere um detalhamento descritivo de 3 a 5 linhas.\n'}`
+    : refDet25;
+
+  const exStr = historico.length
+    ? historico.map((ex, i) => `
+Exemplo ${i+1} aprovado (${ex.ano}):
+  Objeto executor:   ${ex.objetoExecutor || ex.objetoParlamentar || 'n/d'}
+  Executor:          ${ex.executor?.cnpj} — ${ex.executor?.nome}
+  Classificação:     ${ex.classificacaoOrcamentaria || 'n/d'}
+  Prazo (meses):     ${ex.prazoMeses || 'n/d'}
+  Finalidade:        ${(ex.finalidades||[])[0] ? (ex.finalidades[0].tipoCodigo+'/'+ex.finalidades[0].areaCodigo+' — '+ex.finalidades[0].tipoDescricao+'/'+ex.finalidades[0].areaDescricao) : 'n/d'}
+  Meta:              ${(ex.metas||[])[0] ? (ex.metas[0].descricao+' | '+ex.metas[0].quantidade+' '+ex.metas[0].unidade+' | '+ex.metas[0].prazoMeses+'m') : 'n/d'}`
+    ).join('\n')
+    : '(nenhum exemplo similar encontrado)';
+
+  const prompt =
+`Você é especialista em Transferências Especiais (EC 105/2019, LC 210/2024).
+
+${lookupCtx}${munCtx}
+EXEMPLOS DE PLANOS APROVADOS (referência adicional):
+${exStr}
+
+PLANO A PREENCHER:
+Beneficiário: ${S.nomeEnte}
+Emenda: ${em.parlamentar}
+Objeto (campo 2.3): ${em.objeto}
+Valor total: ${em.valor}
+Prazo: ${prazoFinal} meses
+Finalidades disponíveis (escolha UMA): ${finalidadesLista}
+${S.contextoAdicional ? `\nCONTEXTO ADICIONAL (informado pelo usuário — use para enriquecer campo 2.5 e metas):\n"${S.contextoAdicional}"\n` : ''}
+
+REGRAS:
+- Se "DADOS CONFIRMADOS" estiver preenchido, use esses valores exatamente.
+- Consolide em UMA única meta.
+- Escolha UMA única finalidade coerente com o objeto.
+- Use exatamente ${prazoFinal} meses em "Meses Previstos" da meta.
+
+Responda SOMENTE com JSON válido, sem markdown:
+{
+  "classificacao": "classificação orçamentária completa",
+  "executor": "CNPJ — nome do executor",
+  "banco": "código — nome do banco",
+  "agencia": "número-DV da agência",
+  "finalidades": "UMA finalidade: 'Tipo — Área'",
+  "metas": "UMA meta. Formato:\\n- Descrição: [entrega]\\n- Unidade: [sigla]\\n- Quantidade: [inteiro]\\n- Meses Previstos: ${prazoFinal}",
+  "detalhamento_completo": "3 a 5 linhas: o que será feito, atividades, público-alvo"
+}`;
+
+  const r = await fetch(GEMINI_PROXY, {
+    method:  'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ prompt, temperature: 0.2, maxTokens: 2500 })
+  });
+  if (!r.ok) throw new Error('Gemini proxy ' + r.status);
+  const d = await r.json();
+  return JSON.parse((d.text || '').replace(/```json|```/g,'').trim());
+}
+
+function fallback(em, historico = [], lookup = null) {
+  const ex    = historico[0];
+  const prazo = String(lookup?.prazoMeses ?? ex?.prazoMeses ?? prazoMaximo());
+  const finalidadePrimaria = (em.finalidades && em.finalidades[0])
+    || 'n/d — verificar na lista do TransfereGov';
+  // KB estático como fonte adicional de banco/agência quando API não retornou histórico
+  const isMun   = S.cnpj !== CNPJ_ESTADO_ES;
+  const kbFb    = lookupKB((isMun ? S.cnpj : '').replace(/\D/g, ''));
+  const bancoFb = lookup?.banco
+    || (ex ? `${ex.executor?.banco?.codigo} — ${ex.executor?.banco?.nome}` : '')
+    || (isMun ? '104 — Caixa Econômica Federal' : '')
+    || (kbFb?.banco ? `${kbFb.banco} — ${kbFb.bancoNome}` : '');
+  const agFb    = lookup?.agencia || ex?.executor?.agencia?.numero || kbFb?.agencia || '';
+  return {
+    classificacao: lookup?.classificacao
+      || ex?.classificacaoOrcamentaria
+      || (kbFb?.classificacao || '')
+      || (isMun
+          ? `${naturezaDespesaDe(em)}\n[Código LOA municipal: verificar com a Secretaria de Planejamento]`
+          : `${naturezaDespesaDe(em)}\n[Projeto/atividade: verificar na LOA do Estado ES (SIGEFES)]`),
+    executor: lookup ? `${lookup.cnpj} — ${lookup.nome}`
+      : ex ? `${ex.executor?.cnpj} — ${ex.executor?.nome}` : (em.executor || '[a preencher]'),
+    banco:    bancoFb,
+    agencia:  agFb,
+    detalhamento_completo: `Execução do objeto: ${em.objeto}. Inclui contratação de serviços e realização das atividades previstas.`,
+    finalidades: finalidadePrimaria,
+    metas: `- Descrição: Execução consolidada das entregas previstas\n- Unidade: Un\n- Quantidade: 1\n- Meses Previstos: ${prazo}`,
+  };
+}
+
+/* ══════════════════════════════════════════
+   REGENERAÇÃO INDIVIDUAL
+══════════════════════════════════════════ */
+const REGEN_TOKENS = {
+  detalhamento_completo: 1200,
+  classificacao:          900,
+  metas:                  800,
+};
+
+const PROMPTS = {
+  classificacao: em => {
+    const nd = naturezaDespesaDe(em);
+    const isMun = S.cnpj !== CNPJ_ESTADO_ES;
+    if (isMun) {
+      return `Campo 1.2 Classificação Orçamentária do Plano de Trabalho (TransfereGov / EC 105/2019).\nBeneficiário municipal: ${S.nomeEnte}.\nObjeto: "${em.objeto}".\nNatureza de despesa já determinada: ${nd}.\nComplete com o código LOA do município (órgão, unidade, programa/ação) compatível com esse objeto. Responda SOMENTE o texto do campo completo.`;
+    }
+    return `Gere a classificação orçamentária para emenda EC 105/2019: objeto "${em.objeto}", beneficiário "${S.nomeEnte}". Inclua: projeto/atividade com código SIOP, natureza (3.3.90.39.00 serviços ou 4.4.90.51.00 obras), fonte 1.706.311001. Responda SOMENTE o texto do campo.`;
+  },
+  executor:             em => `Sugira o executor mais provável (CNPJ formatado — nome completo) para o objeto "${em.objeto}" no ES, com base em padrões de Transferências Especiais EC 105/2019. Responda SOMENTE o texto.`,
+  banco:                em => `Sugira o banco (código — nome) mais usual para o executor de "${em.objeto}" no ES (Transferências Especiais EC 105/2019). Responda SOMENTE o texto no formato "001 — Banco do Brasil".`,
+  agencia:              em => `Sugira o número de agência mais usual para executor de "${em.objeto}" no ES. Responda SOMENTE o número.`,
+  objeto:               em => `Reformule para o campo 2.3 do TransfereGov: "${em.objeto}". Compatível com a finalidade ministerial. Responda SOMENTE o texto.`,
+  detalhamento_completo: em => {
+    const execPT         = em.objetoExecPostgrest || em.objetoExecPT || null;
+    const descricaoDetPT = em.descricaoDetPT || null;
+    const siopClass      = em.appPostgrest || null;
+    const siop           = em.detalhamentoSIOP || null;
+    const seed           = (S.historico || [])[0]?.objetoExecutor;
+    const stdDet         = S.objStd?.detalhamentos?.[0] || null;
+    const stdDetTxt      = (typeof stdDet === "string" ? stdDet : stdDet?.descricao) || null;
+    const stdMin         = S.objStd?.ministerio || null;
+    const ctx            = S.contextoAdicional?.trim() || '';
+
+    const siopCtx = siopClass
+      ? `Classificação SIOP (área de política pública):\n"${siopClass}"\n`
+      : '';
+    const ctxLine = ctx ? `Contexto adicional: "${ctx}"\n` : '';
+
+    // Com texto real do executor: refina incorporando contexto SIOP
+    if (execPT) {
+      return `Campo 2.5 Detalhamento do Objeto de Execução (TransfereGov / LC 210/2024).
+Beneficiário: ${S.nomeEnte}
+Objeto parlamentar: ${em.objeto}
+${siopCtx}${ctxLine}
+Texto atual do executor:
+"${execPT}"
+
+Refine o texto do executor em 3 a 5 linhas usando a classificação SIOP como contexto. Mantenha dados concretos (atividades, público-alvo, metodologia) e use linguagem técnica clara. Responda SOMENTE o texto refinado.`;
+    }
+    // Sem contexto adicional, prioriza sempre descrições do objeto SIOP (API/objeto padronizado)
+    if (!ctx && !descricaoDetPT && stdDetTxt) {
+      return `Campo 2.5 Detalhamento do Objeto de Execução (TransfereGov / LC 210/2024).
+Beneficiário: ${S.nomeEnte}
+Objeto parlamentar: ${em.objeto}
+${siopCtx}
+Descrição do objeto SIOP (objeto padronizado):
+"${stdDetTxt}"
+
+Use a descrição SIOP acima como base principal para escrever 3 a 5 linhas do campo 2.5, detalhando o que será executado, atividades principais, público-alvo e metodologia. Mantenha aderência ao objeto parlamentar e linguagem técnica clara. Responda SOMENTE o texto.`;
+    }
+    // Com descrição específica do detalhamento SIOP: gera com base nela
+    if (descricaoDetPT) {
+      return `Campo 2.5 Detalhamento do Objeto de Execução (TransfereGov / LC 210/2024).
+Beneficiário: ${S.nomeEnte}
+Objeto parlamentar: ${em.objeto}
+${siopCtx}${ctxLine}
+Descrição do objeto SIOP (texto do detalhamento ministerial):
+"${descricaoDetPT}"
+
+Com base nessa descrição e no objeto parlamentar acima, escreva 3 a 5 linhas para o campo 2.5: o que será executado, as atividades principais, o público-alvo e a metodologia. Use linguagem técnica clara e objetiva. Responda SOMENTE o texto.`;
+    }
+    // Com descrição padronizada do objeto SIOP: usa como base textual
+    if (stdDetTxt) {
+      return `Campo 2.5 Detalhamento do Objeto de Execução (TransfereGov / LC 210/2024).
+Beneficiário: ${S.nomeEnte}
+Objeto parlamentar: ${em.objeto}
+${siopCtx}${ctxLine}
+Descrição do objeto SIOP (objeto padronizado):
+"${stdDetTxt}"
+
+Com base nessa descrição SIOP e no objeto parlamentar acima, escreva 3 a 5 linhas para o campo 2.5: o que será executado, as atividades principais, o público-alvo e a metodologia. Use linguagem técnica clara e objetiva. Responda SOMENTE o texto.`;
+    }
+    // Com SIOP: gera a partir da classificação (sempre disponível no PostgREST)
+    if (siopClass) {
+      return `Campo 2.5 Detalhamento do Objeto de Execução (TransfereGov / LC 210/2024).
+Beneficiário: ${S.nomeEnte}
+Objeto parlamentar: ${em.objeto}
+${siopCtx}${ctxLine}
+Com base na classificação SIOP e no objeto acima, escreva 3 a 5 linhas descrevendo: o que será executado, as atividades principais, o público-alvo e a metodologia. Use linguagem técnica clara e objetiva. Responda SOMENTE o texto.`;
+    }
+    // Fallbacks sem SIOP
+    if (siop) {
+      return `Campo 2.5 (TransfereGov / LC 210/2024). Descrição SIOP: "${siop}". Beneficiário: ${S.nomeEnte}. Objeto: ${em.objeto}. Escreva 3 a 5 linhas: o que será executado, atividades, público-alvo, metodologia. Responda SOMENTE o texto.`;
+    }
+    if (seed) {
+      return `Adapte ao novo plano o texto base abaixo. Mantenha a estrutura. Responda SOMENTE o texto adaptado.\n\nTexto base:\n${seed}\n\nNovo objeto: ${em.objeto}`;
+    }
+    if (stdDetTxt) {
+      return `Campo 2.5 (TransfereGov / LC 210/2024).${stdMin ? ` Ministério: ${stdMin}.` : ''} Modelo oficial:\n"${stdDetTxt}"\n\nBeneficiário: ${S.nomeEnte}\nObjeto: ${em.objeto}\n\nAdapte ao contexto específico, 3 a 5 linhas. Responda SOMENTE o texto.`;
+    }
+    return `Campo 2.5 (TransfereGov / LC 210/2024). Objeto: "${em.objeto}". Beneficiário: ${S.nomeEnte}. Escreva 3 a 5 linhas: o que será executado, atividades principais, público-alvo, metodologia. Responda SOMENTE o texto.`;
+  },
+  finalidades:          em => {
+    const lista = (em.finalidades||[]).length ? em.finalidades.join(' | ') : '(livre, coerente com o objeto)';
+    return `Campo 2.6 Finalidades do TransfereGov. Objeto: "${em.objeto}". Escolha UMA única finalidade desta lista: ${lista}. Formato: "Tipo — Área". Responda SOMENTE o texto.`;
+  },
+  metas: em => {
+    const det25 = $('f25')?.value?.trim() || em.descricaoDetPT || em.objeto;
+    const ctx   = S.contextoAdicional?.trim();
+    return `Campo 2.7 Metas do Plano de Trabalho (TransfereGov / LC 210/2024).
+Beneficiário: ${S.nomeEnte}
+Objeto (campo 2.3): "${em.objeto}"
+Detalhamento do objeto (campo 2.5): "${det25}"
+${ctx ? `Contexto adicional: "${ctx}"\n` : ''}
+Consolide em UMA única meta coerente com o detalhamento acima. Formato obrigatório:
+- Descrição: [o que será entregue, compatível com o campo 2.5]
+- Unidade: [sigla da unidade de medida, ex: Un, Pessoa, Evento, Kit]
+- Quantidade: [número inteiro]
+- Meses Previstos: [número de meses]
+Responda SOMENTE o texto no formato acima.`;
+  },
+};
+
+async function regen(fieldId, tipo) {
+  if (!S.emenda) return;
+  const el = $(fieldId);
+  const orig = el.value;
+  const aiBtns = el.closest('.field-row')?.querySelectorAll('.icon-btn.ai');
+
+  // Para banco/agência: KB estático tem alta precisão quando disponível → usar sem IA
+  if (tipo === 'banco' || tipo === 'agencia') {
+    const isMun = S.cnpj !== CNPJ_ESTADO_ES;
+    const cnpjExec = (isMun ? S.cnpj : (S.emenda.cnpjExecutor || '')).replace(/\D/g, '');
+    const kb = lookupKB(cnpjExec);
+    // Banco municípios: CEF como padrão direto (76% acurácia, melhor que KB histórico)
+    if (tipo === 'banco' && isMun) { el.value = '104 — Caixa Econômica Federal'; return; }
+    if (tipo === 'agencia' && kb?.agencia) { el.value = kb.agencia; return; }
+  }
+
+  el.disabled = true;
+  aiBtns?.forEach(b => { b.disabled = true; b.textContent = '⏳'; });
+
+  const fn = PROMPTS[tipo];
+  if (!fn) { el.disabled = false; return; }
+
+  try {
+    const r = await fetch(GEMINI_PROXY, {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ prompt: fn(S.emenda), temperature: 0.4, maxTokens: REGEN_TOKENS[tipo] ?? 400 })
+    });
+    const d = await r.json();
+    el.value = (d.text || orig).replace(/```/g,'').trim();
+  } catch { el.value = orig; }
+
+  el.disabled = false;
+  aiBtns?.forEach(b => { b.disabled = false; b.textContent = '✦ IA'; });
+}
+
+/* ══════════════════════════════════════════
+   COPIAR
+══════════════════════════════════════════ */
+async function copiar(fieldId) {
+  const el = $(fieldId);
+  const btn = el.closest('.field-row')?.querySelector('.icon-btn.copy');
+  const orig = btn?.textContent;
+  try { await navigator.clipboard.writeText(el.value); }
+  catch { el.select(); document.execCommand('copy'); }
+  if (btn) { btn.textContent = '✓'; setTimeout(() => btn.textContent = orig, 1400); }
+}
+
+/* ══════════════════════════════════════════
+   NAVEGAÇÃO
+══════════════════════════════════════════ */
+function voltarP1() {
+  hide('page2'); show('page1');
+  hide('alerta-fonte');
+  setProgress(1);
+  window.scrollTo({ top:0, behavior:'smooth' });
+}
+function irP2() {
+  hide('page3'); show('page2');
+  setProgress(2);
+  window.scrollTo({ top:0, behavior:'smooth' });
+}
+function irP3() {
+  hide('page2'); show('page3');
+  setProgress(3);
+  window.scrollTo({ top:0, behavior:'smooth' });
+}
+
+/* ══════════════════════════════════════════
+   ENVIO POR E-MAIL
+══════════════════════════════════════════ */
+function abrirTransfereGov() {
+  const base = 'https://www.gov.br/transferegov/pt-br';
+  const proposta = S?.emenda?.idProposta || S?.emenda?.codigo || null;
+  const url = proposta
+    ? `${base}/acesso-livre?proposta=${encodeURIComponent(proposta)}`
+    : base;
+  window.open(url, '_blank', 'noopener,noreferrer');
+}
+
+function enviarEmail() {
+  const dest = $('e-dest').value.trim();
+  const nome = $('e-nome').value.trim();
+  const org  = $('e-org').value.trim();
+  const st   = $('e-status');
+
+  if (!dest || !dest.includes('@')) {
+    st.innerHTML = '<div class="alert alert-err">Informe um endereço de e-mail válido.</div>';
+    return;
+  }
+
+  const g = id => $(id)?.value || '';
+  const ck = id => $(id)?.checked ? 'SIM' : 'NÃO';
+  const em = S.emenda;
+
+  const corpo = [
+    '=== TRANSFEREGOV ASSISTENTE — SEFAZ-ES ===',
+    `Gerado em: ${new Date().toLocaleString('pt-BR')}`,
+    `Usuário: ${nome || '-'} | ${org || '-'} | ${dest}`,
+    '',
+    '--- IDENTIFICAÇÃO ---',
+    `Beneficiário: ${S.nomeEnte || ''}`,
+    `Emenda:       ${em?.parlamentar || ''}`,
+    `Objeto:       ${em?.objeto || ''}`,
+    `Valor:        ${em?.valor || ''}`,
+    '',
+    '--- 1. PLANO DE TRABALHO ---',
+    `1.1 Orçamento próprio:    ${ck('f11')}`,
+    `1.2 Classificação:\n${g('f12')}`,
+    `1.3 Declaração pessoal/dívida: ${ck('f13')}`,
+    `1.4 Prazo: ${g('f14')} meses`,
+    '',
+    '--- 2. DETALHAMENTO DO EXECUTOR ---',
+    `2.1 Declaração pessoal/dívida: ${ck('f21')}`,
+    `2.2 Executor:     ${g('f22')}`,
+    `2.3 Objeto:       ${g('f23')}`,
+    `2.4 Det. Lista:   ${g('f24')}`,
+    `2.5 Detalhamento:\n${g('f25')}`,
+    `2.6 Finalidades:  ${g('f26')}`,
+    `2.7 Metas:\n${g('f27')}`,
+    `2.8 Conta específica: ${ck('f28')}`,
+    `2.9 Banco:        ${g('f29banco')}`,
+    `2.10 Agência:     ${g('f210ag')}`,
+    `2.11 Conselhos:   ${g('f211')}`,
+    '',
+    '=== FIM ==='
+  ].join('\n');
+
+  const subj = encodeURIComponent(`TransfereGov Assistente — ${em?.parlamentar?.slice(0,40) || 'Plano'}`);
+  window.open(`mailto:${dest}?subject=${subj}&body=${encodeURIComponent(corpo)}`);
+  st.innerHTML = '<div class="alert alert-ok">Cliente de e-mail aberto com o resumo completo. Verifique e envie.</div>';
+}
+
+const pause = ms => new Promise(r => setTimeout(r, ms));
+
+/* ══════════════════════════════════════════
+   CARREGAR LISTA DE ENTES (ES) DO BACKEND
+══════════════════════════════════════════ */
+async function carregarEntes() {
+  const sel = $('sel-benef');
+  if (!sel) return;
+  try {
+    const r = await fetch('/api/transferegov-entes', { signal: AbortSignal.timeout(8000) });
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    const entes = await r.json();
+    if (!Array.isArray(entes) || entes.length === 0) return; // mantém fallback hardcoded
+
+    // Preserva valor selecionado (se houver) e o placeholder inicial.
+    const prev = sel.value;
+    sel.innerHTML = '<option value="">— selecione o ente federado —</option>';
+    entes.forEach(e => {
+      const o = document.createElement('option');
+      o.value = e.cnpj;
+      o.textContent = `${e.cnpj} — ${e.nome}`;
+      sel.appendChild(o);
+    });
+    if (prev) {
+      sel.value = prev;
+      // Só dispara carregamento se a DOMContentLoaded ainda não o iniciou
+      const jaCarregando = $('em-loading')?.style.display !== 'none';
+      const jaExibido    = $('em-tabela')?.style.display  !== 'none';
+      if (!jaCarregando && !jaExibido) onBenefChange();
+    }
+  } catch (_) {
+    // Se o endpoint falhar, o dropdown hardcoded do HTML permanece como fallback.
+  }
+}
+
+// Disparado quando o browser restaura o valor do select antes do script async completar
+function triggerSeNaoCarregado() {
+  const val = $('sel-benef')?.value;
+  if (!val) return;
+  if ($('em-loading')?.style.display !== 'none') return; // já carregando
+  if ($('em-tabela')?.style.display  !== 'none') return; // já exibido
+  onBenefChange();
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  // Tentativa imediata
+  triggerSeNaoCarregado();
+  // iOS restaura o form DEPOIS do DOMContentLoaded — verifica com delays
+  setTimeout(triggerSeNaoCarregado, 600);
+  setTimeout(triggerSeNaoCarregado, 1800);
+  // blur: dispara quando o picker do iOS fecha, mesmo sem mudar o valor
+  $('sel-benef')?.addEventListener('blur', triggerSeNaoCarregado);
+});
+
+carregarEntes();
+</script>
+</body>
 </html>
