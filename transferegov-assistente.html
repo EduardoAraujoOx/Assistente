@@ -673,8 +673,9 @@
           <input type="text" id="e-org" placeholder="Ex: SEFAZ-ES / Prefeitura de Vitória">
         </div>
         <div id="e-status"></div>
-        <div class="footer-nav" style="margin-top:1rem;">
+        <div class="footer-nav" style="margin-top:1rem; flex-wrap:wrap;">
           <button class="btn btn-ghost" onclick="irP2()">← Voltar ao Plano</button>
+          <button class="btn btn-ghost" onclick="abrirTransfereGov()">Abrir TransfereGov ↗</button>
           <button class="btn btn-gold"  onclick="enviarEmail()">Enviar Resumo ✉</button>
         </div>
       </div>
@@ -1656,6 +1657,15 @@ function irP3() {
 /* ══════════════════════════════════════════
    ENVIO POR E-MAIL
 ══════════════════════════════════════════ */
+function abrirTransfereGov() {
+  const base = 'https://www.gov.br/transferegov/pt-br';
+  const proposta = S?.emenda?.idProposta || S?.emenda?.codigo || null;
+  const url = proposta
+    ? `${base}/acesso-livre?proposta=${encodeURIComponent(proposta)}`
+    : base;
+  window.open(url, '_blank', 'noopener,noreferrer');
+}
+
 function enviarEmail() {
   const dest = $('e-dest').value.trim();
   const nome = $('e-nome').value.trim();
