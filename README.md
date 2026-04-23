@@ -71,6 +71,22 @@ Chave configurada diretamente no HTML (para prototipagem).
 | 2.9 Lista de Conselhos | Histórico |
 | 2.10 Notificações aos Conselhos | Em branco |
 
+
+### Regra do campo 2.5 (sem contexto adicional)
+
+Quando o usuário **não preenche** o campo “Informações adicionais do parlamentar”, o campo **2.5 Detalhamento do Objeto** passa a priorizar estritamente os dados de objeto SIOP:
+
+1. `descricaoDetPT` (descrição do detalhamento ministerial, quando disponível)
+2. `objStd.detalhamentos[0].descricao` (objeto padronizado SIOP)
+3. `appPostgrest` (classificação SIOP como contexto)
+
+Com isso, o Gemini gera o texto com base no objeto SIOP, reduzindo respostas genéricas só com o objeto parlamentar.
+
+Exemplo esperado de base SIOP para 2.5:
+
+> “Equipe de formação e bolsas de participação para meninas e suas respectivas mães ou cuidadoras, abrangendo total de 320 meninas e 320 mães ou cuidadoras em cada grupo de formação.”
+
+
 ## Deploy no Vercel (opcional)
 
 Para deploy estático no Vercel, basta empurrar o repositório. O Vercel
