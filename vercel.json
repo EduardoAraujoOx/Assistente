@@ -4,6 +4,6 @@
   "outputDirectory": ".",
   "framework": null,
   "rewrites": [
-    { "source": "/", "destination": "/transferegov-assistente.html" }
+    { "source": "/", "destination": "/index.html" }
   ]
 }
