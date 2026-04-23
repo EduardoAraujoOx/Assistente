@@ -6,7 +6,7 @@ e geração de campos por IA (Gemini 2.0 Flash).
 
 ## Como usar
 
-Abra o arquivo `transferegov-assistente.html` diretamente no navegador.
+Abra o arquivo `TransfereGov Assistente.html` diretamente no navegador (ou `transferegov-assistente.html`, que mantém compatibilidade).
 Nenhuma instalação necessária.
 
 ## Funcionalidades
@@ -71,11 +71,31 @@ Chave configurada diretamente no HTML (para prototipagem).
 | 2.9 Lista de Conselhos | Histórico |
 | 2.10 Notificações aos Conselhos | Em branco |
 
+
+### Regra do campo 2.5 (sem contexto adicional)
+
+Quando o usuário **não preenche** o campo “Informações adicionais do parlamentar”, o campo **2.5 Detalhamento do Objeto** passa a priorizar estritamente os dados de objeto SIOP:
+
+1. **Gemini (2.5)** gerado com base **exclusiva** no SIOP (sem histórico e sem contexto externo)
+2. `descricaoDetPT` (descrição do detalhamento ministerial, quando disponível)
+3. `objStd.detalhamentos[0].descricao` (objeto padronizado SIOP)
+4. `detalhamentoSIOP` / `appPostgrest` (classificação SIOP como contexto mínimo)
+
+Com isso, o Gemini gera o texto com base no objeto SIOP, reduzindo respostas genéricas só com o objeto parlamentar.
+
+> Quando o usuário **preenche** “Informações adicionais do parlamentar”, o sistema mantém o comportamento tradicional e pode aproveitar texto já existente do executor para refinamento.
+
+Exemplo esperado de base SIOP para 2.5:
+
+> “Equipe de formação e bolsas de participação para meninas e suas respectivas mães ou cuidadoras, abrangendo total de 320 meninas e 320 mães ou cuidadoras em cada grupo de formação.”
+
+
 ## Deploy no Vercel (opcional)
 
 Para deploy estático no Vercel, basta empurrar o repositório. O Vercel
 serve arquivos HTML estáticos automaticamente. Não é necessário nenhum
 framework ou build step.
+Este repositório inclui também um `index.html` de fallback que redireciona automaticamente para `transferegov-assistente.html`, garantindo que acessos diretos ao domínio (ex.: `sefaz-es.vercel.app`) funcionem mesmo sem rota customizada.
 
 Se quiser resolver CORS e proteger as chaves, adicione um diretório `/api/`
 com funções serverless simples que proxy as chamadas externas.

@@ -1229,10 +1229,7 @@ async function gerarPlano() {
   );
   setBadge('badge24', ['API', 'tag-api']);
 
-  // 2.5: regra especial sem contexto adicional -> priorizar EXCLUSIVAMENTE base SIOP
-  //      com texto gerado pela IA; com contexto adicional, manter prioridade tradicional.
-  //      objetoExecPostgrest/objetoExecPT continuam sendo usados quando já existe texto
-  //      de executor submetido, desde que o usuário tenha fornecido contexto adicional.
+  // 2.5: executor PostgREST (disponível p/ AGUARDANDO) > executor portal PT > Gemini > histórico
   // objetoExecPostgrest: objeto_executor da tabela executor_especial (PostgREST, por id_plano_acao)
   // objetoExecPT:        executor.objeto do portal /public/plano-trabalho/{ptId}/executor
   // Ambos são o mesmo dado — PostgREST é preferido por ser batch e não depender de PT existir
@@ -1240,34 +1237,20 @@ async function gerarPlano() {
   const objetoExecPT        = S.emenda.objetoExecPT        || null;
   const objetoExecBase      = objetoExecPostgrest || objetoExecPT || null;
   const objetoExecHist      = historico[0]?.objetoExecutor || null;
-  const descricaoDetPT      = S.emenda.descricaoDetPT || null;
-  const ctxAdicional        = S.contextoAdicional?.trim() || '';
-  const stdDet25            = (typeof S.objStd?.detalhamentos?.[0] === "string"
-    ? S.objStd?.detalhamentos?.[0]
-    : S.objStd?.detalhamentos?.[0]?.descricao) || null;
-  const siopBase25          = descricaoDetPT || stdDet25 || S.emenda.detalhamentoSIOP || S.emenda.appPostgrest || null;
-  const semContextoAdicional = !ctxAdicional;
+  const descricaoDetPT = S.emenda.descricaoDetPT || null;
   // Prioridade campo 2.5:
-  //   SEM contexto adicional:
-  //     1. IA (Gemini) com seed SIOP
-  //     2. API SIOP bruta (descricaoDetPT/stdDet/detalhamentoSIOP/appPostgrest)
-  //     3. fallback legado
-  //   COM contexto adicional:
-  //     1. API executor já submetido
-  //     2. IA (Gemini)
-  //     3. API SIOP / histórico / fallback
-  const valor25 = semContextoAdicional
-    ? ((geminiOk ? c.detalhamento_completo : null) || siopBase25 || objetoExecBase || objetoExecHist || c.detalhamento_completo || '')
-    : (objetoExecBase || (geminiOk ? c.detalhamento_completo : null) || siopBase25 || objetoExecHist || c.detalhamento_completo || '');
-  setVal('f25', valor25);
+  //   1. API (objetoExecBase)   — texto do executor já submetido
+  //   2. IA  (Gemini, quando ok) — gerado c/ descricaoDetPT ou appPostgrest como seed
+  //   3. API (descricaoDetPT)   — descrição ministerial SIOP (direto da API, sem refinar)
+  //   4. Hist (objetoExecHist)  — plano aprovado mais similar no KB histórico
+  //   5. fallback genérico
+  setVal('f25', objetoExecBase || (geminiOk ? c.detalhamento_completo : null) || descricaoDetPT || objetoExecHist || c.detalhamento_completo || '');
   setBadge('badge25',
-    semContextoAdicional && geminiOk && c.detalhamento_completo ? ['IA',  'tag-ai']   :
-    semContextoAdicional && siopBase25                          ? ['API', 'tag-api']  :
-    objetoExecBase                                               ? ['API', 'tag-api']  :
-    geminiOk && c.detalhamento_completo                          ? ['IA',  'tag-ai']   :
-    siopBase25                                                   ? ['API', 'tag-api']  :
-    objetoExecHist                                               ? ['Hist','tag-hist']  :
-                                                                   ['Hist','tag-hist']
+    objetoExecBase                      ? ['API', 'tag-api']  :
+    geminiOk && c.detalhamento_completo ? ['IA',  'tag-ai']   :
+    descricaoDetPT                      ? ['API', 'tag-api']  :
+    objetoExecHist                      ? ['Hist','tag-hist']  :
+                                          ['Hist','tag-hist']
   );
 
   // ── Classificação ─────────────────────────────────────────────────────────
@@ -1376,20 +1359,9 @@ async function geminiGerarPlano(em, historico = [], lookup = null, objStd = null
     : '';
   const stdDetTxt = (typeof stdDet === "string" ? stdDet : stdDet?.descricao) || null;
 
-  const hasCtxAdicional = !!(S.contextoAdicional?.trim());
-  const refDet25 = !hasCtxAdicional
-    ? descricaoDetPT
-      ? `${siopCtx}DESCRIÇÃO DO OBJETO SIOP (texto específico do detalhamento ministerial):\n"${descricaoDetPT}"\nUse EXCLUSIVAMENTE as informações SIOP acima para escrever 3 a 5 linhas do campo 2.5 (o que será executado, atividades, público-alvo e metodologia), sem incorporar contexto externo.\n`
-      : stdDetTxt
-        ? `${siopCtx}DESCRIÇÃO PADRONIZADA DO OBJETO SIOP (origem SIOP):\n"${stdDetTxt}"\nUse EXCLUSIVAMENTE esta descrição SIOP como base para gerar o campo 2.5 em 3 a 5 linhas, com atividades, público-alvo e metodologia.\n`
-        : siopClass
-          ? `${siopCtx}Com base EXCLUSIVAMENTE na classificação SIOP acima, escreva 3 a 5 linhas do campo 2.5 descrevendo: o que será executado, atividades principais, público-alvo e metodologia.\n`
-          : detSIOP
-            ? `DESCRIÇÃO DO SIOP (fornecida pelo Ministério):\n"${detSIOP}"\nUse EXCLUSIVAMENTE o texto SIOP acima para escrever 3 a 5 linhas: o que será executado, atividades, público-alvo e metodologia.\n`
-            : (stdDetTxt ? `MODELO OFICIAL DO MINISTÉRIO para este objeto: "${stdDetTxt.slice(0,200)}"\n` : '')
-    : execObjBase
-      ? `${siopCtx}TEXTO DO EXECUTOR (base fiel para o campo 2.5):\n"${execObjBase}"\nRefine o texto do executor usando a classificação SIOP como contexto. Mantenha dados concretos e linguagem técnica clara.\n`
-      : descricaoDetPT
+  const refDet25 = execObjBase
+    ? `${siopCtx}TEXTO DO EXECUTOR (base fiel para o campo 2.5):\n"${execObjBase}"\nRefine o texto do executor usando a classificação SIOP como contexto. Mantenha dados concretos e linguagem técnica clara.\n`
+    : descricaoDetPT
       ? `${siopCtx}DESCRIÇÃO DO OBJETO SIOP (texto específico do detalhamento ministerial):\n"${descricaoDetPT}"\nCom base nessa descrição e no objeto parlamentar, escreva 3 a 5 linhas para o campo 2.5: o que será executado, atividades, público-alvo e metodologia. Use linguagem técnica clara.\n`
       : stdDetTxt
         ? `${siopCtx}DESCRIÇÃO PADRONIZADA DO OBJETO SIOP (origem SIOP):\n"${stdDetTxt}"\nUse esta descrição como BASE PRINCIPAL para gerar o campo 2.5 em 3 a 5 linhas, mantendo aderência ao objeto parlamentar e detalhando atividades, público-alvo e metodologia.\n`
@@ -1439,9 +1411,6 @@ REGRAS:
 - Consolide em UMA única meta.
 - Escolha UMA única finalidade coerente com o objeto.
 - Use exatamente ${prazoFinal} meses em "Meses Previstos" da meta.
-- ${hasCtxAdicional
-  ? 'Com contexto adicional preenchido, você pode usá-lo para enriquecer o campo 2.5.'
-  : 'Para o campo 2.5, use EXCLUSIVAMENTE as informações SIOP fornecidas no prompt (não use histórico nem contexto externo).'}
 
 Responda SOMENTE com JSON válido, sem markdown:
 {
@@ -1533,8 +1502,7 @@ const PROMPTS = {
     const ctxLine = ctx ? `Contexto adicional: "${ctx}"\n` : '';
 
     // Com texto real do executor: refina incorporando contexto SIOP
-    // (apenas quando há contexto adicional informado pelo usuário)
-    if (execPT && ctx) {
+    if (execPT) {
       return `Campo 2.5 Detalhamento do Objeto de Execução (TransfereGov / LC 210/2024).
 Beneficiário: ${S.nomeEnte}
 Objeto parlamentar: ${em.objeto}
@@ -1544,30 +1512,16 @@ Texto atual do executor:
 
 Refine o texto do executor em 3 a 5 linhas usando a classificação SIOP como contexto. Mantenha dados concretos (atividades, público-alvo, metodologia) e use linguagem técnica clara. Responda SOMENTE o texto refinado.`;
     }
-    // Sem contexto adicional: usar EXCLUSIVAMENTE base SIOP para o campo 2.5.
-    if (!ctx && descricaoDetPT) {
+    // Sem contexto adicional, prioriza sempre descrições do objeto SIOP (API/objeto padronizado)
+    if (!ctx && !descricaoDetPT && stdDetTxt) {
       return `Campo 2.5 Detalhamento do Objeto de Execução (TransfereGov / LC 210/2024).
 Beneficiário: ${S.nomeEnte}
-${siopCtx}
-Descrição do objeto SIOP (texto do detalhamento ministerial):
-"${descricaoDetPT}"
-
-Use EXCLUSIVAMENTE a descrição SIOP acima para escrever 3 a 5 linhas do campo 2.5, detalhando o que será executado, atividades principais, público-alvo e metodologia. Responda SOMENTE o texto.`;
-    }
-    if (!ctx && stdDetTxt) {
-      return `Campo 2.5 Detalhamento do Objeto de Execução (TransfereGov / LC 210/2024).
-Beneficiário: ${S.nomeEnte}
+Objeto parlamentar: ${em.objeto}
 ${siopCtx}
 Descrição do objeto SIOP (objeto padronizado):
 "${stdDetTxt}"
 
-Use EXCLUSIVAMENTE a descrição SIOP acima como base para escrever 3 a 5 linhas do campo 2.5, detalhando o que será executado, atividades principais, público-alvo e metodologia. Responda SOMENTE o texto.`;
-    }
-    if (!ctx && siopClass) {
-      return `Campo 2.5 Detalhamento do Objeto de Execução (TransfereGov / LC 210/2024).
-Beneficiário: ${S.nomeEnte}
-${siopCtx}
-Com base EXCLUSIVAMENTE na classificação SIOP acima, escreva 3 a 5 linhas descrevendo: o que será executado, as atividades principais, o público-alvo e a metodologia. Use linguagem técnica clara e objetiva. Responda SOMENTE o texto.`;
+Use a descrição SIOP acima como base principal para escrever 3 a 5 linhas do campo 2.5, detalhando o que será executado, atividades principais, público-alvo e metodologia. Mantenha aderência ao objeto parlamentar e linguagem técnica clara. Responda SOMENTE o texto.`;
     }
     // Com descrição específica do detalhamento SIOP: gera com base nela
     if (descricaoDetPT) {
